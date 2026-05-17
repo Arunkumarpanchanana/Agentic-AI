@@ -553,7 +553,7 @@ print("FastAPI app defined. Run with uvicorn to serve.")
     </div>
 
     <div class="session-nav-buttons">
-      <a href="/Agentic-AI/sessions/production/24-optimization.html" class="session-nav-btn secondary">← Previous</a>
+      <a href="/Agentic-AI/sessions/production/24-optimization.html" class="session-nav-btn secondary" id="prev-session">← Previous</a>
       <a href="/Agentic-AI/" class="session-nav-btn">Back to Home</a>
     </div>
   </main>
@@ -628,7 +628,8 @@ window.SESSION_META = {
       correct: 2,
       explanation: "The agent must first understand the dataset structure — columns, data types, shape, and sample rows — before it can plan or execute any meaningful analysis."
     }
-  ]
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
 };
 </script>
 </body>

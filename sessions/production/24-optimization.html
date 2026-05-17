@@ -458,8 +458,8 @@ print(f"Latency reduction: {(1 - parallel_time/sequential_time):.0%}")
     </div>
 
     <div class="session-nav-buttons">
-      <a href="/Agentic-AI/sessions/production/23-observability.html" class="session-nav-btn secondary">← Previous</a>
-      <a href="/Agentic-AI/sessions/production/25-capstone.html" class="session-nav-btn">Next →</a>
+      <a href="/Agentic-AI/sessions/production/23-observability.html" class="session-nav-btn secondary" id="prev-session">← Previous</a>
+      <a href="/Agentic-AI/sessions/production/25-capstone.html" class="session-nav-btn" id="next-session">Next →</a>
     </div>
   </main>
 </div>
@@ -528,7 +528,8 @@ window.SESSION_META = {
       correct: 1,
       explanation: "Context window hygiene means keeping only recent turns plus a compressed summary of older turns, preventing the context from growing unboundedly and wasting tokens on stale information."
     }
-  ]
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
 };
 </script>
 </body>

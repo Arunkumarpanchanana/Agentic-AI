@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!meta) return;
   if (window.Progress) Progress.markViewed(meta.id);
   try {
-    const res = await fetch('/Python-for-AI/data/sessions.json');
+    const res = await fetch('/Agentic-AI/data/sessions.json');
     const data = await res.json();
     buildSidebar(data, meta);
     buildNavButtons(data, meta);
