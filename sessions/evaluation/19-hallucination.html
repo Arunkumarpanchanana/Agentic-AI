@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hallucination & Reliability — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-eval{background:#f59e0b;color:#000;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #f59e0b;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1c1400;border:1px solid #f59e0b;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#f59e0b;color:#000;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#f59e0b;color:#000;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.7}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/evaluation.html">Evaluation</a><span class="sep">›</span><span>Session 19</span></div>
+      <h1 class="session-title">Hallucination & Reliability</h1>
+      <p class="session-tagline">Why agents hallucinate more than chatbots, and how to detect and mitigate it with self-consistency, grounding, and uncertainty estimation.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-eval"><i class="fas fa-exclamation-triangle"></i> Evaluation</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Agents Hallucinate More Than Chatbots</h2>
+      <p>A chatbot hallucinating in a single response is bad. An agent hallucinating compounds across many steps — each hallucinated fact becomes a false premise for the next step, causing <strong>error cascades</strong>. An agent that invents a citation in step 2 will build an entire research report on that false foundation by step 10.</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Factor</th><th>How it amplifies hallucination in agents</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Compounding errors</strong></td><td>Each step's hallucination feeds the next step as a "fact"</td></tr>
+            <tr><td><strong>Long context dilution</strong></td><td>In long histories, the model attends less carefully to early facts</td></tr>
+            <tr><td><strong>Tool result misreading</strong></td><td>Agent misinterprets ambiguous tool output and proceeds with wrong assumption</td></tr>
+            <tr><td><strong>Goal drift</strong></td><td>As the agent drifts from its goal, it generates content that "sounds right" but isn't grounded</td></tr>
+            <tr><td><strong>No external check</strong></td><td>Unlike a human, the agent doesn't pause and double-check surprising claims</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#f59e0b;margin-top:2px"></i>
+        <div><strong>Key insight:</strong> The solution to agent hallucination is grounding — anchoring every factual claim to an external source the agent can verify. The agent should never assert a fact it did not obtain from a tool result.</div>
+      </div>
+
+      <h2>Self-Consistency Checking</h2>
+      <p>Self-consistency is the most practical hallucination mitigation for agents. Sample the agent (or LLM) multiple times and compare outputs. High agreement = high confidence. High variance = likely hallucination.</p>
+      <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
+from collections import Counter
+import re
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+
+def self_consistency_check(question: str, n: int = 5, threshold: float = 0.6) -> dict:
+    """
+    Sample the LLM n times and check if answers are consistent.
+    Returns: answer, confidence, is_reliable flag.
+    """
+    answers = []
+    for _ in range(n):
+        r = llm([HumanMessage(content=f"Answer in one sentence:\n{question}")]).content.strip()
+        answers.append(r)
+
+    # Extract key claims (simplified: first number or yes/no found)
+    def extract_key(answer):
+        if re.search(r'\byes\b', answer.lower()): return "yes"
+        if re.search(r'\bno\b', answer.lower()): return "no"
+        nums = re.findall(r'\b\d[\d,\.]*\b', answer)
+        return nums[0] if nums else answer[:30].lower()
+
+    keys = [extract_key(a) for a in answers]
+    counts = Counter(keys)
+    top_key, top_count = counts.most_common(1)[0]
+    confidence = top_count / n
+    best_answer = next(a for a, k in zip(answers, keys) if k == top_key)
+
+    return {
+        "answer": best_answer,
+        "confidence": confidence,
+        "is_reliable": confidence >= threshold,
+        "all_keys": keys,
+    }
+
+result = self_consistency_check("What year was Python first released?")
+print(f"Answer: {result['answer'][:100]}")
+print(f"Confidence: {result['confidence']:.0%}")
+print(f"Reliable: {result['is_reliable']}")</code></pre>
+
+      <h2>Factuality Grounding</h2>
+      <p>Grounding means every factual claim must be traceable to a retrieved source, not generated from model weights:</p>
+      <pre><code class="language-python">def grounded_response(question: str, search_fn) -> dict:
+    """Force agent to ground every claim in retrieved evidence."""
+    # Step 1: Retrieve evidence
+    evidence = search_fn(question)
+    # Step 2: Generate grounded response
+    grounded_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    response = grounded_llm([HumanMessage(content=f"""Answer the question using ONLY the provided evidence.
+If the evidence doesn't contain the answer, say "I don't have sufficient evidence to answer this."
+Do NOT use any knowledge from your training data.
+
+Evidence:
+{evidence}
+
+Question: {question}
+Answer:""")]).content
+    return {"answer": response, "evidence": evidence, "grounded": True}</code></pre>
+
+      <h2>Uncertainty Estimation</h2>
+      <p>Instead of always giving a confident answer, agents should express calibrated uncertainty:</p>
+      <pre><code class="language-python">UNCERTAINTY_PROMPT = """Answer the question, then rate your confidence:
+- HIGH: I'm certain based on well-established facts
+- MEDIUM: I believe this is correct but you should verify
+- LOW: I'm uncertain — please verify this independently
+
+Question: {question}
+
+Answer: [your answer]
+Confidence: [HIGH/MEDIUM/LOW]
+Reason for confidence level: [brief explanation]"""
+
+def answer_with_uncertainty(question: str) -> dict:
+    llm_det = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    response = llm_det([HumanMessage(content=UNCERTAINTY_PROMPT.format(question=question))]).content
+    # Parse confidence level
+    confidence = "UNKNOWN"
+    for level in ["HIGH", "MEDIUM", "LOW"]:
+        if level in response:
+            confidence = level
+            break
+    return {"response": response, "confidence_level": confidence,
+            "should_verify": confidence in ["LOW", "UNKNOWN"]}</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#f59e0b;margin-top:2px"></i>
+        <div><strong>Hallucination detection pipeline:</strong> (1) Ground all factual claims in tool results. (2) Use self-consistency to flag low-confidence answers. (3) Add a dedicated verifier agent that checks key claims against retrieved evidence before passing results downstream. Don't rely on a single LLM call for anything factual.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Add a Hallucination Detector to a Research Agent</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Build a Claim Extractor</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
+import re
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+def extract_claims(text: str) -> list:
+    """Extract verifiable factual claims from text."""
+    response = llm([HumanMessage(content=f"""Extract all verifiable factual claims from this text.
+Return as a numbered list. Only include specific facts (dates, numbers, names, events).
+Skip opinions and general statements.
+
+Text: {text}
+
+Factual claims:""")]).content
+    claims = [line.strip() for line in response.split('\n') if line.strip() and line.strip()[0].isdigit()]
+    return claims
+
+sample_text = """Python was created by Guido van Rossum in 1991. It is now the most popular programming language according to the TIOBE index. Python 3.12 was released in October 2023 and includes significant performance improvements. The language is used by companies including Google, NASA, and Instagram."""
+
+claims = extract_claims(sample_text)
+print(f"Extracted {len(claims)} claims:")
+for c in claims: print(f"  {c}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Claim Verifier</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def verify_claim(claim: str, evidence: str) -> dict:
+    """Verify a claim against provided evidence."""
+    response = llm([HumanMessage(content=f"""Verify this claim against the evidence provided.
+Claim: {claim}
+Evidence: {evidence}
+
+Is the claim:
+A) SUPPORTED by the evidence
+B) CONTRADICTED by the evidence
+C) NOT_ADDRESSED by the evidence (cannot verify)
+
+Answer with just A, B, or C, then one sentence explanation.""")]).content
+    verdict = "SUPPORTED" if "A" in response[:10] else "CONTRADICTED" if "B" in response[:10] else "UNVERIFIED"
+    return {"claim": claim, "verdict": verdict, "explanation": response[5:].strip()[:200]}
+
+# Simulate evidence from a search
+evidence = "Python was released on February 20, 1991. Guido van Rossum created Python."
+for claim in claims[:3]:
+    result = verify_claim(claim, evidence)
+    icon = {"SUPPORTED":"✅","CONTRADICTED":"❌","UNVERIFIED":"⚠️"}.get(result["verdict"],"?")
+    print(f"{icon} [{result['verdict']}] {claim[:70]}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Build the Full Detection Pipeline</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def hallucination_detection_pipeline(agent_output: str, evidence_fn) -> dict:
+    """Full pipeline: extract claims → get evidence → verify each claim."""
+    print("Step 1: Extracting claims...")
+    claims = extract_claims(agent_output)
+    print(f"  Found {len(claims)} verifiable claims")
+    results = []
+    print("Step 2: Verifying claims...")
+    for claim in claims:
+        evidence = evidence_fn(claim)
+        result = verify_claim(claim, evidence)
+        results.append(result)
+        icon = {"SUPPORTED":"✅","CONTRADICTED":"❌","UNVERIFIED":"⚠️"}.get(result["verdict"],"?")
+        print(f"  {icon} {claim[:60]}...")
+    supported = sum(1 for r in results if r["verdict"]=="SUPPORTED")
+    contradicted = sum(1 for r in results if r["verdict"]=="CONTRADICTED")
+    unverified = sum(1 for r in results if r["verdict"]=="UNVERIFIED")
+    reliability = supported / len(results) if results else 0
+    return {"total_claims": len(results), "supported": supported, "contradicted": contradicted,
+            "unverified": unverified, "reliability_score": round(reliability, 2), "details": results}
+
+def mock_evidence(claim): return "Python was created by Guido van Rossum and released in 1991. Python 3.12 was released in 2023."
+report = hallucination_detection_pipeline(sample_text, mock_evidence)
+print(f"\nReliability score: {report['reliability_score']:.0%}")
+print(f"  Supported: {report['supported']} | Contradicted: {report['contradicted']} | Unverified: {report['unverified']}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Test with a Hallucinated Text</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">hallucinated_text = """Python was invented by Linus Torvalds in 1985. It was initially called 'Cobra' before being renamed. Python 4.0 was released in 2022 with full static typing support. The language is primarily used for operating system development."""
+
+print("=== Testing with hallucinated text ===")
+report2 = hallucination_detection_pipeline(hallucinated_text, mock_evidence)
+print(f"\nReliability score: {report2['reliability_score']:.0%}")
+print("High hallucination detected!" if report2["reliability_score"] < 0.4 else "Mostly reliable")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/evaluation/18-benchmarks.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Benchmarks</span>
+      </a>
+      <a href="/Agentic-AI/sessions/evaluation/20-security.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Prompt Injection & Security ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-19",
+  title: "Hallucination & Reliability",
+  section: "evaluation",
+  quizData: [
+    { type: "mcq", question: "Why do agents hallucinate more than simple chatbots?", options: ["Agents use larger models", "Hallucinations compound across steps — each false claim becomes a premise for the next", "Agents have less training data", "Agents use more tools"], correct: 1, explanation: "In agents, a hallucination in step 2 becomes a 'fact' used in step 3, which builds on it in step 4. Errors cascade multiplicatively rather than being isolated to a single response." },
+    { type: "mcq", question: "Self-consistency checking detects hallucinations by:", options: ["Asking the LLM if it is confident", "Sampling the same question multiple times and flagging high-variance answers as unreliable", "Comparing to a ground truth database", "Using a second, larger model to verify"], correct: 1, explanation: "High variance across multiple LLM samples indicates uncertainty — the model doesn't have a stable answer and may be hallucinating. Consistent answers across samples suggest higher reliability." },
+    { type: "mcq", question: "Factuality grounding means:", options: ["Using the most factual model", "Anchoring every claim to a retrieved external source rather than model-generated memory", "Adding citations at the end", "Reducing temperature to 0"], correct: 1, explanation: "Grounding requires every factual assertion to be traceable to a tool result (web search, database query, document retrieval) rather than generated from model weights." },
+    { type: "mcq", question: "The error cascade problem in agents refers to:", options: ["Multiple API calls failing simultaneously", "Early hallucinations becoming false premises that corrupt all subsequent reasoning", "Memory overflow from too many steps", "Tool calls timing out in sequence"], correct: 1, explanation: "Error cascades occur when a hallucination in an early step is treated as fact by subsequent steps, causing all downstream reasoning to be built on a false foundation." },
+    { type: "mcq", question: "Calibrated uncertainty in agent responses means:", options: ["Always saying 'I don't know'", "Expressing HIGH/MEDIUM/LOW confidence proportional to actual reliability so users know when to verify", "Only answering questions with 100% certainty", "Using temperature=0 for all responses"], correct: 1, explanation: "Calibrated uncertainty means the agent's stated confidence matches its actual accuracy. HIGH confidence claims should be right ~95% of the time; LOW confidence should trigger user verification." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

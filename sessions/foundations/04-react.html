@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ReAct: Reasoning + Acting — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .badge-foundations { background: #6366f1; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .trace-block { background: #0d1117; border: 1px solid #334155; border-radius: 8px; padding: 1rem; margin: 1rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.8; }
+    .trace-thought { color: #a5b4fc; }
+    .trace-action { color: #34d399; }
+    .trace-obs { color: #fbbf24; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #6366f1; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .session-nav-btn { background: #6366f1; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/foundations.html">Foundations</a><span class="sep">›</span><span>Session 04</span></div>
+      <h1 class="session-title">ReAct: Reasoning + Acting</h1>
+      <p class="session-tagline">Learn the Thought-Action-Observation loop from the landmark 2022 paper and implement it with LangChain.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-foundations"><i class="fas fa-brain"></i> Foundations</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>The ReAct Paper (Yao et al., 2022)</h2>
+      <p>ReAct — short for <strong>Re</strong>asoning + <strong>Act</strong>ing — was introduced by Shunyu Yao and colleagues at Princeton and Google Brain in the paper <em>"ReAct: Synergizing Reasoning and Acting in Language Models"</em> (2022). It became one of the most cited and practically influential papers in agentic AI.</p>
+      <p>The key insight: prior work had separated reasoning (chain-of-thought prompting) from acting (action-only agents). ReAct showed that <strong>interleaving explicit reasoning steps with action steps dramatically improved performance</strong> on knowledge-intensive and decision-making tasks.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Core idea:</strong> At each step, the LLM produces a <em>Thought</em> (internal reasoning trace) before producing an <em>Action</em>. The action's result becomes an <em>Observation</em> that feeds into the next Thought. This creates an interpretable, steerable loop.</div>
+      </div>
+
+      <h2>The Thought-Action-Observation Loop</h2>
+      <p>Here is a real ReAct trace for the question: <em>"What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?"</em></p>
+
+      <div class="trace-block">
+        <div class="trace-thought">Thought 1: I need to search Colorado orogeny and find the eastern sector information.</div>
+        <div class="trace-action">Action 1: Search["Colorado orogeny"]</div>
+        <div class="trace-obs">Observation 1: The Colorado orogeny was an episode of mountain building (an orogeny) in Colorado... The eastern sector extends into the High Plains...</div>
+        <div class="trace-thought">Thought 2: The eastern sector extends into the High Plains. I need to find the elevation range of the High Plains.</div>
+        <div class="trace-action">Action 2: Search["High Plains elevation"]</div>
+        <div class="trace-obs">Observation 2: The High Plains are a subregion of the Great Plains. The elevation ranges from around 1,800 to 7,000 feet above sea level.</div>
+        <div class="trace-thought">Thought 3: I now know the elevation range. The answer is 1,800 to 7,000 feet.</div>
+        <div class="trace-action">Action 3: Finish["1,800 to 7,000 feet"]</div>
+      </div>
+
+      <p>Notice how each Thought explains <em>why</em> the next action is being taken — this makes the agent's reasoning transparent and debuggable.</p>
+
+      <h2>ReAct vs Chain-of-Thought vs Action-Only</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Approach</th><th>Reasoning</th><th>External Info</th><th>Error Recovery</th><th>Interpretability</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Chain-of-Thought</strong></td><td>Explicit thoughts</td><td>No (closed-book)</td><td>Poor</td><td>High</td></tr>
+            <tr><td><strong>Action-Only</strong></td><td>None</td><td>Yes (tools)</td><td>Poor</td><td>Low</td></tr>
+            <tr><td><strong>ReAct</strong></td><td>Explicit thoughts</td><td>Yes (tools)</td><td>Good (can reason about errors)</td><td>High</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The paper showed ReAct outperformed chain-of-thought by 6-11% on HotpotQA (multi-hop reasoning) and significantly reduced hallucination because the agent could look up facts rather than generating them from memory.</p>
+
+      <h2>Why Thoughts Help</h2>
+      <p>The reasoning trace serves multiple roles in ReAct:</p>
+      <ul style="line-height:2">
+        <li><strong>Decomposition:</strong> Breaking complex questions into sub-questions.</li>
+        <li><strong>Context tracking:</strong> Summarising what has been learned so far.</li>
+        <li><strong>Error diagnosis:</strong> "The search returned no results — I'll try a different query."</li>
+        <li><strong>Goal alignment:</strong> "I only need one more piece of information before I can answer."</li>
+        <li><strong>Human interpretability:</strong> Developers can read the trace to understand why an agent took a wrong turn.</li>
+      </ul>
+
+      <h2>LangChain ReAct Agent</h2>
+      <pre><code class="language-python">from langchain import hub
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_openai import ChatOpenAI
+from langchain.tools import Tool
+from langchain_community.tools import DuckDuckGoSearchRun
+
+# --- Define tools ---
+search = DuckDuckGoSearchRun()
+
+def calculator(expression: str) -> str:
+    """Evaluate a mathematical expression."""
+    try:
+        result = eval(expression, {"__builtins__": {}}, {})
+        return str(result)
+    except Exception as e:
+        return f"Error: {e}"
+
+tools = [
+    Tool(name="Search", func=search.run,
+         description="Search the web for current information. Input: a search query string."),
+    Tool(name="Calculator", func=calculator,
+         description="Evaluate math expressions. Input: a Python-style math expression like '2 ** 10 / 3'."),
+]
+
+# --- Load the ReAct prompt from LangChain Hub ---
+prompt = hub.pull("hwchase17/react")
+
+# --- Create the ReAct agent ---
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+agent = create_react_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=10)
+
+# --- Run ---
+result = executor.invoke({
+    "input": "What is the population of Tokyo, and what is 15% of that number?"
+})
+print("Final answer:", result["output"])</code></pre>
+
+      <h2>Common ReAct Failure Modes</h2>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Thought-action mismatch:</strong> The thought says "I'll search X" but the action searches Y.</li>
+          <li><strong>Observation ignoring:</strong> The agent generates the next thought before properly reading the observation.</li>
+          <li><strong>Infinite loops:</strong> The agent keeps searching for something not on the web.</li>
+          <li><strong>Premature finish:</strong> The agent answers before gathering enough information.</li>
+          <li><strong>Tool hallucination:</strong> The agent calls a tool that doesn't exist in its tool list.</li>
+        </ul>
+      </div>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Debugging tip:</strong> Always set <code>verbose=True</code> in your AgentExecutor during development. Reading the full Thought-Action-Observation trace is the fastest way to understand why your agent is misbehaving.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Build a ReAct Agent with Search + Calculator</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Install Dependencies</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">!pip install langchain langchain-openai langchain-community duckduckgo-search -q
+import os
+os.environ["OPENAI_API_KEY"] = "your-key-here"  # or use Colab secrets
+print("Ready!")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Simulate ReAct Without an LLM</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python"># Simulate a ReAct trace with a hardcoded "LLM"
+def fake_react_llm(step, observation=""):
+    steps = [
+        ("Thought", "I need to find the GDP of Germany."),
+        ("Action", "Search: GDP of Germany 2024"),
+        ("Thought", f"Observation says: {observation}. Now calculate 5% of that."),
+        ("Action", "Calculator: 4_456_000_000_000 * 0.05"),
+        ("Thought", "I have the answer."),
+        ("Action", "Finish: 5% of Germany GDP is approximately $222.8 billion"),
+    ]
+    return steps[step] if step < len(steps) else ("Finish", "Done")
+
+# Run the simulated loop
+print("=== ReAct Trace ===")
+obs = ""
+for i in range(6):
+    role, content = fake_react_llm(i, obs)
+    prefix = {"Thought": "💭", "Action": "⚡", "Finish": "✅"}.get(role, "")
+    print(f"{prefix} {role}: {content}")
+    if role == "Action" and "Search" in content:
+        obs = "Germany GDP 2024: approximately $4.456 trillion (IMF estimate)"</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Build the Real ReAct Agent</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain import hub
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_openai import ChatOpenAI
+from langchain.tools import Tool
+from langchain_community.tools import DuckDuckGoSearchRun
+
+search = DuckDuckGoSearchRun()
+
+tools = [
+    Tool(name="Search", func=search.run,
+         description="Search the internet. Input: search query string."),
+    Tool(name="Calculator", func=lambda expr: str(eval(expr, {"__builtins__": {}}, {})),
+         description="Evaluate math. Input: Python math expression."),
+]
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+prompt = hub.pull("hwchase17/react")
+agent = create_react_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=8)
+
+result = executor.invoke({"input": "What is the current price of gold per ounce, and how much would 5 ounces cost?"})
+print("\nFinal Answer:", result["output"])</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Analyse the Trace</h3></div>
+            <div class="lab-step-body">
+              <p>After running the agent, answer these in a markdown cell:</p>
+              <ul>
+                <li>How many Thought-Action-Observation cycles did the agent use?</li>
+                <li>Did the agent reason correctly between steps? Where did it struggle?</li>
+                <li>Try changing the question to something harder (multi-hop) and observe how the trace changes.</li>
+              </ul>
+              <p><strong>Challenge:</strong> Add a third tool — a unit converter — and ask the agent a question that requires all three tools.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/foundations/03-bdi.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ BDI Model</span>
+      </a>
+      <a href="/Agentic-AI/sessions/foundations/05-plan-execute.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Plan-and-Execute Agents ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-04",
+  title: "ReAct: Reasoning + Acting",
+  section: "foundations",
+  quizData: [
+    { type: "mcq", question: "What does the 'Re' in ReAct stand for?", options: ["Retrieval", "Reasoning", "Recursive", "Reinforcement"], correct: 1, explanation: "ReAct = Reasoning + Acting. The key innovation is interleaving explicit reasoning (Thought) steps with action steps." },
+    { type: "mcq", question: "In a ReAct trace, what comes immediately after an Action?", options: ["Another Thought", "An Observation", "A Final Answer", "A Tool Definition"], correct: 1, explanation: "The Thought-Action-Observation loop: Thought (reasoning) → Action (tool call) → Observation (tool result) → next Thought." },
+    { type: "mcq", question: "Compared to chain-of-thought prompting, ReAct's main advantage is:", options: ["It is faster", "It can access external information via tools", "It uses smaller models", "It requires no prompt engineering"], correct: 1, explanation: "Chain-of-thought is closed-book (no tools). ReAct interleaves reasoning with tool calls, allowing the agent to look up facts rather than hallucinate them." },
+    { type: "mcq", question: "Which of these is a common ReAct failure mode?", options: ["Using too many tools", "Observation ignoring — generating the next thought before reading the result", "Producing too much output", "Using chain-of-thought reasoning"], correct: 1, explanation: "Observation ignoring occurs when the LLM's attention is poorly distributed and the action result is effectively ignored in the next reasoning step." },
+    { type: "mcq", question: "The ReAct paper (Yao et al. 2022) showed improvements on which type of task?", options: ["Image classification", "Multi-hop knowledge-intensive QA like HotpotQA", "Code generation benchmarks", "Speech recognition"], correct: 1, explanation: "ReAct showed 6-11% improvements on HotpotQA (multi-hop reasoning) by combining reasoning traces with Wikipedia search tool calls." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

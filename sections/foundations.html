@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Foundations — Agentic AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <style>
+    .section-hero { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 3.5rem 1.5rem 3rem; text-align: center; }
+    .section-badge { display:inline-flex; align-items:center; gap:.5rem; background:rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.3); color:#a5b4fc; padding:.3rem .9rem; border-radius:999px; font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+    .section-hero h1 { font-size:2.4rem; font-weight:800; color:#f1f5f9; margin-bottom:.75rem; }
+    .section-hero p { color:#94a3b8; max-width:560px; margin:0 auto 1.5rem; line-height:1.7; }
+    .section-stats { display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap; }
+    .stat { text-align:center; }
+    .stat .n { font-size:1.6rem; font-weight:800; color:#818cf8; }
+    .stat .l { font-size:.75rem; color:#64748b; text-transform:uppercase; letter-spacing:.08em; }
+    .sessions-list { max-width:800px; margin:0 auto; padding:3rem 1.5rem 4rem; }
+    .sessions-list h2 { font-size:1.2rem; font-weight:700; color:#94a3b8; margin-bottom:1.5rem; text-transform:uppercase; letter-spacing:.08em; }
+    .session-row { display:flex; align-items:center; gap:1rem; background:#1e293b; border:1px solid #334155; border-radius:.875rem; padding:1.25rem 1.5rem; margin-bottom:.875rem; text-decoration:none; transition:border-color .2s, transform .15s; }
+    .session-row:hover { border-color:#6366f1; transform:translateX(4px); }
+    .session-row .num { font-family:'JetBrains Mono',monospace; font-size:.8rem; font-weight:700; color:#6366f1; min-width:2.5rem; }
+    .session-row .info { flex:1; }
+    .session-row .info h3 { font-size:1rem; font-weight:600; color:#e2e8f0; margin-bottom:.2rem; }
+    .session-row .info p { font-size:.83rem; color:#64748b; }
+    .session-row .dur { font-size:.78rem; color:#475569; white-space:nowrap; }
+    .done-badge { background:rgba(99,102,241,.2); color:#818cf8; font-size:.7rem; font-weight:700; padding:.2rem .6rem; border-radius:999px; }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <div class="section-hero">
+    <div class="section-badge"><i class="fa-solid fa-brain"></i> Section 1 of 5</div>
+    <h1>🧠 Foundations</h1>
+    <p>Understand how agents think. Explore classical and modern agent architectures — from BDI models to ReAct and Plan-and-Execute patterns used in production today.</p>
+    <div class="section-stats">
+      <div class="stat"><div class="n">6</div><div class="l">Sessions</div></div>
+      <div class="stat"><div class="n">~2.5h</div><div class="l">Duration</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">Labs</div></div>
+    </div>
+  </div>
+
+  <div class="sessions-list">
+    <h2>Sessions</h2>
+    <a href="/Agentic-AI/sessions/foundations/01-intro.html" class="session-row">
+      <span class="num">01</span>
+      <div class="info"><h3>What Is Agentic AI?</h3><p>Agents vs. chatbots, autonomy spectrum, perception-action loops, real-world examples.</p></div>
+      <span class="dur">20 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/foundations/02-architectures.html" class="session-row">
+      <span class="num">02</span>
+      <div class="info"><h3>Agent Architectures Overview</h3><p>Reactive, deliberative, hybrid, and layered architectures — how they differ and when to use each.</p></div>
+      <span class="dur">25 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/foundations/03-bdi.html" class="session-row">
+      <span class="num">03</span>
+      <div class="info"><h3>BDI: Beliefs, Desires, Intentions</h3><p>The BDI model explained — how agents hold state, form goals, and commit to plans.</p></div>
+      <span class="dur">25 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/foundations/04-react.html" class="session-row">
+      <span class="num">04</span>
+      <div class="info"><h3>ReAct: Reasoning + Acting</h3><p>The ReAct paper, thought-action-observation loops, and how modern LLM agents implement it.</p></div>
+      <span class="dur">25 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/foundations/05-plan-execute.html" class="session-row">
+      <span class="num">05</span>
+      <div class="info"><h3>Plan-and-Execute Agents</h3><p>Separate planner and executor roles, task graphs, replanning on failure.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/foundations/06-cognitive-loops.html" class="session-row">
+      <span class="num">06</span>
+      <div class="info"><h3>Cognitive Loops &amp; Agent Perception</h3><p>Sense-think-act cycles, environment modeling, and observation processing pipelines.</p></div>
+      <span class="dur">25 min</span>
+    </a>
+  </div>
+
+  <div id="footer-placeholder"></div>
+  <script src="/Agentic-AI/assets/js/progress.js"></script>
+  <script src="/Agentic-AI/assets/js/main.js"></script>
+</body>
+</html>

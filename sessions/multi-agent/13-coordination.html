@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi-Agent Coordination Theory — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-multi{background:#a855f7;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1a0f2e;border:1px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#a855f7;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#a855f7;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/multi-agent.html">Multi-Agent</a><span class="sep">›</span><span>Session 13</span></div>
+      <h1 class="session-title">Multi-Agent Coordination Theory</h1>
+      <p class="session-tagline">Game theory, cooperation vs competition, centralized vs decentralized control, and emergent coordination.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-multi"><i class="fas fa-network-wired"></i> Multi-Agent</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Multiple Agents?</h2>
+      <p>A single agent is limited by its context window, computational budget, and the breadth of skills one LLM can reliably deploy simultaneously. Multi-agent systems break these limits by distributing work across specialized agents that collaborate, each bringing focused capability to a shared task.</p>
+      <p>Multi-agent systems enable: parallel execution of independent subtasks, specialization (a code-writing agent, a testing agent, a documentation agent), redundancy through multiple independent checks, and scalability beyond single-context limits.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Key tension:</strong> More agents mean more coordination overhead. The art is finding the right number of agents and the right coordination mechanism for each task — more is not always better.</div>
+      </div>
+
+      <h2>Game Theory Basics for Agent Designers</h2>
+      <p>Game theory gives us precise language for reasoning about multi-agent interactions. Three foundational concepts:</p>
+      <div class="card">
+        <h4 style="color:#a855f7;margin-top:0">The Prisoner's Dilemma</h4>
+        <p>Two agents each choose to cooperate or defect. Mutual cooperation yields the best joint outcome, but each agent is individually tempted to defect (getting a higher payoff if the other cooperates). This models situations where agents have misaligned incentives despite benefiting from coordination.</p>
+        <p><strong>In LLM agents:</strong> Two agents sharing a compute budget may each try to use more tokens, reducing quality for the other. Solution: explicit resource allocation rules.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:#a855f7;margin-top:0">Coordination Games</h4>
+        <p>Agents need to make consistent choices but have multiple equilibria. The challenge: which one? Example: two agents both must use the same data format. Either JSON or XML works, but they must agree. Solution: a shared protocol (Session 14 covers this).</p>
+      </div>
+      <div class="card">
+        <h4 style="color:#a855f7;margin-top:0">Cooperation vs Competition</h4>
+        <p>Most LLM multi-agent systems are <strong>cooperative</strong> — agents share a goal and coordinate. But some systems deliberately introduce <strong>competition</strong> (e.g., debate agents, adversarial review) to improve output quality through productive conflict.</p>
+      </div>
+
+      <h2>Centralized vs Decentralized Coordination</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Dimension</th><th>Centralized</th><th>Decentralized</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Control</strong></td><td>Single orchestrator assigns tasks</td><td>Agents negotiate directly</td></tr>
+            <tr><td><strong>Single point of failure</strong></td><td>Yes — orchestrator crash stops all</td><td>No — agents continue independently</td></tr>
+            <tr><td><strong>Scalability</strong></td><td>Limited by orchestrator capacity</td><td>Better — no central bottleneck</td></tr>
+            <tr><td><strong>Predictability</strong></td><td>High — orchestrator controls flow</td><td>Lower — emergent behaviour possible</td></tr>
+            <tr><td><strong>LLM implementation</strong></td><td>Supervisor LLM + worker agents</td><td>Peer-to-peer message passing</td></tr>
+            <tr><td><strong>Best for</strong></td><td>Structured pipelines, clear hierarchy</td><td>Dynamic environments, fault tolerance</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Emergent Coordination</h2>
+      <p>In complex multi-agent systems, coordination patterns can <strong>emerge</strong> without being explicitly programmed. This is borrowed from complexity science: simple local rules between agents produce complex global behaviours.</p>
+      <p>Example: In a document processing pipeline, if each agent marks completed documents with a "done" tag, a downstream agent can autonomously discover which documents to process next — without any central scheduler. The coordination emerges from the shared state.</p>
+      <pre><code class="language-python">import random
+from dataclasses import dataclass, field
+from typing import List
+
+@dataclass
+class Agent:
+    agent_id: str
+    specialty: str
+    completed: list = field(default_factory=list)
+
+    def can_handle(self, task: dict) -> bool:
+        return task.get("type") == self.specialty
+
+    def process(self, task: dict) -> dict:
+        result = f"{self.agent_id} processed {task['name']}"
+        self.completed.append(task["id"])
+        return {"task_id": task["id"], "result": result, "agent": self.agent_id, "status": "done"}
+
+class DecentralizedSystem:
+    def __init__(self, agents: List[Agent]):
+        self.agents = agents
+        self.task_queue = []
+        self.results = []
+
+    def add_task(self, task: dict):
+        self.task_queue.append({**task, "status": "pending"})
+
+    def run_round(self):
+        """Each agent picks tasks it can handle — emergent coordination."""
+        pending = [t for t in self.task_queue if t["status"] == "pending"]
+        for task in pending:
+            eligible = [a for a in self.agents if a.can_handle(task)]
+            if eligible:
+                chosen = random.choice(eligible)  # random selection among eligible
+                task["status"] = "taken"
+                result = chosen.process(task)
+                self.results.append(result)
+                print(f"  {chosen.agent_id} → {task['name']}")
+
+# Simulate
+agents = [
+    Agent("ResearchBot-1", "research"),
+    Agent("ResearchBot-2", "research"),
+    Agent("WriterBot-1",   "writing"),
+    Agent("ReviewBot-1",   "review"),
+]
+system = DecentralizedSystem(agents)
+tasks = [
+    {"id":"t1","name":"Research quantum computing","type":"research"},
+    {"id":"t2","name":"Research machine learning","type":"research"},
+    {"id":"t3","name":"Write introduction","type":"writing"},
+    {"id":"t4","name":"Review draft","type":"review"},
+]
+for t in tasks: system.add_task(t)
+print("Running decentralized round:")
+system.run_round()
+print(f"\nCompleted {len(system.results)}/{len(tasks)} tasks")</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Start centralized:</strong> When building multi-agent systems, start with a centralized orchestrator. It is easier to debug and reason about. Only move to decentralized coordination when you have a specific need (fault tolerance, scale, dynamic task discovery) that centralization cannot meet.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Simulate a 2-Agent Resource Allocation Problem</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Define the Game</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import random
+
+# Shared resource: 100 tokens per round
+TOTAL_TOKENS = 100
+ROUNDS = 10
+
+def payoff(my_request, other_request, total=TOTAL_TOKENS):
+    """Calculate payoff given two agents' resource requests."""
+    total_requested = my_request + other_request
+    if total_requested <= total:
+        return my_request  # Both get what they asked for
+    else:
+        # Proportional split when over-requested
+        return int(total * my_request / total_requested)
+
+# Test payoff matrix
+print("Payoff matrix (my_request vs other_request):")
+print(f"{'':>8}", end="")
+for other in [20, 40, 60, 80]:
+    print(f"  other={other}", end="")
+print()
+for mine in [20, 40, 60, 80]:
+    print(f"mine={mine}", end="")
+    for other in [20, 40, 60, 80]:
+        print(f"  {payoff(mine, other):8}", end="")
+    print()</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Implement Agent Strategies</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class ResourceAgent:
+    def __init__(self, name, strategy):
+        self.name = name
+        self.strategy = strategy  # "greedy", "fair", "adaptive", "tit_for_tat"
+        self.history = []
+        self.total_payoff = 0
+
+    def request(self, round_num) -> int:
+        if self.strategy == "greedy":
+            return 80  # Always ask for 80%
+        elif self.strategy == "fair":
+            return 50  # Always ask for half
+        elif self.strategy == "adaptive":
+            # Ask for more if last round gave full payoff
+            if self.history and self.history[-1]["got"] == self.history[-1]["asked"]:
+                return min(80, self.history[-1]["asked"] + 10)
+            return 50
+        elif self.strategy == "tit_for_tat":
+            # Mirror the other agent's last request
+            if not self.history: return 50
+            return self.history[-1].get("other_asked", 50)
+        return 50
+
+    def update(self, asked, got, other_asked):
+        self.history.append({"asked": asked, "got": got, "other_asked": other_asked})
+        self.total_payoff += got
+
+def run_simulation(strat_a, strat_b, rounds=ROUNDS):
+    a = ResourceAgent("Agent A", strat_a)
+    b = ResourceAgent("Agent B", strat_b)
+    print(f"\n{'Strategy':>15}: {strat_a} vs {strat_b}")
+    print(f"{'Round':>5} | {'A asks':>7} | {'B asks':>7} | {'A gets':>7} | {'B gets':>7}")
+    print("-" * 45)
+    for r in range(rounds):
+        ra, rb = a.request(r), b.request(r)
+        ga, gb = payoff(ra, rb), payoff(rb, ra)
+        a.update(ra, ga, rb); b.update(rb, gb, ra)
+        print(f"{r+1:>5} | {ra:>7} | {rb:>7} | {ga:>7} | {gb:>7}")
+    print(f"Total: A={a.total_payoff}, B={b.total_payoff}")
+    return a.total_payoff, b.total_payoff
+
+run_simulation("fair", "fair")
+run_simulation("greedy", "fair")
+run_simulation("tit_for_tat", "greedy")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Add a Coordinator</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def coordinated_allocation(requests: dict, total=TOTAL_TOKENS) -> dict:
+    """Centralized coordinator enforces fair allocation."""
+    total_requested = sum(requests.values())
+    if total_requested <= total:
+        return requests  # Everyone gets what they want
+    # Proportional allocation with cap
+    scale = total / total_requested
+    return {agent: int(req * scale) for agent, req in requests.items()}
+
+# Compare uncoordinated vs coordinated
+agents_requests = {"Agent A": 80, "Agent B": 70, "Agent C": 60}
+print("Requests:", agents_requests)
+print("Without coordinator — first-come-first-served:")
+remaining = TOTAL_TOKENS
+for agent, req in agents_requests.items():
+    got = min(req, remaining)
+    remaining -= got
+    print(f"  {agent}: asked {req}, got {got}")
+
+print("\nWith coordinator — proportional allocation:")
+allocated = coordinated_allocation(agents_requests)
+for agent, tokens in allocated.items():
+    print(f"  {agent}: asked {agents_requests[agent]}, got {tokens}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Reflect on Coordination Mechanisms</h3></div>
+            <div class="lab-step-body">
+              <p>In a markdown cell, answer these questions based on your simulation results:</p>
+              <ul>
+                <li>Which strategy pair produced the highest combined payoff?</li>
+                <li>Does the greedy strategy always win individually? What happens when both agents are greedy?</li>
+                <li>How did the centralized coordinator change outcomes compared to uncoordinated allocation?</li>
+                <li>In a real LLM multi-agent system, what resource would "tokens" represent, and how would you implement a coordinator?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/capabilities/12-human-loop.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Human-in-the-Loop</span>
+      </a>
+      <a href="/Agentic-AI/sessions/multi-agent/14-protocols.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Communication Protocols ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-13",
+  title: "Multi-Agent Coordination Theory",
+  section: "multi-agent",
+  quizData: [
+    { type: "mcq", question: "In the Prisoner's Dilemma applied to LLM agents, what does 'defecting' typically mean?", options: ["Crashing the agent loop", "An agent consuming more shared resources than its fair share", "Refusing to use tools", "Sending malformed messages"], correct: 1, explanation: "Defection in resource-sharing scenarios means taking more than a fair share (compute, tokens, time), which reduces the quality or capacity available to other agents." },
+    { type: "mcq", question: "What is the main advantage of decentralized multi-agent coordination?", options: ["Easier to debug", "No single point of failure and better scalability", "Always produces better output", "Requires fewer agents"], correct: 1, explanation: "Decentralized coordination eliminates the single point of failure that centralized orchestrators represent, and scales better since there is no central bottleneck." },
+    { type: "mcq", question: "Emergent coordination in multi-agent systems means:", options: ["The orchestrator plans all coordination explicitly", "Complex coordination patterns arise from simple local rules between agents without central planning", "Agents randomly assign tasks to themselves", "A human manually coordinates every interaction"], correct: 1, explanation: "Emergent coordination — borrowed from complexity science — is when simple local behaviours (e.g., marking tasks 'done') produce global coordination patterns without any central planner." },
+    { type: "mcq", question: "When should you prefer centralized over decentralized coordination?", options: ["When you need fault tolerance", "When the pipeline is structured and predictable and you want easy debugging", "When agents have highly variable specialties", "When the number of agents exceeds 100"], correct: 1, explanation: "Centralized coordination is easier to debug, reason about, and control. It is the right choice for structured pipelines with a clear hierarchy." },
+    { type: "mcq", question: "Competition is deliberately introduced in some multi-agent systems to:", options: ["Reduce costs", "Improve output quality through productive conflict (e.g., debate, adversarial review)", "Speed up execution", "Avoid the need for a coordinator"], correct: 1, explanation: "Deliberate competition — like debate agents or adversarial reviewers — leverages productive conflict to surface weaknesses in reasoning and improve final output quality." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

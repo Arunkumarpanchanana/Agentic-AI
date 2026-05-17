@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Long-Horizon Task Execution — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-capabilities{background:#10b981;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#0f2027;border:1px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#10b981;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#10b981;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/capabilities.html">Capabilities</a><span class="sep">›</span><span>Session 11</span></div>
+      <h1 class="session-title">Long-Horizon Task Execution</h1>
+      <p class="session-tagline">Build agents that persist across context window limits using checkpointing, state compression, and progress tracking.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-capabilities"><i class="fas fa-route"></i> Capabilities</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>The Long-Horizon Problem</h2>
+      <p>Most agentic tasks in tutorials complete in under 10 steps and a few minutes. Real-world tasks — conducting a literature review, building a production feature, auditing a codebase — may require hundreds of steps across hours or days. These long-horizon tasks expose fundamental limitations that short demos hide:</p>
+      <ul style="line-height:2">
+        <li><strong>Context window exhaustion:</strong> Conversation history grows until it exceeds the model's context limit.</li>
+        <li><strong>Goal drift:</strong> After many steps, the agent loses track of its original objective.</li>
+        <li><strong>Cost explosion:</strong> Each step re-sends the full history, making costs grow quadratically.</li>
+        <li><strong>No fault tolerance:</strong> A crash or API timeout at step 95 of 100 loses all progress.</li>
+      </ul>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Three pillars of long-horizon execution:</strong> Checkpointing (save/resume state), memory compression (keep context window manageable), and progress tracking (never lose sight of the goal).</div>
+      </div>
+
+      <h2>Checkpointing Agent State</h2>
+      <p>A checkpoint is a serialised snapshot of the agent's complete state at a point in time. If the agent crashes or is interrupted, it resumes from the last checkpoint rather than starting over.</p>
+      <pre><code class="language-python">import json, os, time
+from dataclasses import dataclass, asdict, field
+from typing import Any
+
+@dataclass
+class AgentCheckpoint:
+    task_id: str
+    goal: str
+    step: int
+    completed_tasks: list
+    pending_tasks: list
+    memory_summary: str
+    results: dict
+    timestamp: float = field(default_factory=time.time)
+
+class CheckpointManager:
+    def __init__(self, checkpoint_dir: str = "./checkpoints"):
+        self.dir = checkpoint_dir
+        os.makedirs(checkpoint_dir, exist_ok=True)
+
+    def save(self, checkpoint: AgentCheckpoint):
+        path = os.path.join(self.dir, f"{checkpoint.task_id}.json")
+        with open(path, "w") as f:
+            json.dump(asdict(checkpoint), f, indent=2)
+        print(f"[CHECKPOINT] Saved at step {checkpoint.step} → {path}")
+
+    def load(self, task_id: str) -> AgentCheckpoint | None:
+        path = os.path.join(self.dir, f"{task_id}.json")
+        if not os.path.exists(path):
+            return None
+        with open(path) as f:
+            data = json.load(f)
+        print(f"[CHECKPOINT] Loaded from step {data['step']}")
+        return AgentCheckpoint(**data)
+
+    def delete(self, task_id: str):
+        path = os.path.join(self.dir, f"{task_id}.json")
+        if os.path.exists(path):
+            os.remove(path)
+
+# Usage
+manager = CheckpointManager()
+cp = AgentCheckpoint(
+    task_id="research-001",
+    goal="Write a report on quantum computing",
+    step=12,
+    completed_tasks=["T1","T2","T3"],
+    pending_tasks=["T4","T5"],
+    memory_summary="Researched quantum gates and Shor's algorithm. Found 5 key papers.",
+    results={"T1": "Quantum gates overview complete", "T2": "Shor's algorithm notes saved"}
+)
+manager.save(cp)
+loaded = manager.load("research-001")
+print(f"Resuming from step {loaded.step}, {len(loaded.pending_tasks)} tasks remaining")</code></pre>
+
+      <h2>Memory Compression</h2>
+      <p>As the context window fills, older content must be compressed. Two strategies:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Strategy</th><th>How it works</th><th>When to use</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Rolling summary</strong></td><td>Periodically summarise oldest N turns into a paragraph; keep only the summary</td><td>Conversational agents, chat history</td></tr>
+            <tr><td><strong>Key-fact extraction</strong></td><td>Extract named entities, decisions, and findings; discard prose</td><td>Research agents, structured tasks</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
+
+compressor = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+def compress_history(history: list, max_items: int = 5) -> str:
+    """Compress old history entries into a summary when history grows too long."""
+    if len(history) <= max_items:
+        return None  # No compression needed yet
+    old_entries = history[:-max_items]
+    old_text = "\n".join([f"Step {e['step']}: {e['action']} → {e['result'][:100]}" for e in old_entries])
+    summary = compressor([HumanMessage(content=f"Summarise these agent steps into 3 key bullet points:\n{old_text}")]).content
+    return summary</code></pre>
+
+      <h2>Progress Tracking</h2>
+      <p>Goal drift — where the agent gradually loses track of the original objective — is one of the most subtle and common long-horizon failures. The solution is explicit progress tracking:</p>
+      <pre><code class="language-python">class ProgressTracker:
+    def __init__(self, goal: str, total_tasks: int):
+        self.goal = goal
+        self.total = total_tasks
+        self.done = 0
+        self.milestones = []
+
+    def update(self, task_name: str, result_summary: str):
+        self.done += 1
+        self.milestones.append({"task": task_name, "summary": result_summary})
+        pct = (self.done / self.total) * 100
+        print(f"[PROGRESS] {self.done}/{self.total} ({pct:.0f}%) — {task_name}")
+
+    def goal_reminder(self) -> str:
+        """Generate a goal-alignment reminder for the LLM context."""
+        return f"""GOAL REMINDER: {self.goal}
+Progress: {self.done}/{self.total} tasks complete.
+Key milestones so far: {'; '.join([m['summary'][:80] for m in self.milestones[-3:]])}
+Stay focused on the original goal."""</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Checkpoint frequency:</strong> Save after every completed task (not every step). This balances fault tolerance against checkpoint overhead. For critical tasks with expensive steps, checkpoint before and after each irreversible action (sending an email, writing to a database, making an API call with side effects).</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Stateful Agent with Save/Resume</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Build the Checkpoint System</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import json, os, time
+from dataclasses import dataclass, asdict, field
+
+@dataclass
+class Checkpoint:
+    task_id: str; goal: str; step: int
+    completed: list; pending: list; results: dict
+    timestamp: float = field(default_factory=time.time)
+
+def save_checkpoint(cp: Checkpoint, path="checkpoint.json"):
+    with open(path, "w") as f: json.dump(asdict(cp), f, indent=2)
+    print(f"  [SAVED] step={cp.step}, done={len(cp.completed)}/{len(cp.completed)+len(cp.pending)}")
+
+def load_checkpoint(path="checkpoint.json"):
+    if not os.path.exists(path): return None
+    with open(path) as f: data = json.load(f)
+    print(f"  [LOADED] Resuming from step {data['step']}")
+    return Checkpoint(**data)
+
+# Test save/load
+cp = Checkpoint("r-001","Research quantum computing",5,["T1","T2"],["T3","T4","T5"],{"T1":"done","T2":"done"})
+save_checkpoint(cp)
+loaded = load_checkpoint()
+print(f"Resumed: {len(loaded.pending)} tasks remaining")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Stateful Agent Loop</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import random
+
+def execute_task(task_name, step, fail_at=None):
+    """Simulate task execution. Optionally fails at a specific step."""
+    if step == fail_at:
+        raise RuntimeError(f"Simulated failure at step {step}")
+    time.sleep(0.1)
+    return f"Result of {task_name} at step {step}"
+
+def stateful_agent(goal, tasks, resume=True, fail_at=None):
+    # Try to resume from checkpoint
+    cp = load_checkpoint() if resume else None
+    if cp and cp.goal == goal:
+        completed = cp.completed
+        pending = cp.pending
+        results = cp.results
+        step = cp.step
+        print(f"Resuming from step {step}")
+    else:
+        completed, pending, results, step = [], list(tasks), {}, 0
+
+    while pending:
+        task = pending[0]
+        step += 1
+        print(f"  Step {step}: {task}")
+        try:
+            result = execute_task(task, step, fail_at=fail_at)
+            results[task] = result
+            completed.append(task)
+            pending.pop(0)
+            # Checkpoint after each task
+            save_checkpoint(Checkpoint("r-001", goal, step, completed, pending, results))
+        except Exception as e:
+            print(f"  ERROR at step {step}: {e}")
+            print("  State saved. Run again to resume.")
+            return None
+
+    print(f"\nAll {len(completed)} tasks complete!")
+    os.remove("checkpoint.json")
+    return results
+
+tasks = [f"Task_{i}" for i in range(1,8)]
+# First run — will fail at step 4
+print("=== First run (will fail at step 4) ===")
+stateful_agent("Research goal", tasks, resume=False, fail_at=4)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Resume After Failure</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">print("\n=== Second run (resuming) ===")
+results = stateful_agent("Research goal", tasks, resume=True, fail_at=None)
+print("\nFinal results:")
+for k, v in (results or {}).items():
+    print(f"  {k}: {v}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Add Memory Compression</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def compress_results(results: dict, max_keep=3) -> str:
+    """Compress old results into a summary string."""
+    if len(results) <= max_keep:
+        return str(results)
+    items = list(results.items())
+    old = items[:-max_keep]
+    recent = dict(items[-max_keep:])
+    summary = f"[COMPRESSED: {len(old)} earlier tasks completed] " + str(recent)
+    print(f"  [COMPRESS] Reduced {len(results)} results to summary + {max_keep} recent")
+    return summary
+
+# Simulate growing results and compression
+large_results = {f"T{i}": f"Result of task {i}" for i in range(1, 12)}
+compressed = compress_results(large_results, max_keep=3)
+print("Compressed state:", compressed[:200])</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/capabilities/10-reflection.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Self-Reflection</span>
+      </a>
+      <a href="/Agentic-AI/sessions/capabilities/12-human-loop.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Human-in-the-Loop ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-11",
+  title: "Long-Horizon Task Execution",
+  section: "capabilities",
+  quizData: [
+    { type: "mcq", question: "What is 'goal drift' in long-horizon agents?", options: ["The agent moves to a new geographic location", "The agent gradually loses track of its original objective after many steps", "The agent's API costs increase over time", "The context window fills with irrelevant data"], correct: 1, explanation: "Goal drift occurs when accumulated context, digressions, and step-by-step focus cause the agent to deviate from its original objective. Explicit progress tracking and goal reminders counter this." },
+    { type: "mcq", question: "Why do LLM costs grow quadratically in long-horizon tasks without compression?", options: ["More tools are called over time", "Each step re-sends the full conversation history, which grows with each step", "The model gets slower over time", "API rate limits are lower for long sessions"], correct: 1, explanation: "Without compression, the prompt for step N includes all N-1 previous steps. Cost = sum of 1+2+3+...+N tokens = O(N²). Memory compression keeps history size bounded." },
+    { type: "mcq", question: "What is the best checkpoint frequency for a long-horizon research agent?", options: ["Every single action", "After every completed task, plus before/after irreversible actions", "Only at the very end", "Every 10 steps regardless of task boundaries"], correct: 1, explanation: "Checkpointing after each task balances fault tolerance with overhead. Irreversible actions (emails, DB writes) warrant additional checkpoints before and after." },
+    { type: "mcq", question: "The 'rolling summary' memory compression strategy works by:", options: ["Deleting all but the last 3 messages", "Periodically summarising oldest conversation turns into a compact paragraph", "Converting text to embeddings", "Splitting history into multiple context windows"], correct: 1, explanation: "Rolling summary uses an LLM to compress the oldest N turns into a paragraph, which replaces those turns in the context. This keeps history length bounded while preserving key information." },
+    { type: "mcq", question: "A checkpoint should contain which of the following?", options: ["Only the final answer", "Goal, current step, completed tasks, pending tasks, partial results, and timestamp", "The full conversation history verbatim", "Only the list of tool calls made"], correct: 1, explanation: "A complete checkpoint must include everything needed to resume: the goal, progress indicators, which tasks are done/pending, their results, and a timestamp for versioning." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

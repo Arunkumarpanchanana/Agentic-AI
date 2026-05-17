@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cognitive Loops & Agent Perception — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .badge-foundations { background: #6366f1; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #6366f1; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .session-nav-btn { background: #6366f1; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/foundations.html">Foundations</a><span class="sep">›</span><span>Session 06</span></div>
+      <h1 class="session-title">Cognitive Loops & Agent Perception</h1>
+      <p class="session-tagline">Master sense-think-act, the OODA loop, environment taxonomy, and observation preprocessing pipelines.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 30 min</span>
+        <span><span class="badge-foundations"><i class="fas fa-brain"></i> Foundations</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>The Sense-Think-Act Cycle</h2>
+      <p>Every agent — from a thermostat to Claude Computer Use — operates on some variant of the <strong>Sense-Think-Act</strong> cycle. This is the most fundamental abstraction in agent design, predating AI by decades (it originated in cybernetics and control theory in the 1940s).</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Phase</th><th>What happens</th><th>In an LLM agent</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sense</strong></td><td>Collect raw data from the environment</td><td>Tool results, user messages, screenshots, API responses</td></tr>
+            <tr><td><strong>Think</strong></td><td>Process sensed data, update world model, decide action</td><td>LLM prompt + context window → next action token</td></tr>
+            <tr><td><strong>Act</strong></td><td>Execute the chosen action, producing side effects</td><td>Tool call, API request, file write, browser click</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>The OODA Loop</h2>
+      <p>The <strong>OODA loop</strong> — Observe, Orient, Decide, Act — was developed by US Air Force Colonel John Boyd in the 1970s to describe fighter pilot decision-making. It adds a crucial step that raw Sense-Think-Act omits: <strong>Orient</strong>.</p>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Observe:</strong> Gather raw sensory data (same as Sense).</li>
+          <li><strong>Orient:</strong> Interpret data in context — apply prior knowledge, mental models, experience. This is where bias and expertise live.</li>
+          <li><strong>Decide:</strong> Select a course of action from options generated during orientation.</li>
+          <li><strong>Act:</strong> Execute the decision, then the loop restarts with new observations shaped by the action's effects.</li>
+        </ul>
+      </div>
+      <p>The <strong>Orient</strong> step is what distinguishes an expert from a novice — both see the same data but interpret it differently. In LLM agents, orientation is performed by the system prompt + in-context examples + retrieved knowledge. This is why prompt engineering and RAG are so impactful: they improve the agent's orientation quality.</p>
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Boyd's key insight:</strong> Speed through the OODA loop matters — but only if orientation quality is maintained. An agent that acts fast but orients poorly will make fast wrong decisions. Better to slow down and orient correctly.</div>
+      </div>
+
+      <h2>Environment Taxonomy</h2>
+      <p>The type of environment your agent operates in fundamentally determines which architecture and algorithms are appropriate. Russell &amp; Norvig (AIMA) classify environments along several dimensions:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Dimension</th><th>Options</th><th>Agent design implication</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Observability</strong></td><td>Fully / Partially observable</td><td>Partial → agent must maintain internal state (beliefs); Full → no internal state needed</td></tr>
+            <tr><td><strong>Determinism</strong></td><td>Deterministic / Stochastic</td><td>Stochastic → agent must handle uncertainty, use probability estimates</td></tr>
+            <tr><td><strong>Episodicity</strong></td><td>Episodic / Sequential</td><td>Sequential → past actions affect future; agent needs memory</td></tr>
+            <tr><td><strong>Dynamism</strong></td><td>Static / Dynamic</td><td>Dynamic → world changes while agent thinks; fast cognition loops required</td></tr>
+            <tr><td><strong>Continuity</strong></td><td>Discrete / Continuous</td><td>Continuous action/state spaces require approximation strategies</td></tr>
+            <tr><td><strong>Agents</strong></td><td>Single / Multi-agent</td><td>Multi-agent → coordination, competition, and communication protocols needed</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A web browsing agent operates in a <strong>partially observable, stochastic, sequential, dynamic, discrete, single-agent</strong> environment. This tells us it needs: a world model (beliefs), uncertainty handling, memory, fast loops, and robust error recovery.</p>
+
+      <h2>Observation Preprocessing Pipelines</h2>
+      <p>Raw observations are rarely ready for LLM consumption. A web page might be a 50,000-token HTML blob — far too large for a context window. Observation preprocessing transforms raw environment data into compact, relevant signals:</p>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Truncation &amp; chunking:</strong> Split long documents into chunks; pass only the most relevant.</li>
+          <li><strong>Extraction:</strong> Pull structured data from HTML (BeautifulSoup), PDFs (pdfminer), or images (OCR).</li>
+          <li><strong>Summarisation:</strong> Use a cheaper LLM to compress a long page into key facts before passing to the main agent.</li>
+          <li><strong>Filtering:</strong> Remove navigation menus, ads, and boilerplate — keep only the content relevant to the current task.</li>
+          <li><strong>Normalisation:</strong> Convert tool results to a uniform format (e.g., always return JSON with keys: content, source, timestamp).</li>
+        </ul>
+      </div>
+      <pre><code class="language-python">from bs4 import BeautifulSoup
+import re
+
+def preprocess_webpage(html: str, max_chars: int = 4000) -> str:
+    """Extract clean text from raw HTML for LLM consumption."""
+    soup = BeautifulSoup(html, "html.parser")
+    # Remove noise elements
+    for tag in soup(["script", "style", "nav", "footer", "header", "aside"]):
+        tag.decompose()
+    # Extract main content
+    main = soup.find("main") or soup.find("article") or soup.body
+    text = main.get_text(separator="\n", strip=True) if main else soup.get_text()
+    # Normalise whitespace
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    # Truncate to context budget
+    if len(text) > max_chars:
+        text = text[:max_chars] + "\n... [truncated]"
+    return text</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>The observation budget:</strong> Every token in your observation costs money and competes with reasoning tokens in the context window. Treat observation preprocessing as a first-class engineering concern, not an afterthought.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Trace the Cognitive Loop for a Web Browsing Agent</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Model the Environment</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from dataclasses import dataclass, field
+from typing import Optional
+import time
+
+@dataclass
+class BrowserState:
+    url: str = "about:blank"
+    title: str = ""
+    content: str = ""
+    links: list = field(default_factory=list)
+    last_action: str = ""
+    timestamp: float = field(default_factory=time.time)
+
+class SimulatedBrowser:
+    """Simulates a browser for testing without real network calls."""
+    PAGES = {
+        "https://example.com": BrowserState(
+            url="https://example.com",
+            title="Example Domain",
+            content="This domain is for use in illustrative examples in documents.",
+            links=["https://example.com/about", "https://iana.org"]
+        ),
+        "https://example.com/about": BrowserState(
+            url="https://example.com/about",
+            title="About Example",
+            content="Example.com is maintained by IANA. It was established in 1992.",
+            links=["https://example.com"]
+        ),
+    }
+    def navigate(self, url: str) -> BrowserState:
+        state = self.PAGES.get(url, BrowserState(url=url, content="Page not found", title="404"))
+        state.last_action = f"navigate({url})"
+        return state
+
+browser = SimulatedBrowser()
+state = browser.navigate("https://example.com")
+print("Initial state:", state.title)
+print("Content:", state.content)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Implement the OODA Loop</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def observe(browser_state: BrowserState) -> dict:
+    """Sense: collect raw environment state."""
+    return {
+        "url": browser_state.url,
+        "title": browser_state.title,
+        "content": browser_state.content[:500],
+        "links": browser_state.links[:5],
+    }
+
+def orient(observation: dict, goal: str, history: list) -> dict:
+    """Orient: interpret observations in context of goal."""
+    relevant_links = [l for l in observation["links"] if "about" in l.lower() or "info" in l.lower()]
+    progress = "started" if not history else "in_progress"
+    return {
+        "goal": goal,
+        "current_page": observation["title"],
+        "goal_achieved": goal.lower() in observation["content"].lower(),
+        "relevant_links": relevant_links,
+        "steps_taken": len(history),
+        "progress": progress,
+    }
+
+def decide(orientation: dict) -> dict:
+    """Decide: choose next action based on oriented world model."""
+    if orientation["goal_achieved"]:
+        return {"action": "finish", "reason": "Goal found in current page content"}
+    if orientation["relevant_links"]:
+        return {"action": "navigate", "url": orientation["relevant_links"][0], "reason": "Found relevant link"}
+    if orientation["steps_taken"] >= 5:
+        return {"action": "finish", "reason": "Max steps reached, reporting best guess"}
+    return {"action": "navigate", "url": "https://example.com/about", "reason": "Exploring available links"}
+
+def act(decision: dict, browser: SimulatedBrowser) -> BrowserState:
+    """Act: execute decision."""
+    if decision["action"] == "navigate":
+        return browser.navigate(decision["url"])
+    return None  # finish
+
+# Run the full OODA loop
+goal = "When was example.com established?"
+history = []
+state = browser.navigate("https://example.com")
+
+for cycle in range(5):
+    print(f"\n=== OODA Cycle {cycle+1} ===")
+    obs = observe(state)
+    ori = orient(obs, goal, history)
+    dec = decide(ori)
+    print(f"  Observe: {obs['title']}")
+    print(f"  Orient:  goal_achieved={ori['goal_achieved']}, relevant_links={ori['relevant_links']}")
+    print(f"  Decide:  {dec['action']} — {dec['reason']}")
+    if dec["action"] == "finish":
+        print(f"  Act: DONE — {dec['reason']}")
+        break
+    new_state = act(dec, browser)
+    history.append({"cycle": cycle, "decision": dec})
+    state = new_state
+    print(f"  Act: Navigated to {state.url}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Add Observation Preprocessing</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import re
+
+def preprocess_observation(raw_content: str, goal: str, max_tokens: int = 500) -> str:
+    """Filter and compress raw content to focus on goal-relevant info."""
+    # Split into sentences
+    sentences = re.split(r'(?<=[.!?])\s+', raw_content)
+    # Score each sentence by goal keyword overlap
+    goal_words = set(goal.lower().split())
+    scored = []
+    for sent in sentences:
+        score = sum(1 for w in goal_words if w in sent.lower())
+        scored.append((score, sent))
+    # Sort by relevance, take top sentences within budget
+    scored.sort(reverse=True)
+    result, chars = [], 0
+    for score, sent in scored:
+        if chars + len(sent) > max_tokens * 4: break
+        result.append(sent)
+        chars += len(sent)
+    return " ".join(result) if result else raw_content[:max_tokens*4]
+
+# Test preprocessing
+raw = "This domain is for use in examples. Example.com was established in 1992 by IANA. It serves as a placeholder domain."
+processed = preprocess_observation(raw, goal="When was example.com established?")
+print("Processed observation:", processed)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Classify the Environment</h3></div>
+            <div class="lab-step-body">
+              <p>In a markdown cell, classify a <strong>real-world web browsing agent</strong> (like Claude Computer Use) on each of Russell &amp; Norvig's six environment dimensions. Justify each classification with one sentence. Then answer: which dimension makes web browsing agents hardest to build, and why?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/foundations/05-plan-execute.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Plan-and-Execute</span>
+      </a>
+      <a href="/Agentic-AI/sessions/capabilities/07-memory.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Memory Systems ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-06",
+  title: "Cognitive Loops & Agent Perception",
+  section: "foundations",
+  quizData: [
+    { type: "mcq", question: "What does the 'Orient' step in OODA add that basic Sense-Think-Act lacks?", options: ["A faster action loop", "Interpretation of data using prior knowledge and mental models", "External tool calls", "A planning phase"], correct: 1, explanation: "Orient filters and interprets raw observations through context, prior knowledge, and mental models — it's what separates expert decisions from novice ones." },
+    { type: "mcq", question: "A 'partially observable' environment means:", options: ["The agent can see everything", "The agent only sees part of the environment state", "The environment never changes", "Tools are unavailable"], correct: 1, explanation: "In a partially observable environment, the agent cannot directly access the full state. It must maintain internal beliefs to compensate for missing information." },
+    { type: "mcq", question: "Why is observation preprocessing critical for web browsing agents?", options: ["Web pages contain malware", "Raw HTML can be 50,000+ tokens — far too large for a context window", "Browsers require special authentication", "Web pages change too fast"], correct: 1, explanation: "Raw HTML includes scripts, styles, navigation, ads — most of it irrelevant. Preprocessing extracts clean text within the agent's token budget." },
+    { type: "mcq", question: "A web browsing agent's environment is best classified as:", options: ["Fully observable, deterministic, episodic", "Partially observable, stochastic, sequential, dynamic", "Fully observable, static, episodic", "Deterministic, continuous, single-agent"], correct: 1, explanation: "Web environments are: partially observable (can't see server state), stochastic (pages change unpredictably), sequential (past navigation affects future), and dynamic (pages update while the agent acts)." },
+    { type: "mcq", question: "Boyd's key insight about the OODA loop was that:", options: ["Speed alone wins — always act as fast as possible", "Speed matters but only if orientation quality is maintained", "Observation is more important than action", "The loop should only run once per task"], correct: 1, explanation: "Boyd observed that acting fast through a poor orientation produces fast wrong decisions. Superior orientation — understanding the situation correctly — is the real competitive advantage." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Human-in-the-Loop Patterns — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-capabilities{background:#10b981;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#0f2027;border:1px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#10b981;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#10b981;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/capabilities.html">Capabilities</a><span class="sep">›</span><span>Session 12</span></div>
+      <h1 class="session-title">Human-in-the-Loop Patterns</h1>
+      <p class="session-tagline">Design approval gates, escalation policies, and interrupt signals that keep humans appropriately in control.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 30 min</span>
+        <span><span class="badge-capabilities"><i class="fas fa-user-check"></i> Capabilities</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>When Should an Agent Pause and Ask?</h2>
+      <p>Full autonomy is not always desirable — or safe. The art of human-in-the-loop design is knowing <em>exactly</em> when to interrupt the agent and ask for human input, without interrupting so often that the agent becomes annoying and useless.</p>
+      <p>Three conditions warrant a pause:</p>
+      <div class="card">
+        <ol style="line-height:2.5">
+          <li><strong>Ambiguity:</strong> The agent cannot determine the user's intent from available context. Rather than guess wrong, it should ask. Example: "Send the report to the team" — which team? Which report?</li>
+          <li><strong>Risk:</strong> The action has a high potential for harm if wrong. Example: deleting files, sending external emails, making financial transactions.</li>
+          <li><strong>Irreversibility:</strong> The action cannot be undone. Example: publishing a blog post, deploying to production, sending a mass notification.</li>
+        </ol>
+      </div>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>The minimal footprint principle:</strong> Agents should request only necessary permissions, prefer reversible actions over irreversible ones, and err on the side of doing less and confirming with users when uncertain about intended scope.</div>
+      </div>
+
+      <h2>Approval Gate Patterns</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Pattern</th><th>How it works</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Pre-action approval</strong></td><td>Show proposed action, wait for yes/no before executing</td><td>High-risk actions (send email, delete file)</td></tr>
+            <tr><td><strong>Plan approval</strong></td><td>Show full task plan before any execution begins</td><td>Complex multi-step tasks</td></tr>
+            <tr><td><strong>Post-action review</strong></td><td>Execute action, show result, ask for confirmation before continuing</td><td>Reversible actions where output quality matters</td></tr>
+            <tr><td><strong>Threshold-based</strong></td><td>Auto-approve low-risk actions; require approval above a risk score</td><td>Mixed-risk workflows</td></tr>
+            <tr><td><strong>Sampling audit</strong></td><td>Auto-approve most actions; randomly sample ~10% for human review</td><td>High-volume routine tasks</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Escalation Policies</h2>
+      <p>Not every pause needs to go to the same human. A well-designed escalation policy routes based on urgency and domain:</p>
+      <pre><code class="language-python">from enum import Enum
+from dataclasses import dataclass
+
+class RiskLevel(Enum):
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    CRITICAL = 4
+
+@dataclass
+class Action:
+    name: str
+    description: str
+    risk_level: RiskLevel
+    reversible: bool
+
+ESCALATION_POLICY = {
+    RiskLevel.LOW:      {"approver": "auto",          "timeout_minutes": 0,  "fallback": "skip"},
+    RiskLevel.MEDIUM:   {"approver": "user",           "timeout_minutes": 60, "fallback": "skip"},
+    RiskLevel.HIGH:     {"approver": "user",           "timeout_minutes": 10, "fallback": "abort"},
+    RiskLevel.CRITICAL: {"approver": "security_team",  "timeout_minutes": 5,  "fallback": "abort"},
+}
+
+def should_pause(action: Action) -> bool:
+    policy = ESCALATION_POLICY[action.risk_level]
+    if policy["approver"] == "auto":
+        return False
+    if not action.reversible and action.risk_level.value >= RiskLevel.MEDIUM.value:
+        return True
+    return policy["approver"] != "auto"
+
+# Examples
+actions = [
+    Action("search_web", "Search Google", RiskLevel.LOW, True),
+    Action("draft_email", "Draft an email response", RiskLevel.MEDIUM, True),
+    Action("send_email", "Send email to 500 customers", RiskLevel.HIGH, False),
+    Action("drop_table", "Delete production database table", RiskLevel.CRITICAL, False),
+]
+for a in actions:
+    pause = should_pause(a)
+    print(f"{'🛑 PAUSE' if pause else '✅ AUTO'} — {a.name} (risk={a.risk_level.name}, reversible={a.reversible})")</code></pre>
+
+      <h2>LangGraph Human Approval Node</h2>
+      <pre><code class="language-python">from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.memory import MemorySaver
+from typing import TypedDict, Annotated
+import operator
+
+class AgentState(TypedDict):
+    messages: list
+    pending_action: dict
+    approved: bool
+    final_output: str
+
+def plan_action(state: AgentState) -> AgentState:
+    """Agent decides what action to take."""
+    state["pending_action"] = {
+        "type": "send_email",
+        "to": "customer@example.com",
+        "subject": "Your order update",
+        "body": "Your order #1234 has shipped."
+    }
+    return state
+
+def human_approval(state: AgentState) -> AgentState:
+    """Human-in-the-loop node — in production this would send a notification."""
+    action = state["pending_action"]
+    print(f"\n[APPROVAL REQUIRED]")
+    print(f"  Action: {action['type']}")
+    print(f"  To: {action.get('to')}")
+    print(f"  Subject: {action.get('subject')}")
+    # In a real system: send Slack message, email, or UI notification
+    # Here we simulate approval
+    state["approved"] = True  # or False to reject
+    return state
+
+def execute_action(state: AgentState) -> AgentState:
+    if state.get("approved"):
+        state["final_output"] = f"Action executed: {state['pending_action']['type']}"
+    else:
+        state["final_output"] = "Action rejected by human reviewer"
+    return state
+
+def route_after_plan(state: AgentState) -> str:
+    action = state.get("pending_action", {})
+    if action.get("type") in ["send_email", "delete_record", "deploy"]:
+        return "human_approval"
+    return "execute_action"
+
+workflow = StateGraph(AgentState)
+workflow.add_node("plan_action", plan_action)
+workflow.add_node("human_approval", human_approval)
+workflow.add_node("execute_action", execute_action)
+workflow.set_entry_point("plan_action")
+workflow.add_conditional_edges("plan_action", route_after_plan)
+workflow.add_edge("human_approval", "execute_action")
+workflow.add_edge("execute_action", END)
+
+graph = workflow.compile(checkpointer=MemorySaver())
+result = graph.invoke({"messages": [], "pending_action": {}, "approved": False, "final_output": ""}, config={"configurable": {"thread_id": "1"}})
+print("Result:", result["final_output"])</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Trust calibration:</strong> Start with tight approval requirements and loosen them as you build confidence in the agent's behaviour. Track approval rates — if humans approve 99% of actions without changes, those actions can be auto-approved. If 30% get rejected or edited, tighten the prompt or add a validation step.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Add Approval Gates to an Email-Drafting Agent</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Define Risk Scoring</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def score_action_risk(action_type: str, params: dict) -> int:
+    """Return risk score 0-100. Higher = more dangerous."""
+    base = {"search": 5, "read_file": 10, "write_file": 40, "send_email": 70, "delete": 90, "deploy": 95}
+    score = base.get(action_type, 50)
+    # Amplifiers
+    if params.get("recipients_count", 1) > 10: score += 20
+    if not params.get("reversible", True): score += 15
+    if params.get("external", False): score += 10
+    return min(score, 100)
+
+test_actions = [
+    ("search", {"query": "python docs"}, {}),
+    ("write_file", {"path": "report.txt"}, {"reversible": True}),
+    ("send_email", {"to": "boss@company.com"}, {"external": True, "reversible": False}),
+    ("send_email", {"to": "all@company.com"}, {"recipients_count": 500, "external": False, "reversible": False}),
+    ("delete", {"path": "/data/prod"}, {"reversible": False}),
+]
+for action, params, extra in test_actions:
+    merged = {**params, **extra}
+    risk = score_action_risk(action, merged)
+    status = "🔴 BLOCK" if risk>80 else "🟡 REVIEW" if risk>40 else "🟢 AUTO"
+    print(f"{status} ({risk:3d}) {action}: {params}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Email Drafting Agent</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+
+def draft_email(context: str) -> dict:
+    """Generate an email draft from context."""
+    response = llm([
+        SystemMessage(content="You are an email writing assistant. Draft professional emails."),
+        HumanMessage(content=f"Draft an email for this situation:\n{context}\nReturn JSON with keys: to, subject, body")
+    ]).content
+    import json, re
+    match = re.search(r'\{.*\}', response, re.DOTALL)
+    if match:
+        return json.loads(match.group())
+    return {"to": "recipient@example.com", "subject": "Follow-up", "body": response}
+
+draft = draft_email("Inform the client that their project is delayed by 2 weeks due to technical issues.")
+print("Draft email:")
+print(f"  To: {draft.get('to')}")
+print(f"  Subject: {draft.get('subject')}")
+print(f"  Body: {draft.get('body', '')[:200]}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Add the Approval Gate</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def approval_gate(action_type: str, params: dict, auto_approve_threshold=40) -> bool:
+    """Check risk and simulate human approval for high-risk actions."""
+    risk = score_action_risk(action_type, params)
+    if risk <= auto_approve_threshold:
+        print(f"  ✅ Auto-approved (risk={risk})")
+        return True
+    print(f"\n  ⚠️  Human approval required (risk={risk})")
+    print(f"  Action: {action_type}")
+    print(f"  Params: {params}")
+    # In production: send notification and wait. Here we simulate.
+    user_input = input("  Approve? [y/n]: ").strip().lower()
+    return user_input == "y"
+
+def email_agent_with_gate(context: str) -> str:
+    print(f"Step 1: Drafting email...")
+    draft = draft_email(context)
+    print(f"  Draft ready: '{draft.get('subject')}'")
+    print(f"Step 2: Checking approval gate...")
+    params = {"to": draft.get("to"), "external": True, "reversible": False}
+    if approval_gate("send_email", params):
+        return f"Email sent: {draft.get('subject')}"
+    else:
+        return "Email cancelled by human reviewer"
+
+result = email_agent_with_gate("Thank the team for their work on Q3 results")
+print(f"\nOutcome: {result}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Audit Trail</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import time
+
+audit_log = []
+
+def log_decision(action, risk, decision, reviewer="auto"):
+    entry = {"timestamp": time.time(), "action": action, "risk": risk, "decision": decision, "reviewer": reviewer}
+    audit_log.append(entry)
+    print(f"  [AUDIT] {decision.upper()} — {action} (risk={risk}, reviewer={reviewer})")
+
+# Simulate a session with multiple actions
+actions_in_session = [
+    ("search", {"query": "market trends"}),
+    ("write_file", {"path": "draft.txt", "reversible": True}),
+    ("send_email", {"to": "ceo@company.com", "external": True, "reversible": False}),
+]
+for action_type, params in actions_in_session:
+    risk = score_action_risk(action_type, params)
+    decision = "approved" if risk <= 40 else "pending_human"
+    reviewer = "auto" if risk <= 40 else "human"
+    log_decision(action_type, risk, decision, reviewer)
+
+print(f"\nAudit log: {len(audit_log)} entries")
+auto_rate = sum(1 for e in audit_log if e["reviewer"]=="auto") / len(audit_log) * 100
+print(f"Auto-approval rate: {auto_rate:.0f}%")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/capabilities/11-long-horizon.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Long-Horizon</span>
+      </a>
+      <a href="/Agentic-AI/sessions/multi-agent/13-coordination.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Multi-Agent Coordination ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-12",
+  title: "Human-in-the-Loop Patterns",
+  section: "capabilities",
+  quizData: [
+    { type: "mcq", question: "Which three conditions most warrant an agent pausing for human input?", options: ["Speed, cost, accuracy", "Ambiguity, risk, and irreversibility", "Memory, tools, and planning", "Model size, temperature, tokens"], correct: 1, explanation: "Agents should pause when: (1) intent is ambiguous and guessing wrong would be costly, (2) the action is high-risk, or (3) the action cannot be undone." },
+    { type: "mcq", question: "The 'minimal footprint principle' for agents means:", options: ["Use the smallest LLM possible", "Request only necessary permissions, prefer reversible actions, confirm when uncertain", "Minimize the number of tool calls", "Use fewer tokens in prompts"], correct: 1, explanation: "The minimal footprint principle limits agent impact: only take permissions needed, prefer reversible over irreversible actions, and ask when scope is unclear." },
+    { type: "mcq", question: "A 'sampling audit' approval pattern auto-approves most actions but:", options: ["Requires approval for all actions over $100", "Randomly samples ~10% of actions for human review", "Only approves the first 10 actions", "Requires approval for every 5th action"], correct: 1, explanation: "Sampling audit is efficient for high-volume routine tasks — humans can't review everything, but random sampling catches systematic errors without creating a bottleneck." },
+    { type: "mcq", question: "In LangGraph, human-in-the-loop is implemented using:", options: ["A special LLM prompt", "Interrupt nodes and checkpointers that pause execution until human input is received", "A separate Python thread", "Email notifications only"], correct: 1, explanation: "LangGraph supports human-in-the-loop via interrupt nodes that pause the graph execution. The MemorySaver or SqliteSaver checkpointer persists state while waiting for human input." },
+    { type: "mcq", question: "Trust calibration means:", options: ["Testing the agent with adversarial inputs", "Starting with tight approval requirements and loosening them as agent behaviour proves reliable", "Asking users to rate agent responses", "Using a trust score for each tool"], correct: 1, explanation: "Trust calibration is an ongoing process: start conservative, track approval rates (high auto-approval → loosen; high rejection → tighten), and adjust thresholds based on observed behaviour." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

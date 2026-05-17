@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Core Capabilities — Agentic AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <style>
+    .section-hero { background: linear-gradient(135deg, #0f172a 0%, #164e3a 100%); padding: 3.5rem 1.5rem 3rem; text-align: center; }
+    .section-badge { display:inline-flex; align-items:center; gap:.5rem; background:rgba(16,185,129,.15); border:1px solid rgba(16,185,129,.3); color:#6ee7b7; padding:.3rem .9rem; border-radius:999px; font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+    .section-hero h1 { font-size:2.4rem; font-weight:800; color:#f1f5f9; margin-bottom:.75rem; }
+    .section-hero p { color:#94a3b8; max-width:560px; margin:0 auto 1.5rem; line-height:1.7; }
+    .section-stats { display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap; }
+    .stat .n { font-size:1.6rem; font-weight:800; color:#6ee7b7; }
+    .stat .l { font-size:.75rem; color:#64748b; text-transform:uppercase; letter-spacing:.08em; }
+    .sessions-list { max-width:800px; margin:0 auto; padding:3rem 1.5rem 4rem; }
+    .sessions-list h2 { font-size:1.2rem; font-weight:700; color:#94a3b8; margin-bottom:1.5rem; text-transform:uppercase; letter-spacing:.08em; }
+    .session-row { display:flex; align-items:center; gap:1rem; background:#1e293b; border:1px solid #334155; border-radius:.875rem; padding:1.25rem 1.5rem; margin-bottom:.875rem; text-decoration:none; transition:border-color .2s, transform .15s; }
+    .session-row:hover { border-color:#10b981; transform:translateX(4px); }
+    .session-row .num { font-family:'JetBrains Mono',monospace; font-size:.8rem; font-weight:700; color:#10b981; min-width:2.5rem; }
+    .session-row .info { flex:1; }
+    .session-row .info h3 { font-size:1rem; font-weight:600; color:#e2e8f0; margin-bottom:.2rem; }
+    .session-row .info p { font-size:.83rem; color:#64748b; }
+    .session-row .dur { font-size:.78rem; color:#475569; white-space:nowrap; }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="section-hero">
+    <div class="section-badge"><i class="fa-solid fa-wrench"></i> Section 2 of 5</div>
+    <h1>🔧 Core Capabilities</h1>
+    <p>Build agents that remember, plan, use tools, reflect on mistakes, handle long tasks, and collaborate with humans at the right moments.</p>
+    <div class="section-stats">
+      <div class="stat"><div class="n">6</div><div class="l">Sessions</div></div>
+      <div class="stat"><div class="n">~3h</div><div class="l">Duration</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">Labs</div></div>
+    </div>
+  </div>
+  <div class="sessions-list">
+    <h2>Sessions</h2>
+    <a href="/Agentic-AI/sessions/capabilities/07-memory.html" class="session-row">
+      <span class="num">07</span>
+      <div class="info"><h3>Memory Systems for Agents</h3><p>Episodic, semantic, procedural, and working memory — how agents store and recall information.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/capabilities/08-tools.html" class="session-row">
+      <span class="num">08</span>
+      <div class="info"><h3>Tool Design &amp; API Integration</h3><p>Designing reliable tools, schema patterns, error handling, and wrapping external APIs.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/capabilities/09-planning.html" class="session-row">
+      <span class="num">09</span>
+      <div class="info"><h3>Planning &amp; Task Decomposition</h3><p>Hierarchical task networks, subgoal generation, dependency graphs, and dynamic replanning.</p></div>
+      <span class="dur">35 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/capabilities/10-reflection.html" class="session-row">
+      <span class="num">10</span>
+      <div class="info"><h3>Self-Reflection &amp; Critique</h3><p>Reflexion framework, inner monologue, self-evaluation loops, and corrective reasoning.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/capabilities/11-long-horizon.html" class="session-row">
+      <span class="num">11</span>
+      <div class="info"><h3>Long-Horizon Task Execution</h3><p>Maintaining context over many steps, checkpointing, interruption recovery, and progress tracking.</p></div>
+      <span class="dur">35 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/capabilities/12-human-loop.html" class="session-row">
+      <span class="num">12</span>
+      <div class="info"><h3>Human-in-the-Loop Patterns</h3><p>When to pause and ask, approval gates, escalation policies, and building trust with users.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="/Agentic-AI/assets/js/progress.js"></script>
+  <script src="/Agentic-AI/assets/js/main.js"></script>
+</body>
+</html>

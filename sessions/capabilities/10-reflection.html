@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Self-Reflection & Critique — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-capabilities{background:#10b981;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#0f2027;border:1px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#10b981;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#10b981;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/capabilities.html">Capabilities</a><span class="sep">›</span><span>Session 10</span></div>
+      <h1 class="session-title">Self-Reflection & Critique</h1>
+      <p class="session-tagline">Add Reflexion loops, inner monologue, and critic agents to dramatically improve output quality.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-capabilities"><i class="fas fa-sync"></i> Capabilities</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>The Reflexion Framework</h2>
+      <p>Reflexion (Shinn et al., 2023) is a framework that allows agents to learn from failure through <strong>verbal reinforcement</strong> — instead of gradient-based learning, the agent reflects in natural language on what went wrong and commits that reflection to memory. On the next attempt, the reflection guides better decisions.</p>
+      <p>Reflexion outperformed GPT-4 (zero-shot) on HumanEval (coding), AlfWorld (decision-making), and HotpotQA (reasoning) by significant margins — without any fine-tuning, purely through iterative self-reflection.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Core loop:</strong> Actor generates a response → Evaluator scores it → Reflector writes a verbal critique → critique is stored in episodic memory → Actor uses critique on next attempt. Repeat until quality threshold is met or max trials reached.</div>
+      </div>
+
+      <h2>The Three Roles in Reflexion</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Role</th><th>Responsibility</th><th>Implementation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Actor</strong></td><td>Generates the initial response or takes actions</td><td>Standard ReAct or LLM chain</td></tr>
+            <tr><td><strong>Evaluator</strong></td><td>Scores the Actor's output against success criteria</td><td>LLM scorer, unit tests, or human feedback</td></tr>
+            <tr><td><strong>Reflector</strong></td><td>Analyses failures and writes specific, actionable critiques</td><td>LLM with a critique prompt</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Inner Monologue</h2>
+      <p>Inner monologue is a lighter-weight form of self-reflection where the agent narrates its reasoning process to itself before committing to an answer. Unlike Reflexion (which spans multiple attempts), inner monologue happens <em>within a single response</em>. It is the "think out loud" pattern:</p>
+      <pre><code class="language-python">INNER_MONOLOGUE_PROMPT = """Before answering, think through the problem step by step:
+1. What exactly is being asked?
+2. What do I know that is relevant?
+3. What could go wrong with a naive answer?
+4. What is the most accurate, complete answer?
+
+Then provide your final answer after your reasoning.
+
+Question: {question}"""</code></pre>
+      <p>This simple pattern significantly reduces reasoning errors on complex questions because it forces the model to identify its own uncertainty before answering.</p>
+
+      <h2>Self-Evaluation Prompts</h2>
+      <p>Effective self-evaluation prompts are specific and criterion-based. Generic "was this good?" prompts produce vague critiques that don't improve the next attempt:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Quality</th><th>Generic (bad)</th><th>Specific (good)</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td>"Was this accurate?"</td><td>"List any factual claims that might be incorrect. For each, identify what would need to be verified."</td></tr>
+            <tr><td>Completeness</td><td>"Did I cover everything?"</td><td>"What aspects of the question were not addressed? What would a domain expert expect to see that is missing?"</td></tr>
+            <tr><td>Clarity</td><td>"Was this clear?"</td><td>"Which sentences would confuse a non-expert reader? How could they be rephrased?"</td></tr>
+            <tr><td>Action</td><td>"How can I improve?"</td><td>"Give 3 concrete changes to make in the next draft, in order of impact."</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>The Critic Agent Pattern</h2>
+      <p>A critic agent is a separate LLM instance (or same LLM with a different system prompt) whose sole job is to evaluate and critique the primary agent's output. Using a separate instance avoids the "self-serving bias" where an agent rates its own output too highly.</p>
+      <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import SystemMessage, HumanMessage
+
+actor_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+critic_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+CRITIC_SYSTEM = """You are a rigorous critic. Your job is to identify weaknesses in a draft response.
+Be specific. List exact issues, not vague complaints.
+Rate overall quality 1-10 and provide exactly 3 actionable improvements."""
+
+def reflexion_loop(question: str, max_trials: int = 3) -> str:
+    reflections = []
+    for trial in range(max_trials):
+        # Actor: generate response with memory of past reflections
+        reflection_context = "\n".join([f"Past attempt {i+1} critique: {r}" for i, r in enumerate(reflections)])
+        actor_prompt = f"""Answer this question as accurately and completely as possible.
+{f'Previous attempt critiques to address:{chr(10)}{reflection_context}' if reflections else ''}
+
+Question: {question}"""
+        response = actor_llm([HumanMessage(content=actor_prompt)]).content
+
+        # Critic: evaluate the response
+        critique = critic_llm([
+            SystemMessage(content=CRITIC_SYSTEM),
+            HumanMessage(content=f"Question: {question}\n\nDraft response:\n{response}\n\nYour critique:")
+        ]).content
+
+        print(f"\n--- Trial {trial+1} ---")
+        print(f"Response (first 200 chars): {response[:200]}...")
+        print(f"Critique: {critique[:300]}...")
+
+        # Check if quality is sufficient (look for high score in critique)
+        if "9/" in critique or "10/" in critique or "excellent" in critique.lower():
+            print(f"\nQuality threshold met at trial {trial+1}")
+            return response
+
+        reflections.append(critique)
+
+    print(f"\nMax trials reached. Returning best response.")
+    return response
+
+result = reflexion_loop("Explain the CAP theorem in distributed systems")</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Cost management:</strong> Reflexion multiplies your LLM calls by the number of trials. Use it selectively — only for high-stakes outputs like final reports, generated code, or user-facing content. For intermediate reasoning steps, inner monologue is cheaper and often sufficient.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Add Self-Critique to an Essay-Writing Agent</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Setup</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">!pip install langchain langchain-openai -q
+import os
+os.environ["OPENAI_API_KEY"] = "your-key"
+from langchain_openai import ChatOpenAI
+from langchain.schema import SystemMessage, HumanMessage
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+critic = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+print("Ready")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Write the Initial Essay</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">topic = "Why open-source AI models are important for society"
+
+def write_essay(topic, feedback=""):
+    prompt = f"""Write a 3-paragraph persuasive essay on: {topic}
+{f'Address this feedback in your revision: {feedback}' if feedback else ''}
+Be specific, use examples, and make a clear argument."""
+    return llm([HumanMessage(content=prompt)]).content
+
+essay_v1 = write_essay(topic)
+print("=== ESSAY v1 ===")
+print(essay_v1)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Apply Critic and Reflexion</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def critique_essay(essay, topic):
+    return critic([
+        SystemMessage(content="You are a writing coach. Be specific and constructive."),
+        HumanMessage(content=f"""Critique this essay on '{topic}'.
+Rate it 1-10. List:
+1. Two specific factual or argument weaknesses
+2. Two sentences that could be clearer
+3. One thing that is missing that would strengthen the essay
+Essay:
+{essay}""")
+    ]).content
+
+critique_1 = critique_essay(essay_v1, topic)
+print("=== CRITIQUE ===")
+print(critique_1)
+
+essay_v2 = write_essay(topic, feedback=critique_1)
+print("\n=== ESSAY v2 (after reflection) ===")
+print(essay_v2)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Compare Quality Before and After</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def score_essay(essay, topic):
+    result = critic([HumanMessage(content=f"Score this essay on '{topic}' from 1-10 on: accuracy, clarity, persuasiveness, completeness. Give one number per dimension then an overall.\nEssay: {essay[:800]}")]).content
+    return result
+
+print("=== v1 SCORES ===")
+print(score_essay(essay_v1, topic))
+print("\n=== v2 SCORES ===")
+print(score_essay(essay_v2, topic))
+
+# Word count comparison
+print(f"\nv1 word count: {len(essay_v1.split())}")
+print(f"v2 word count: {len(essay_v2.split())}")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/capabilities/09-planning.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Planning</span>
+      </a>
+      <a href="/Agentic-AI/sessions/capabilities/11-long-horizon.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Long-Horizon Execution ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-10",
+  title: "Self-Reflection & Critique",
+  section: "capabilities",
+  quizData: [
+    { type: "mcq", question: "In the Reflexion framework, how does the agent 'learn' from failure?", options: ["Gradient descent on loss function", "Verbal critiques stored in episodic memory and used on next attempt", "Fine-tuning on failure examples", "Reducing the temperature parameter"], correct: 1, explanation: "Reflexion uses verbal reinforcement — the Reflector writes a natural language critique of the failure, stores it in memory, and the Actor reads it on the next attempt." },
+    { type: "mcq", question: "What are the three roles in the Reflexion framework?", options: ["Planner, Executor, Monitor", "Actor, Evaluator, Reflector", "Encoder, Decoder, Critic", "Searcher, Writer, Reviewer"], correct: 1, explanation: "Actor generates responses, Evaluator scores them against success criteria, and Reflector writes actionable critiques. These three roles create the improvement loop." },
+    { type: "mcq", question: "Inner monologue differs from Reflexion because:", options: ["Inner monologue uses a separate LLM", "Inner monologue happens within a single response, not across multiple attempts", "Inner monologue requires tool calls", "Reflexion is faster"], correct: 1, explanation: "Inner monologue is the 'think out loud' pattern within one response — the agent reasons through the problem before answering. Reflexion spans multiple complete attempts." },
+    { type: "mcq", question: "Why use a separate critic LLM instance rather than asking the actor to critique itself?", options: ["Separate instances are faster", "To avoid self-serving bias where an agent rates its own output too highly", "The actor cannot read its own output", "LangChain requires separate instances"], correct: 1, explanation: "Agents (like humans) tend to rate their own work too generously. A separate critic instance with a different system prompt provides more objective and useful feedback." },
+    { type: "mcq", question: "On which benchmark did Reflexion demonstrate significant improvement over GPT-4 zero-shot?", options: ["ImageNet classification", "HumanEval coding benchmark", "MNIST digit recognition", "WMT translation"], correct: 1, explanation: "Reflexion improved performance on HumanEval (coding), AlfWorld (decision-making), and HotpotQA (reasoning) without any fine-tuning — purely through iterative self-reflection." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

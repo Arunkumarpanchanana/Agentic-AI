@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planning & Task Decomposition — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-capabilities{background:#10b981;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#0f2027;border:1px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#10b981;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#10b981;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/capabilities.html">Capabilities</a><span class="sep">›</span><span>Session 09</span></div>
+      <h1 class="session-title">Planning & Task Decomposition</h1>
+      <p class="session-tagline">Master HTN planning, task graphs, goal decomposition, dependency resolution, and Tree of Thoughts.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-capabilities"><i class="fas fa-project-diagram"></i> Capabilities</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Planning Is Hard</h2>
+      <p>Planning — breaking a high-level goal into executable steps — is deceptively difficult. Humans do it implicitly using years of domain experience. Agents must do it explicitly, often in domains they've only seen during training. The challenge is that a naive plan can be technically correct but operationally useless: too abstract to execute, missing dependencies, or ignoring resource constraints.</p>
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Three planning approaches for LLM agents:</strong> Hierarchical Task Networks (top-down decomposition), Task Graphs (dependency-aware DAGs), and Tree of Thoughts (multi-path exploration with pruning).</div>
+      </div>
+
+      <h2>Hierarchical Task Networks (HTN)</h2>
+      <p>HTN planning decomposes a high-level goal into progressively more concrete subtasks through a hierarchy of <strong>methods</strong>. At the top is an abstract task; at the bottom are primitive actions that can be directly executed. Each method specifies how to decompose one abstract task into subtasks.</p>
+      <div class="card">
+        <pre style="margin:0;color:#94a3b8;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.8">Abstract Task: "Write a research report on climate change"
+  │
+  ├─ Method 1: research-then-write
+  │   ├─ Task: gather_sources(topic="climate change")
+  │   │   ├─ search_web("climate change latest research")
+  │   │   ├─ search_web("IPCC 2024 report")
+  │   │   └─ fetch_arxiv_papers("climate change 2024")
+  │   ├─ Task: synthesise_findings(sources)
+  │   └─ Task: write_report(synthesis)
+  │       ├─ write_introduction()
+  │       ├─ write_body_sections()
+  │       └─ write_conclusion()</pre>
+      </div>
+
+      <h2>Task Graphs and Dependency Resolution</h2>
+      <p>A task graph (DAG) makes dependencies explicit. Tasks with no incoming edges can start immediately; tasks with incoming edges must wait for their dependencies to complete. This enables <strong>parallel execution</strong> of independent tasks.</p>
+      <pre><code class="language-python">from collections import defaultdict, deque
+
+class TaskGraph:
+    def __init__(self):
+        self.tasks = {}       # id -> task dict
+        self.deps = defaultdict(set)   # id -> set of dependency ids
+
+    def add_task(self, task_id: str, description: str, dependencies: list = None):
+        self.tasks[task_id] = {"id": task_id, "description": description, "status": "pending"}
+        if dependencies:
+            self.deps[task_id] = set(dependencies)
+
+    def get_ready_tasks(self) -> list:
+        """Return tasks whose dependencies are all completed."""
+        completed = {tid for tid, t in self.tasks.items() if t["status"] == "done"}
+        return [
+            t for tid, t in self.tasks.items()
+            if t["status"] == "pending" and self.deps[tid].issubset(completed)
+        ]
+
+    def mark_done(self, task_id: str):
+        self.tasks[task_id]["status"] = "done"
+
+    def topological_order(self) -> list:
+        """Kahn's algorithm for topological sort."""
+        in_degree = {tid: len(deps) for tid, deps in self.deps.items()}
+        for tid in self.tasks:
+            if tid not in in_degree:
+                in_degree[tid] = 0
+        queue = deque([tid for tid, deg in in_degree.items() if deg == 0])
+        order = []
+        while queue:
+            node = queue.popleft()
+            order.append(node)
+            for tid, deps in self.deps.items():
+                if node in deps:
+                    in_degree[tid] -= 1
+                    if in_degree[tid] == 0:
+                        queue.append(tid)
+        return order
+
+# Example: Research report task graph
+g = TaskGraph()
+g.add_task("T1", "Search for climate data sources")
+g.add_task("T2", "Search for policy papers")
+g.add_task("T3", "Search for economic impact studies")
+g.add_task("T4", "Synthesise all sources", dependencies=["T1","T2","T3"])
+g.add_task("T5", "Write report draft", dependencies=["T4"])
+g.add_task("T6", "Review and edit", dependencies=["T5"])
+
+print("Execution order:", g.topological_order())
+print("Ready to start:", [t["description"] for t in g.get_ready_tasks()])</code></pre>
+
+      <h2>Dynamic Replanning</h2>
+      <p>Real tasks rarely go according to plan. A source might be unavailable, a search might return irrelevant results, or the agent discovers the goal was underspecified. Dynamic replanning handles this by invoking the planner again when a task fails:</p>
+      <pre><code class="language-python">def execute_with_dynamic_replan(graph: TaskGraph, executor_fn, planner_fn, goal: str):
+    results = {}
+    max_replans = 2
+    replan_count = 0
+    while True:
+        ready = graph.get_ready_tasks()
+        if not ready:
+            all_done = all(t["status"] == "done" for t in graph.tasks.values())
+            if all_done:
+                print("All tasks complete!")
+                return results
+            else:
+                print("Deadlock — no ready tasks but not all done")
+                break
+        for task in ready:
+            try:
+                result = executor_fn(task, results)
+                results[task["id"]] = result
+                graph.mark_done(task["id"])
+            except Exception as e:
+                if replan_count >= max_replans:
+                    raise
+                print(f"Task {task['id']} failed: {e}. Replanning...")
+                new_tasks = planner_fn(goal, results, str(e))
+                for t in new_tasks:
+                    graph.add_task(**t)
+                replan_count += 1
+    return results</code></pre>
+
+      <h2>Tree of Thoughts</h2>
+      <p>Tree of Thoughts (Yao et al., 2023) extends chain-of-thought by exploring <strong>multiple reasoning paths</strong> simultaneously and pruning unpromising branches. This is powerful for tasks where the optimal plan is not obvious upfront — like solving math problems or writing complex code.</p>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Thought generation:</strong> At each step, generate k candidate thoughts (not just one).</li>
+          <li><strong>Evaluation:</strong> Score each thought on likelihood of leading to the goal.</li>
+          <li><strong>Search:</strong> Use BFS (explore all paths at each depth) or DFS with backtracking.</li>
+          <li><strong>Pruning:</strong> Eliminate low-scoring paths to keep computation tractable.</li>
+        </ul>
+      </div>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Practical advice:</strong> Tree of Thoughts is expensive (k × depth LLM calls). Use it only for tasks where plan quality is far more important than cost — like generating a novel algorithm or solving a complex optimisation problem. For routine multi-step tasks, a simple DAG planner is sufficient.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Build a Task DAG for "Write a Research Report"</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Implement the TaskGraph Class</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from collections import defaultdict, deque
+
+class TaskGraph:
+    def __init__(self):
+        self.tasks = {}
+        self.deps = defaultdict(set)
+
+    def add_task(self, task_id, description, dependencies=None):
+        self.tasks[task_id] = {"id": task_id, "description": description, "status": "pending", "result": None}
+        if dependencies:
+            self.deps[task_id] = set(dependencies)
+
+    def get_ready(self):
+        done = {tid for tid, t in self.tasks.items() if t["status"] == "done"}
+        return [t for tid, t in self.tasks.items() if t["status"] == "pending" and self.deps[tid].issubset(done)]
+
+    def mark_done(self, tid, result=""):
+        self.tasks[tid]["status"] = "done"
+        self.tasks[tid]["result"] = result
+
+    def summary(self):
+        for tid, t in self.tasks.items():
+            deps = list(self.deps.get(tid, []))
+            print(f"  [{t['status'].upper():7}] {tid}: {t['description']} (deps: {deps})")
+
+g = TaskGraph()
+g.add_task("T1", "Search: climate change science overview")
+g.add_task("T2", "Search: climate policy developments 2024")
+g.add_task("T3", "Search: economic impact of climate change")
+g.add_task("T4", "Synthesise: combine all research", dependencies=["T1","T2","T3"])
+g.add_task("T5", "Write: introduction section", dependencies=["T4"])
+g.add_task("T6", "Write: body sections", dependencies=["T4"])
+g.add_task("T7", "Write: conclusion", dependencies=["T5","T6"])
+g.add_task("T8", "Review and finalise", dependencies=["T7"])
+g.summary()</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Simulate Parallel Execution</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import time
+
+def simulated_executor(task):
+    """Fake task execution with variable duration."""
+    durations = {"T1": 0.3, "T2": 0.4, "T3": 0.2, "T4": 0.5, "T5": 0.3, "T6": 0.6, "T7": 0.4, "T8": 0.2}
+    time.sleep(durations.get(task["id"], 0.3))
+    return f"Result of {task['description'][:40]}"
+
+start = time.time()
+wave = 0
+while True:
+    ready = g.get_ready()
+    if not ready:
+        if all(t["status"] == "done" for t in g.tasks.values()):
+            print(f"\nAll tasks complete in {time.time()-start:.2f}s")
+        else:
+            print("Deadlock!")
+        break
+    wave += 1
+    print(f"\nWave {wave} — running {len(ready)} tasks in parallel:")
+    for task in ready:
+        print(f"  Starting: {task['id']} — {task['description']}")
+    for task in ready:
+        result = simulated_executor(task)
+        g.mark_done(task["id"], result)
+        print(f"  ✓ Done: {task['id']}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>LLM-Powered Planner</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
+import json
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+def llm_planner(goal: str) -> list:
+    prompt = f"""Break this goal into a task DAG. Return JSON list only.
+Each task: {{"id":"T1","description":"...","dependencies":[]}}
+Use [] for tasks with no dependencies.
+
+Goal: {goal}"""
+    response = llm([HumanMessage(content=prompt)])
+    tasks = json.loads(response.content)
+    return tasks
+
+goal = "Produce a competitive analysis report comparing Python, Go, and Rust for backend APIs"
+tasks = llm_planner(goal)
+print("LLM-generated plan:")
+for t in tasks:
+    print(f"  {t['id']}: {t['description']} → deps: {t['dependencies']}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Visualise the DAG</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def print_dag(tasks):
+    """Print a simple ASCII representation of the task DAG."""
+    dep_map = {t["id"]: t.get("dependencies", []) for t in tasks}
+    roots = [t for t in tasks if not dep_map[t["id"]]]
+    print("\nTask DAG:")
+    printed = set()
+    def print_tree(task_id, prefix="", tasks_by_id=None):
+        if task_id in printed: return
+        printed.add(task_id)
+        desc = tasks_by_id[task_id]["description"][:50]
+        print(f"{prefix}[{task_id}] {desc}")
+        children = [t["id"] for t in tasks if task_id in dep_map[t["id"]]]
+        for i, child in enumerate(children):
+            is_last = i == len(children) - 1
+            print_tree(child, prefix + ("    " if is_last else "│   "), tasks_by_id)
+
+    tasks_by_id = {t["id"]: t for t in tasks}
+    for root in roots:
+        print_tree(root["id"], "", tasks_by_id)
+
+print_dag(tasks)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/capabilities/08-tools.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Tool Design</span>
+      </a>
+      <a href="/Agentic-AI/sessions/capabilities/10-reflection.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Self-Reflection & Critique ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-09",
+  title: "Planning & Task Decomposition",
+  section: "capabilities",
+  quizData: [
+    { type: "mcq", question: "In HTN planning, a 'method' is:", options: ["A Python function", "A way to decompose an abstract task into subtasks", "A tool call schema", "A memory write operation"], correct: 1, explanation: "In HTN planning, methods define how to decompose abstract tasks into more concrete subtasks or primitive actions, forming a hierarchy." },
+    { type: "mcq", question: "In a task graph DAG, which tasks can start executing immediately?", options: ["Tasks with the highest priority", "Tasks with no incoming dependency edges", "The last task in the list", "Tasks that have been validated by the planner"], correct: 1, explanation: "Tasks with no dependencies (no incoming edges) have nothing to wait for and can start immediately, often in parallel." },
+    { type: "mcq", question: "Tree of Thoughts differs from standard chain-of-thought by:", options: ["Using fewer tokens", "Generating multiple candidate thoughts at each step and pruning low-quality paths", "Only working on math problems", "Removing the reasoning step"], correct: 1, explanation: "Tree of Thoughts generates k candidate thoughts at each step, evaluates them, and uses BFS or DFS to explore the most promising paths while pruning weak ones." },
+    { type: "mcq", question: "Dynamic replanning is triggered when:", options: ["The agent finishes all tasks", "A task fails or produces unexpected results requiring the remaining plan to be revised", "The user asks a new question", "Memory is full"], correct: 1, explanation: "Dynamic replanning preserves completed results and generates a new plan for remaining tasks, incorporating information about why the original plan failed." },
+    { type: "mcq", question: "Kahn's algorithm is used in task graphs to:", options: ["Score task importance", "Find a valid topological execution order respecting all dependencies", "Balance load across executors", "Detect hallucinated tasks"], correct: 1, explanation: "Kahn's algorithm performs topological sorting on a DAG, producing an order where every task appears after all its dependencies — ensuring correct execution sequencing." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Observability & Monitoring — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-prod{background:#22c55e;color:#000;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #22c55e;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#0a1f0a;border:1px solid #22c55e;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#22c55e;color:#000;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#22c55e;color:#000;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.7}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/production.html">Production</a><span class="sep">›</span><span>Session 23</span></div>
+      <h1 class="session-title">Observability & Monitoring</h1>
+      <p class="session-tagline">Structured logging, LangSmith tracing, tool call monitoring, alerting, cost dashboards, and step-level metrics.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-prod"><i class="fas fa-chart-line"></i> Production</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Agents Need Observability</h2>
+      <p>When a production agent fails, you need to answer: which step failed? What was the agent thinking? What tool was called with what arguments? What did the tool return? Without structured observability, debugging agent failures is like investigating a car crash with no dashcam footage — you only see the outcome, not what happened.</p>
+      <p>Agent observability is harder than traditional software observability because: the "code" is natural language, decisions are probabilistic, and the same input can produce different outcomes on different runs.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#22c55e;margin-top:2px"></i>
+        <div><strong>The three pillars of agent observability:</strong> Traces (step-by-step execution history), Metrics (quantitative performance measures), and Logs (structured event records). LangSmith provides all three out of the box for LangChain/LangGraph agents.</div>
+      </div>
+
+      <h2>Structured Logging</h2>
+      <p>Plain-text logs are unsearchable at scale. Structured (JSON) logs can be indexed, filtered, and aggregated:</p>
+      <pre><code class="language-python">import logging, json, time, uuid
+from datetime import datetime
+
+class AgentLogger:
+    def __init__(self, agent_id: str, task_id: str):
+        self.agent_id = agent_id
+        self.task_id = task_id
+        self.session_id = str(uuid.uuid4())[:8]
+        self._logger = logging.getLogger("agent")
+
+    def _log(self, level: str, event: str, **kwargs):
+        record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "level": level,
+            "agent_id": self.agent_id,
+            "task_id": self.task_id,
+            "session_id": self.session_id,
+            "event": event,
+            **kwargs
+        }
+        print(json.dumps(record))  # In production: send to log aggregator
+
+    def step_start(self, step: int, action: str):
+        self._log("INFO", "step_start", step=step, action=action)
+
+    def step_complete(self, step: int, action: str, duration_ms: float, tokens: int):
+        self._log("INFO", "step_complete", step=step, action=action,
+                  duration_ms=duration_ms, tokens=tokens)
+
+    def tool_call(self, tool: str, args: dict, result_preview: str, success: bool):
+        self._log("INFO", "tool_call", tool=tool, args=args,
+                  result_preview=result_preview[:100], success=success)
+
+    def error(self, error_type: str, message: str, step: int):
+        self._log("ERROR", "agent_error", error_type=error_type,
+                  message=message[:500], step=step)
+
+    def task_complete(self, total_steps: int, total_tokens: int, total_cost_usd: float, success: bool):
+        self._log("INFO", "task_complete", total_steps=total_steps,
+                  total_tokens=total_tokens, total_cost_usd=total_cost_usd, success=success)
+
+logger = AgentLogger("research-agent", "task-001")
+logger.step_start(1, "web_search")
+logger.tool_call("web_search", {"query": "AI trends 2025"}, "Found 10 results...", True)
+logger.step_complete(1, "web_search", duration_ms=342, tokens=450)
+logger.task_complete(total_steps=5, total_tokens=2100, total_cost_usd=0.0063, success=True)</code></pre>
+
+      <h2>LangSmith Integration</h2>
+      <pre><code class="language-python">import os
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = "your-langsmith-api-key"
+os.environ["LANGCHAIN_PROJECT"] = "my-agent-production"
+
+# That's it — LangChain automatically sends traces to LangSmith
+from langchain_openai import ChatOpenAI
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain import hub
+from langchain.tools import Tool
+
+llm = ChatOpenAI(model="gpt-4o-mini")
+tools = [Tool(name="search", func=lambda q: f"Results for {q}", description="Search")]
+prompt = hub.pull("hwchase17/react")
+agent = create_react_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=False)
+
+# Add metadata for filtering in LangSmith dashboard
+result = executor.invoke(
+    {"input": "What is the capital of France?"},
+    config={
+        "metadata": {
+            "user_id": "user-123",
+            "environment": "production",
+            "agent_version": "2.1.0",
+        },
+        "tags": ["research", "geography"],
+    }
+)
+# Now visible in LangSmith at smith.langchain.com</code></pre>
+
+      <h2>Step-Level Metrics to Track</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th>Description</th><th>Alert threshold</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Steps per task</strong></td><td>How many Thought-Action-Observation cycles to complete</td><td>&gt; 2× baseline = possible loop</td></tr>
+            <tr><td><strong>Token usage per step</strong></td><td>Tokens consumed in each step's LLM call</td><td>&gt; 80% of context limit = compression needed</td></tr>
+            <tr><td><strong>Tool error rate</strong></td><td>Fraction of tool calls that return errors</td><td>&gt; 10% = tool reliability issue</td></tr>
+            <tr><td><strong>Task success rate</strong></td><td>Fraction of tasks that complete successfully</td><td>&lt; 90% = agent quality regression</td></tr>
+            <tr><td><strong>Cost per task</strong></td><td>Total token cost for one task completion</td><td>&gt; budget cap = alert + throttle</td></tr>
+            <tr><td><strong>P95 latency</strong></td><td>95th percentile task completion time</td><td>&gt; SLA = scaling or optimization needed</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Cost Dashboard</h2>
+      <pre><code class="language-python">from collections import defaultdict
+import statistics
+
+class CostTracker:
+    # GPT-4o-mini pricing (May 2025)
+    PRICING = {"gpt-4o-mini": {"input": 0.15/1e6, "output": 0.60/1e6},
+               "gpt-4o":      {"input": 2.50/1e6, "output": 10.00/1e6}}
+
+    def __init__(self):
+        self.records = []
+
+    def record(self, model: str, input_tokens: int, output_tokens: int, task_id: str, user_id: str):
+        prices = self.PRICING.get(model, self.PRICING["gpt-4o-mini"])
+        cost = input_tokens * prices["input"] + output_tokens * prices["output"]
+        self.records.append({"model": model, "input": input_tokens, "output": output_tokens,
+                              "cost": cost, "task_id": task_id, "user_id": user_id})
+
+    def dashboard(self):
+        if not self.records: return
+        total_cost = sum(r["cost"] for r in self.records)
+        by_user = defaultdict(float)
+        for r in self.records: by_user[r["user_id"]] += r["cost"]
+        costs = [r["cost"] for r in self.records]
+        print(f"=== COST DASHBOARD ===")
+        print(f"  Total tasks: {len(self.records)}")
+        print(f"  Total cost: ${total_cost:.4f}")
+        print(f"  Avg cost/task: ${statistics.mean(costs):.4f}")
+        print(f"  Top users by cost:")
+        for uid, cost in sorted(by_user.items(), key=lambda x: -x[1])[:5]:
+            print(f"    {uid}: ${cost:.4f}")
+
+tracker = CostTracker()
+for i in range(10):
+    tracker.record("gpt-4o-mini", 1200+i*100, 300+i*50, f"t{i}", f"user-{i%3}")
+tracker.dashboard()</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#22c55e;margin-top:2px"></i>
+        <div><strong>Debug workflow:</strong> When an agent fails in production: (1) Find the trace in LangSmith. (2) Identify the failing step. (3) Read the exact Thought, Action, and Observation at that step. (4) Reproduce locally with the same inputs. (5) Fix the prompt, tool, or logic. This is why every step must be traced — you cannot debug what you cannot see.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Add Full Tracing and Inspect a Failure Trace</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Build a Traced Agent</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import time, json, uuid
+from dataclasses import dataclass, field, asdict
+from typing import Any, Optional
+
+@dataclass
+class TraceStep:
+    step_id: str = field(default_factory=lambda: str(uuid.uuid4())[:6])
+    step_num: int = 0
+    action: str = ""
+    input: Any = None
+    output: Any = None
+    duration_ms: float = 0
+    tokens: int = 0
+    error: Optional[str] = None
+
+@dataclass
+class Trace:
+    trace_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
+    goal: str = ""
+    steps: list = field(default_factory=list)
+    success: bool = False
+    total_tokens: int = 0
+    total_cost_usd: float = 0
+    started_at: float = field(default_factory=time.time)
+
+class TracedAgent:
+    TOKEN_COST = 0.15 / 1e6
+
+    def __init__(self, name: str):
+        self.name = name
+        self.traces = []
+
+    def run(self, goal: str, inject_failure_at: int = None) -> Trace:
+        trace = Trace(goal=goal)
+        steps_plan = [
+            ("search", f"search({goal[:30]})"),
+            ("analyse", "analyse(results)"),
+            ("synthesise", "synthesise(analysis)"),
+            ("format", "format_output()"),
+        ]
+        for i, (action, description) in enumerate(steps_plan):
+            step = TraceStep(step_num=i+1, action=action, input=description)
+            t0 = time.time()
+            if inject_failure_at == i+1:
+                step.error = f"Simulated failure at step {i+1}: API timeout"
+                step.duration_ms = round((time.time()-t0)*1000, 1)
+                trace.steps.append(step)
+                self._print_step(step)
+                break
+            time.sleep(0.05)
+            tokens = 200 + i * 50
+            step.output = f"Result of {action}"
+            step.duration_ms = round((time.time()-t0)*1000+50, 1)
+            step.tokens = tokens
+            trace.total_tokens += tokens
+            trace.steps.append(step)
+            self._print_step(step)
+        trace.success = not any(s.error for s in trace.steps) and len(trace.steps) == len(steps_plan)
+        trace.total_cost_usd = round(trace.total_tokens * self.TOKEN_COST, 6)
+        self.traces.append(trace)
+        return trace
+
+    def _print_step(self, s: TraceStep):
+        status = "❌ ERROR" if s.error else "✅"
+        print(f"  {status} Step {s.step_num} [{s.action}] {s.duration_ms:.0f}ms {s.tokens} tok")
+        if s.error: print(f"     Error: {s.error}")
+
+agent = TracedAgent("research-agent")
+print("=== Successful run ===")
+t1 = agent.run("Research quantum computing advances")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Simulate and Inspect a Failure</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">print("\n=== Failed run (injected failure at step 3) ===")
+t2 = agent.run("Write a market analysis report", inject_failure_at=3)
+
+def inspect_trace(trace: Trace):
+    print(f"\n=== TRACE INSPECTION: {trace.trace_id} ===")
+    print(f"  Goal: {trace.goal}")
+    print(f"  Success: {trace.success}")
+    print(f"  Steps completed: {len(trace.steps)}")
+    print(f"  Total tokens: {trace.total_tokens}")
+    print(f"  Total cost: ${trace.total_cost_usd:.6f}")
+    failing = [s for s in trace.steps if s.error]
+    if failing:
+        print(f"\n  FAILURE ANALYSIS:")
+        for s in failing:
+            print(f"    Step {s.step_num} [{s.action}] failed: {s.error}")
+            print(f"    Input was: {s.input}")
+            completed = [st for st in trace.steps if not st.error]
+            print(f"    {len(completed)} steps completed before failure")
+
+inspect_trace(t2)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Aggregate Metrics Across Runs</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import statistics
+
+# Run 5 more tasks with mixed results
+for i in range(5):
+    fail_at = 2 if i == 1 else (4 if i == 3 else None)
+    agent.run(f"Task {i+3}", inject_failure_at=fail_at)
+
+def metrics_report(agent):
+    traces = agent.traces
+    successful = [t for t in traces if t.success]
+    failed = [t for t in traces if not t.success]
+    all_steps = [len(t.steps) for t in traces]
+    all_costs = [t.total_cost_usd for t in traces]
+    print(f"\n=== METRICS REPORT ({len(traces)} tasks) ===")
+    print(f"  Success rate: {len(successful)/len(traces):.0%}")
+    print(f"  Failure rate: {len(failed)/len(traces):.0%}")
+    print(f"  Avg steps/task: {statistics.mean(all_steps):.1f}")
+    print(f"  Total cost: ${sum(all_costs):.4f}")
+    print(f"  Avg cost/task: ${statistics.mean(all_costs):.5f}")
+    if successful:
+        print(f"  Avg cost (success only): ${statistics.mean(t.total_cost_usd for t in successful):.5f}")
+
+metrics_report(agent)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Set Up LangSmith (Real Integration)</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import os
+# Sign up at smith.langchain.com and get your API key
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = "lsv2_..."  # Your LangSmith key
+os.environ["LANGCHAIN_PROJECT"] = "agentic-ai-course"
+
+# Now ALL LangChain/LangGraph runs are automatically traced
+from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+# This call will appear in your LangSmith dashboard automatically
+response = llm.invoke([HumanMessage(content="What is 2+2? Answer in one word.")],
+                       config={"metadata": {"session": "lab-23", "user": "student"}})
+print(f"Response: {response.content}")
+print("\nCheck your LangSmith dashboard at smith.langchain.com to see the trace!")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/production/22-deployment.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Deployment</span>
+      </a>
+      <a href="/Agentic-AI/sessions/production/24-optimization.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Cost & Optimization ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-23",
+  title: "Observability & Monitoring",
+  section: "production",
+  quizData: [
+    { type: "mcq", question: "Why is agent observability harder than traditional software observability?", options: ["Agents run slower", "Decisions are in natural language and probabilistic — the same input can produce different outputs", "Agents use more memory", "Agents cannot be logged"], correct: 1, explanation: "Traditional software is deterministic — same input = same output. Agent decisions are in natural language and probabilistic, making traces essential for understanding why a specific run failed." },
+    { type: "mcq", question: "LangSmith tracing is enabled by:", options: ["Adding verbose=True to AgentExecutor", "Setting LANGCHAIN_TRACING_V2=true and LANGCHAIN_API_KEY environment variables", "Calling langsmith.start() before each run", "Installing a separate tracing library"], correct: 1, explanation: "LangSmith integration requires just two environment variables. LangChain automatically intercepts all LLM calls and sends structured traces to the LangSmith dashboard." },
+    { type: "mcq", question: "A step-level 'token usage per step' metric should alert when:", options: ["It reaches zero", "It exceeds 80% of the context window limit, signaling compression is needed", "It matches the previous step", "It is below baseline"], correct: 1, explanation: "When a single step's token usage approaches the context window limit, the agent is about to hit the limit and will start losing important context. Early warning allows proactive compression." },
+    { type: "mcq", question: "Structured (JSON) logs are preferred over plain text logs because:", options: ["JSON is faster to write", "They can be indexed, filtered, and aggregated by log management systems at scale", "JSON logs are smaller", "Plain text logs are not supported by Python"], correct: 1, explanation: "JSON logs allow log management systems (Datadog, Elasticsearch, CloudWatch) to filter by user_id, task_id, error type, agent version — enabling efficient debugging of production issues." },
+    { type: "mcq", question: "When debugging a production agent failure, what is the first step?", options: ["Redeploy the agent", "Find the trace in LangSmith and identify the exact failing step with its inputs and outputs", "Increase the max_iterations limit", "Switch to a larger model"], correct: 1, explanation: "The debug workflow: find the trace → identify failing step → read exact Thought/Action/Observation → reproduce locally → fix. You cannot fix what you cannot see." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

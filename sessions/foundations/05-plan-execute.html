@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan-and-Execute Agents — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .badge-foundations { background: #6366f1; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #6366f1; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .session-nav-btn { background: #6366f1; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/foundations.html">Foundations</a><span class="sep">›</span><span>Session 05</span></div>
+      <h1 class="session-title">Plan-and-Execute Agents</h1>
+      <p class="session-tagline">Separate planning from execution for more reliable long-horizon task completion with replanning on failure.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-foundations"><i class="fas fa-brain"></i> Foundations</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Beyond ReAct: Why Separate Planning from Execution?</h2>
+      <p>ReAct agents plan and execute interleaved — each Thought decides the next single action. This works well for short tasks but struggles with complex, multi-step goals where maintaining a global view matters. <strong>Plan-and-Execute</strong> architectures solve this by separating two concerns: a <em>Planner</em> that thinks about the whole task upfront, and an <em>Executor</em> that focuses on completing individual subtasks.</p>
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Key separation:</strong> The Planner sees the forest; the Executor sees the trees. This division lets you use a powerful (expensive) model for planning and a faster (cheaper) model for execution.</div>
+      </div>
+
+      <h2>The Plan-and-Execute Architecture</h2>
+      <div class="card">
+        <ol style="line-height:2.2">
+          <li><strong>Plan:</strong> Given a goal, the Planner LLM generates a structured task graph — an ordered list of subtasks with dependencies.</li>
+          <li><strong>Execute:</strong> The Executor processes each subtask in dependency order, calling tools as needed.</li>
+          <li><strong>Observe:</strong> Results of each subtask are stored and passed to dependent subtasks.</li>
+          <li><strong>Replan (if needed):</strong> If a subtask fails or produces unexpected results, the Planner is invoked again to adjust the remaining plan.</li>
+          <li><strong>Synthesise:</strong> Once all subtasks complete, the Planner synthesises results into a final answer.</li>
+        </ol>
+      </div>
+
+      <h2>Task Graphs and Dependencies</h2>
+      <p>Unlike a flat list of steps, a <strong>task graph</strong> (directed acyclic graph, DAG) captures which subtasks can run in parallel and which must wait for others. For example, researching two independent topics can happen in parallel, but writing a synthesis requires both to be done first.</p>
+      <div class="card">
+        <pre style="margin:0;color:#94a3b8;font-family:'JetBrains Mono',monospace;font-size:0.85rem;line-height:1.8">Goal: "Write a market analysis report on EV adoption"
+
+Task Graph:
+  T1: Research global EV sales trends     ─┐
+  T2: Research top EV manufacturers        ├─► T5: Synthesise findings
+  T3: Research government incentives      ─┤
+  T4: Research infrastructure challenges  ─┘    └─► T6: Write final report
+
+T1-T4 can run in parallel. T5 depends on T1-T4. T6 depends on T5.</pre>
+      </div>
+
+      <h2>Plan-and-Solve Prompting</h2>
+      <p>Wang et al. (2023) introduced <strong>Plan-and-Solve prompting</strong> as a zero-shot alternative. Instead of few-shot examples, the prompt instructs the model to: (1) devise a plan, (2) carry out the plan. This simple addition to chain-of-thought significantly reduces calculation errors and missing-step mistakes.</p>
+      <pre><code class="language-python"># Plan-and-Solve prompt template
+PLAN_AND_SOLVE_PROMPT = """
+Let's first understand the problem and devise a plan to solve it.
+Then, let's carry out the plan and solve the problem step by step.
+
+Problem: {problem}
+
+Plan:
+"""</code></pre>
+
+      <h2>LangChain Plan-and-Execute Implementation</h2>
+      <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+from langchain.tools import Tool
+from langchain_community.tools import DuckDuckGoSearchRun
+import json
+
+# --- Planner ---
+PLANNER_PROMPT = PromptTemplate(
+    input_variables=["goal"],
+    template="""You are a planning agent. Given a goal, break it into 3-5 concrete subtasks.
+Return a JSON list of objects with keys: id, description, depends_on (list of ids).
+
+Goal: {goal}
+
+Return only valid JSON, no explanation:"""
+)
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+planner_chain = LLMChain(llm=llm, prompt=PLANNER_PROMPT)
+
+# --- Executor ---
+search = DuckDuckGoSearchRun()
+
+EXECUTOR_PROMPT = PromptTemplate(
+    input_variables=["task", "context"],
+    template="""Complete this research task. Use the context from previous tasks if relevant.
+
+Task: {task}
+Context from previous tasks: {context}
+
+Provide a concise, factual response:"""
+)
+executor_chain = LLMChain(llm=llm, prompt=EXECUTOR_PROMPT)
+
+# --- Orchestrator ---
+def plan_and_execute(goal: str) -> dict:
+    print(f"Planning for goal: {goal}\n")
+    # Step 1: Plan
+    raw_plan = planner_chain.run(goal=goal)
+    try:
+        tasks = json.loads(raw_plan)
+    except json.JSONDecodeError:
+        tasks = [{"id": "1", "description": goal, "depends_on": []}]
+
+    print("Plan:")
+    for t in tasks:
+        print(f"  [{t['id']}] {t['description']} (depends on: {t['depends_on']})")
+
+    # Step 2: Execute in dependency order
+    results = {}
+    for task in tasks:
+        deps_context = "\n".join([f"Task {d}: {results.get(d, 'pending')}" for d in task.get("depends_on", [])])
+        result = executor_chain.run(task=task["description"], context=deps_context or "None")
+        results[task["id"]] = result
+        print(f"\n✓ Task {task['id']} complete: {result[:100]}...")
+
+    return results
+
+results = plan_and_execute("Research the pros and cons of Python vs Go for backend development")</code></pre>
+
+      <h2>Replanning on Failure</h2>
+      <p>A key advantage of Plan-and-Execute over ReAct is <strong>structured replanning</strong>. When a subtask fails, instead of the agent getting confused mid-stream, you invoke the planner again with the failure context:</p>
+      <pre><code class="language-python">def execute_with_replan(goal, tasks, max_replan=2):
+    results = {}
+    replan_count = 0
+    remaining_tasks = tasks[:]
+    while remaining_tasks:
+        task = remaining_tasks.pop(0)
+        try:
+            result = execute_task(task, results)
+            results[task["id"]] = result
+        except Exception as e:
+            if replan_count >= max_replan:
+                raise RuntimeError(f"Max replanning attempts reached: {e}")
+            print(f"Task {task['id']} failed: {e}. Replanning...")
+            new_plan = replan(goal, results, str(e))
+            remaining_tasks = new_plan  # replace remaining tasks with new plan
+            replan_count += 1
+    return results</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>When to use Plan-and-Execute vs ReAct:</strong> Use ReAct for tasks under ~5 steps where the path is unpredictable. Use Plan-and-Execute for tasks with 5+ steps where upfront planning adds value, or where you need to run subtasks in parallel.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Build a Research Planner</h2>
+          <p>Build a plan-and-execute agent that breaks a research question into subtasks and answers each one.</p>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Install and Setup</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">!pip install langchain langchain-openai -q
+import os, json
+os.environ["OPENAI_API_KEY"] = "your-key"
+from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+print("LLM ready")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Planner</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">planner_prompt = PromptTemplate(
+    input_variables=["question"],
+    template="""Break this research question into 4 subtasks.
+Return JSON: [{{"id":"1","task":"...","depends_on":[]}}]
+Only JSON, no explanation.
+Question: {question}"""
+)
+planner = LLMChain(llm=llm, prompt=planner_prompt)
+
+question = "What are the environmental and economic impacts of offshore wind energy?"
+plan_raw = planner.run(question=question)
+plan = json.loads(plan_raw)
+print("Generated plan:")
+for t in plan:
+    print(f"  [{t['id']}] {t['task']}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Build the Executor and Run</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">executor_prompt = PromptTemplate(
+    input_variables=["task","context"],
+    template="Answer this research task in 2-3 sentences.\nTask: {task}\nContext: {context}"
+)
+executor = LLMChain(llm=llm, prompt=executor_prompt)
+
+results = {}
+for task in plan:
+    ctx = " | ".join([f"T{d}: {results.get(d,'')[:100]}" for d in task.get("depends_on",[])])
+    result = executor.run(task=task["task"], context=ctx or "None")
+    results[task["id"]] = result
+    print(f"\n[Task {task['id']}] {task['task']}")
+    print(f"  → {result}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Synthesise Final Answer</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">synth_prompt = PromptTemplate(
+    input_variables=["question","findings"],
+    template="Synthesise these research findings into a coherent 1-paragraph answer.\nQuestion: {question}\nFindings:\n{findings}"
+)
+synth = LLMChain(llm=llm, prompt=synth_prompt)
+findings = "\n".join([f"- {v}" for v in results.values()])
+final = synth.run(question=question, findings=findings)
+print("\n=== FINAL ANSWER ===")
+print(final)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/foundations/04-react.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ ReAct</span>
+      </a>
+      <a href="/Agentic-AI/sessions/foundations/06-cognitive-loops.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Cognitive Loops ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-05",
+  title: "Plan-and-Execute Agents",
+  section: "foundations",
+  quizData: [
+    { type: "mcq", question: "What is the primary advantage of separating planning from execution?", options: ["It makes the agent faster", "The planner can see the whole task while the executor focuses on each step", "It reduces the number of tool calls", "It eliminates the need for memory"], correct: 1, explanation: "Separation of concerns: the planner maintains a global view of the goal while the executor focuses on efficient completion of individual subtasks." },
+    { type: "mcq", question: "In a task graph (DAG), what does an edge from T1 to T3 represent?", options: ["T1 and T3 run in parallel", "T3 must complete before T1 can start", "T3 depends on the output of T1", "T1 and T3 share the same executor"], correct: 2, explanation: "A directed edge from T1 to T3 means T3 depends on T1 — T1 must complete successfully before T3 can execute, often because T3 uses T1's output." },
+    { type: "mcq", question: "Plan-and-Solve prompting (Wang et al. 2023) differs from standard chain-of-thought by:", options: ["Using more examples", "Instructing the model to first devise a plan, then execute it", "Using a separate model for each step", "Removing all reasoning from the prompt"], correct: 1, explanation: "Plan-and-Solve adds 'Let's devise a plan to solve it. Then carry out the plan step by step.' This zero-shot instruction reduces missing-step errors." },
+    { type: "mcq", question: "When should you choose Plan-and-Execute over ReAct?", options: ["For tasks under 3 steps", "For tasks with 5+ steps where upfront planning adds value or parallel execution is needed", "When tools are unavailable", "When the LLM has no context window"], correct: 1, explanation: "ReAct is better for short unpredictable tasks. Plan-and-Execute shines for complex, multi-step goals where a global plan prevents the agent from losing track of the overall objective." },
+    { type: "mcq", question: "What happens during 'replanning' in a Plan-and-Execute agent?", options: ["The entire task restarts from scratch", "The planner is invoked again with failure context to adjust remaining tasks", "The executor retries the same failed step 3 times", "A human takes over"], correct: 1, explanation: "Replanning preserves completed results and only regenerates the remaining plan, incorporating information about what failed and why." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

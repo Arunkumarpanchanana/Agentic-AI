@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agent Benchmarks & Metrics — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-eval{background:#f59e0b;color:#000;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #f59e0b;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1c1400;border:1px solid #f59e0b;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#f59e0b;color:#000;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#f59e0b;color:#000;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.7}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/evaluation.html">Evaluation</a><span class="sep">›</span><span>Session 18</span></div>
+      <h1 class="session-title">Agent Benchmarks & Metrics</h1>
+      <p class="session-tagline">WebArena, AgentBench, GAIA, SWE-Bench — and how to design your own evaluation harness for production agents.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 30 min</span>
+        <span><span class="badge-eval"><i class="fas fa-chart-bar"></i> Evaluation</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Benchmarks Matter</h2>
+      <p>Without rigorous evaluation, agent development is guesswork. A benchmark provides a standardized, reproducible measure of agent capability. It tells you: is version 2 actually better than version 1? Does the agent generalize beyond the tasks it was prompted with? Where exactly does it fail?</p>
+      <p>Agent benchmarks are harder to design than model benchmarks because agents take sequences of actions — partial credit, efficiency, and reliability across runs all matter, not just the final answer.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#f59e0b;margin-top:2px"></i>
+        <div><strong>The four key metrics:</strong> Task success rate (did it complete?), efficiency (steps and tokens used), reliability (variance across runs), and cost (total spend). Optimizing one often trades off against others.</div>
+      </div>
+
+      <h2>Major Agent Benchmarks</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Benchmark</th><th>Domain</th><th>Tasks</th><th>What it tests</th></tr></thead>
+          <tbody>
+            <tr><td><strong>WebArena</strong></td><td>Web navigation</td><td>812 tasks</td><td>Shopping, Reddit, GitLab, Wikipedia browsing</td></tr>
+            <tr><td><strong>AgentBench</strong></td><td>Multi-domain</td><td>9 environments</td><td>OS, DB, web, coding, card games, lateral thinking</td></tr>
+            <tr><td><strong>GAIA</strong></td><td>General AI</td><td>466 questions</td><td>Multi-step reasoning requiring tools and real-world knowledge</td></tr>
+            <tr><td><strong>SWE-Bench</strong></td><td>Software engineering</td><td>2,294 issues</td><td>Resolving real GitHub issues end-to-end</td></tr>
+            <tr><td><strong>τ-bench</strong></td><td>Tool use</td><td>Variable</td><td>Reliable tool calling under adversarial conditions</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>The Four Core Metrics in Detail</h2>
+      <div class="card">
+        <h4 style="color:#f59e0b;margin-top:0">1. Task Success Rate (TSR)</h4>
+        <p>The fraction of tasks completed successfully. The most important metric, but requires careful definition of "success." Partial credit rubrics handle tasks where the agent gets partway there.</p>
+        <pre><code class="language-python">def task_success_rate(results: list) -> dict:
+    total = len(results)
+    full_success = sum(1 for r in results if r["score"] == 1.0)
+    partial = sum(1 for r in results if 0 < r["score"] < 1.0)
+    failed = sum(1 for r in results if r["score"] == 0)
+    return {
+        "tsr": full_success / total,
+        "partial_rate": partial / total,
+        "failure_rate": failed / total,
+        "mean_score": sum(r["score"] for r in results) / total
+    }</code></pre>
+      </div>
+      <div class="card">
+        <h4 style="color:#f59e0b;margin-top:0">2. Efficiency (Steps & Tokens)</h4>
+        <p>How many steps and tokens did the agent use to complete a task? An agent that completes a task in 3 steps is better than one that takes 15 steps — it costs less and is less likely to drift.</p>
+        <pre><code class="language-python">def efficiency_metrics(results: list) -> dict:
+    successful = [r for r in results if r["score"] == 1.0]
+    if not successful: return {"avg_steps": None, "avg_tokens": None}
+    return {
+        "avg_steps": sum(r["steps"] for r in successful) / len(successful),
+        "avg_tokens": sum(r["tokens"] for r in successful) / len(successful),
+        "steps_per_success": sum(r["steps"] for r in results) / max(1, sum(1 for r in results if r["score"]==1.0)),
+    }</code></pre>
+      </div>
+      <div class="card">
+        <h4 style="color:#f59e0b;margin-top:0">3. Reliability (Variance Across Runs)</h4>
+        <p>Run each task 3-5 times. A reliable agent gets the same result consistently. High variance is a red flag — the agent is essentially guessing.</p>
+        <pre><code class="language-python">import statistics
+
+def reliability_metrics(repeated_results: dict) -> dict:
+    """repeated_results: {task_id: [score_run1, score_run2, score_run3]}"""
+    variances = {tid: statistics.variance(scores) for tid, scores in repeated_results.items() if len(scores) > 1}
+    return {
+        "mean_variance": statistics.mean(variances.values()) if variances else 0,
+        "high_variance_tasks": [tid for tid, v in variances.items() if v > 0.25],
+        "fully_reliable_rate": sum(1 for scores in repeated_results.values() if len(set(scores))==1) / len(repeated_results)
+    }</code></pre>
+      </div>
+
+      <h2>Building a Test Harness</h2>
+      <pre><code class="language-python">import time, json
+from dataclasses import dataclass, field, asdict
+
+@dataclass
+class EvalResult:
+    task_id: str
+    task_description: str
+    expected_output: str
+    actual_output: str
+    score: float       # 0.0 - 1.0
+    steps: int
+    tokens_used: int
+    duration_seconds: float
+    error: str = ""
+
+class AgentEvaluator:
+    def __init__(self, agent, scorer_fn, test_cases: list):
+        self.agent = agent
+        self.scorer = scorer_fn
+        self.test_cases = test_cases
+        self.results: list[EvalResult] = []
+
+    def run(self) -> list[EvalResult]:
+        for tc in self.test_cases:
+            start = time.time()
+            try:
+                output = self.agent.run(tc["input"])
+                score = self.scorer(output, tc["expected"])
+                error = ""
+            except Exception as e:
+                output, score, error = "", 0.0, str(e)[:200]
+            self.results.append(EvalResult(
+                task_id=tc["id"], task_description=tc["input"],
+                expected_output=tc["expected"], actual_output=str(output),
+                score=score, steps=getattr(self.agent, "last_steps", 0),
+                tokens_used=getattr(self.agent, "last_tokens", 0),
+                duration_seconds=round(time.time()-start, 2), error=error
+            ))
+        return self.results
+
+    def report(self):
+        tsr = sum(r.score for r in self.results) / len(self.results)
+        avg_steps = sum(r.steps for r in self.results) / len(self.results)
+        print(f"=== EVAL REPORT ({len(self.results)} tasks) ===")
+        print(f"  Task Success Rate: {tsr:.1%}")
+        print(f"  Avg Steps: {avg_steps:.1f}")
+        print(f"  Failures: {sum(1 for r in self.results if r.score==0)}")
+        for r in self.results:
+            status = "✅" if r.score == 1 else "⚠️" if r.score > 0 else "❌"
+            print(f"  {status} {r.task_id}: score={r.score:.1f}, steps={r.steps}")</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#f59e0b;margin-top:2px"></i>
+        <div><strong>Evaluation first:</strong> Define your evaluation suite before building your agent. This forces precision about what "good" means and prevents you from unconsciously overfitting the agent to tasks you happened to test informally.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Design an Evaluation Suite for a Coding Agent</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Define Test Cases</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">TEST_CASES = [
+    {"id":"tc-01","input":"Write a Python function that reverses a string","expected_contains":["def","return","[::-1]"],"difficulty":1},
+    {"id":"tc-02","input":"Write a binary search function","expected_contains":["def","mid","while","return"],"difficulty":2},
+    {"id":"tc-03","input":"Implement a simple LRU cache class","expected_contains":["class","def get","def put","OrderedDict"],"difficulty":3},
+    {"id":"tc-04","input":"Write a decorator that measures function execution time","expected_contains":["def","wrapper","time","return"],"difficulty":2},
+    {"id":"tc-05","input":"Implement depth-first search on a graph","expected_contains":["def","visited","stack","append"],"difficulty":3},
+]
+print(f"Test suite: {len(TEST_CASES)} cases")
+for tc in TEST_CASES:
+    print(f"  [{tc['id']}] difficulty={tc['difficulty']}: {tc['input'][:50]}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Scorer</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def score_code_output(output: str, test_case: dict) -> float:
+    """Multi-dimensional scorer for code generation tasks."""
+    score = 0.0
+    keywords = test_case.get("expected_contains", [])
+    if not keywords: return 0.5
+    # Keyword presence (50% of score)
+    found = sum(1 for kw in keywords if kw in output)
+    score += 0.5 * (found / len(keywords))
+    # Syntactic validity (30% of score)
+    try:
+        compile(output, "<string>", "exec")
+        score += 0.3
+    except SyntaxError:
+        pass
+    # Has docstring or comments (20%)
+    if '"""' in output or "'''" in output or "#" in output:
+        score += 0.2
+    return round(min(score, 1.0), 2)
+
+# Test scorer
+sample_output = '''
+def reverse_string(s):
+    """Reverse a string."""
+    return s[::-1]
+'''
+tc = TEST_CASES[0]
+print(f"Score for tc-01: {score_code_output(sample_output, tc)}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Run the Evaluation Harness</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
+import time, statistics
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+results = []
+for tc in TEST_CASES:
+    start = time.time()
+    response = llm([HumanMessage(content=f"Write only Python code, no explanation:\n{tc['input']}")]).content
+    duration = time.time() - start
+    score = score_code_output(response, tc)
+    results.append({"id": tc["id"], "score": score, "duration": round(duration,2), "difficulty": tc["difficulty"]})
+    print(f"  [{tc['id']}] score={score:.2f}, time={duration:.1f}s")
+
+# Aggregate metrics
+print(f"\n=== RESULTS ===")
+print(f"  Mean score: {statistics.mean(r['score'] for r in results):.2f}")
+print(f"  Pass rate (>=0.7): {sum(1 for r in results if r['score']>=0.7)/len(results):.0%}")
+print(f"  Avg duration: {statistics.mean(r['duration'] for r in results):.1f}s")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Analyze by Difficulty</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from collections import defaultdict
+
+by_difficulty = defaultdict(list)
+for r in results:
+    by_difficulty[r["difficulty"]].append(r["score"])
+
+print("Performance by difficulty:")
+for diff in sorted(by_difficulty.keys()):
+    scores = by_difficulty[diff]
+    avg = statistics.mean(scores)
+    print(f"  Difficulty {diff}: avg={avg:.2f}, tasks={len(scores)}")
+
+# Find failure patterns
+failures = [r for r in results if r["score"] < 0.5]
+print(f"\nFailed tasks ({len(failures)}):")
+for f in failures:
+    tc = next(t for t in TEST_CASES if t["id"]==f["id"])
+    print(f"  {f['id']}: {tc['input'][:60]}")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/multi-agent/17-consensus.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Debate & Consensus</span>
+      </a>
+      <a href="/Agentic-AI/sessions/evaluation/19-hallucination.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Hallucination & Reliability ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-18",
+  title: "Agent Benchmarks & Metrics",
+  section: "evaluation",
+  quizData: [
+    { type: "mcq", question: "SWE-Bench tests agents on:", options: ["Web navigation tasks", "Resolving real GitHub issues end-to-end", "Multi-player game performance", "Image generation quality"], correct: 1, explanation: "SWE-Bench contains 2,294 real GitHub issues. An agent must read the issue, write a fix, and pass the existing test suite — a rigorous measure of software engineering capability." },
+    { type: "mcq", question: "Why is reliability (variance across runs) an important agent metric?", options: ["It measures API cost", "High variance means the agent is essentially guessing — success depends on luck, not capability", "It measures response speed", "It determines token efficiency"], correct: 1, explanation: "An agent that succeeds 60% of the time on the same task is unreliable for production. You need to know whether success is consistent or random." },
+    { type: "mcq", question: "Task Success Rate (TSR) is most meaningfully interpreted when:", options: ["Only counting 100% completions", "Combined with partial credit scoring to understand how close failed attempts came to succeeding", "Measured on a single run", "Compared only against GPT-4"], correct: 1, explanation: "TSR alone can be misleading. Partial credit scores reveal whether failures are near-misses or complete collapses, guiding targeted improvement." },
+    { type: "mcq", question: "The 'evaluation first' principle means:", options: ["Run evaluation before deploying", "Define your evaluation suite before building the agent to prevent unconscious overfitting", "Use the first benchmark you find", "Evaluate on training data first"], correct: 1, explanation: "Defining evaluation criteria upfront forces precision about success and prevents the common trap of iterating on the agent to pass the informal tests you happened to try." },
+    { type: "mcq", question: "GAIA benchmark evaluates agents on:", options: ["Web browser automation", "Multi-step reasoning questions requiring tools and real-world knowledge", "Code generation", "Multi-agent coordination"], correct: 1, explanation: "GAIA (General AI Assistants) tests 466 questions that require combining tool use, world knowledge, and multi-step reasoning — designed to be easy for humans but hard for AI." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tool Design & API Integration — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-capabilities{background:#10b981;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#0f2027;border:1px solid #10b981;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#10b981;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#10b981;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/capabilities.html">Capabilities</a><span class="sep">›</span><span>Session 08</span></div>
+      <h1 class="session-title">Tool Design & API Integration</h1>
+      <p class="session-tagline">Build reliable, well-described tools that agents can select and use correctly every time.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-capabilities"><i class="fas fa-tools"></i> Capabilities</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Tools Are the Agent's Hands</h2>
+      <p>An LLM without tools is like a brilliant consultant locked in a room with no phone. Tools are what give agents the ability to affect the world — searching the web, reading files, calling APIs, running code, sending emails. But a poorly designed tool is worse than no tool: it confuses the agent, causes hallucinated arguments, and produces unreliable results.</p>
+      <p>Tool design is one of the highest-leverage skills in agentic AI engineering. A well-designed tool is reliable, self-describing, and error-tolerant. A poorly designed tool breaks agent workflows in subtle, hard-to-debug ways.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Tool anatomy:</strong> Every tool needs three things the LLM uses to decide whether and how to call it: (1) a <strong>name</strong> that clearly identifies what it does, (2) a <strong>description</strong> that explains when to use it and what it returns, and (3) a <strong>schema</strong> that defines its input parameters precisely.</div>
+      </div>
+
+      <h2>Tool Anatomy</h2>
+      <pre><code class="language-python">from langchain.tools import StructuredTool
+from pydantic import BaseModel, Field
+from typing import Optional
+
+# Define the input schema using Pydantic
+class WebSearchInput(BaseModel):
+    query: str = Field(description="The search query. Be specific — include date ranges or qualifiers if needed.")
+    num_results: Optional[int] = Field(default=5, description="Number of results to return (1-10).")
+
+def web_search(query: str, num_results: int = 5) -> str:
+    """
+    Search the web for current information.
+    Returns a formatted string of search results with titles, URLs, and snippets.
+    Use this tool when you need facts about recent events, statistics, or information
+    that may not be in your training data.
+    DO NOT use for math calculations or code execution.
+    """
+    # Implementation would call a real search API
+    return f"Search results for '{query}': [result 1], [result 2]..."
+
+search_tool = StructuredTool.from_function(
+    func=web_search,
+    name="web_search",
+    description=web_search.__doc__,
+    args_schema=WebSearchInput
+)</code></pre>
+
+      <h2>Good vs Bad Tool Design</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Dimension</th><th>Bad Design</th><th>Good Design</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Name</strong></td><td><code>tool1</code>, <code>do_thing</code></td><td><code>search_web</code>, <code>send_email</code></td></tr>
+            <tr><td><strong>Description</strong></td><td>"Searches the web"</td><td>"Search the web for current info. Returns titles, URLs, snippets. Use for recent facts, NOT for math."</td></tr>
+            <tr><td><strong>Parameters</strong></td><td>One giant string with everything</td><td>Typed fields with descriptions and constraints</td></tr>
+            <tr><td><strong>Error handling</strong></td><td>Raises exception — crashes agent</td><td>Returns structured error message the agent can reason about</td></tr>
+            <tr><td><strong>Output format</strong></td><td>Raw JSON blob</td><td>Formatted string the LLM can parse naturally</td></tr>
+            <tr><td><strong>Scope</strong></td><td>Does 5 things at once</td><td>Does one thing well (Unix philosophy)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Error Handling Patterns</h2>
+      <p>Tools will fail — APIs go down, rate limits are hit, queries return no results. The key is returning <strong>informative error messages</strong> that the agent can reason about, rather than raising exceptions that crash the loop.</p>
+      <pre><code class="language-python">import requests
+from requests.exceptions import Timeout, ConnectionError
+
+def robust_api_call(endpoint: str, params: dict) -> str:
+    """Wrap an external API with robust error handling."""
+    try:
+        resp = requests.get(endpoint, params=params, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return format_results(data)
+    except Timeout:
+        return "ERROR: API request timed out after 10 seconds. Try again or use a different approach."
+    except ConnectionError:
+        return "ERROR: Cannot connect to the API. Check if the service is available."
+    except requests.HTTPError as e:
+        if e.response.status_code == 429:
+            return "ERROR: Rate limit exceeded. Wait 60 seconds before retrying."
+        elif e.response.status_code == 404:
+            return "ERROR: Resource not found. Check if the query parameters are correct."
+        return f"ERROR: HTTP {e.response.status_code}. {str(e)}"
+    except Exception as e:
+        return f"ERROR: Unexpected error: {str(e)[:200]}"
+
+def format_results(data: dict) -> str:
+    """Format API response as readable text for the LLM."""
+    if not data.get("results"):
+        return "No results found for this query. Try broadening your search terms."
+    lines = [f"Found {len(data['results'])} results:"]
+    for i, r in enumerate(data["results"][:5], 1):
+        lines.append(f"{i}. {r.get('title', 'No title')} — {r.get('snippet', '')}")
+    return "\n".join(lines)</code></pre>
+
+      <h2>Tool Selection Strategies</h2>
+      <p>When an agent has many tools, selecting the right one becomes a challenge. Three strategies:</p>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Description-based selection (default):</strong> The LLM reads all tool descriptions and selects based on semantic match. Works for up to ~20 tools.</li>
+          <li><strong>Retrieval-based selection:</strong> For large tool libraries (100+), embed tool descriptions and retrieve the top-k most relevant tools before passing to the LLM.</li>
+          <li><strong>Hierarchical routing:</strong> A lightweight classifier routes to a tool category; a specialist agent within that category selects the specific tool.</li>
+        </ul>
+      </div>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>The description is part of your prompt:</strong> Tool descriptions consume context window tokens on every agent step. Keep them concise but complete — aim for 2-4 sentences per tool. Use negative examples ("do NOT use for X") to prevent common misuse.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Wrap 3 External APIs as Agent Tools</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Install and Import</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">!pip install langchain langchain-openai requests pydantic -q
+from langchain.tools import StructuredTool
+from pydantic import BaseModel, Field
+from typing import Optional
+import requests, os, json
+os.environ["OPENAI_API_KEY"] = "your-key"
+print("Ready")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Wrap the Open-Meteo Weather API</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class WeatherInput(BaseModel):
+    city: str = Field(description="City name, e.g. 'London', 'Tokyo'")
+    days: int = Field(default=1, description="Number of forecast days (1-7)")
+
+def get_weather(city: str, days: int = 1) -> str:
+    """Get current weather and forecast for a city using Open-Meteo (free, no API key).
+    Returns temperature, wind speed, and weather condition.
+    Use for weather-related questions only."""
+    try:
+        # Geocoding
+        geo = requests.get(f"https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1", timeout=8)
+        loc = geo.json()["results"][0]
+        lat, lon = loc["latitude"], loc["longitude"]
+        # Weather
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
+        w = requests.get(url, timeout=8).json()["current_weather"]
+        return f"Weather in {city}: {w['temperature']}°C, wind {w['windspeed']} km/h, code {w['weathercode']}"
+    except Exception as e:
+        return f"ERROR fetching weather for {city}: {str(e)[:100]}"
+
+weather_tool = StructuredTool.from_function(func=get_weather, name="get_weather",
+    description=get_weather.__doc__, args_schema=WeatherInput)
+print(weather_tool.run({"city": "Paris", "days": 1}))</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Wrap a Wikipedia and Calculator Tool</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class WikiInput(BaseModel):
+    topic: str = Field(description="Topic to search on Wikipedia")
+
+def search_wikipedia(topic: str) -> str:
+    """Search Wikipedia for factual information about a topic.
+    Returns a summary of the Wikipedia article.
+    Use for historical facts, biographies, science concepts. NOT for real-time data."""
+    try:
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{topic.replace(' ','_')}"
+        r = requests.get(url, timeout=8)
+        if r.status_code == 404:
+            return f"No Wikipedia article found for '{topic}'. Try a different search term."
+        data = r.json()
+        return f"{data['title']}: {data['extract'][:800]}"
+    except Exception as e:
+        return f"ERROR: {str(e)[:100]}"
+
+class CalcInput(BaseModel):
+    expression: str = Field(description="Python math expression, e.g. '2**10 / 3 + 5'")
+
+def calculate(expression: str) -> str:
+    """Evaluate a mathematical expression. Supports +,-,*,/,**,(), abs(), round().
+    Returns the numeric result as a string. Use ONLY for math, not code execution."""
+    safe_globals = {"__builtins__": {}, "abs": abs, "round": round, "pow": pow}
+    try:
+        result = eval(expression, safe_globals, {})
+        return f"{expression} = {result}"
+    except Exception as e:
+        return f"ERROR evaluating '{expression}': {str(e)}"
+
+wiki_tool = StructuredTool.from_function(func=search_wikipedia, name="search_wikipedia",
+    description=search_wikipedia.__doc__, args_schema=WikiInput)
+calc_tool = StructuredTool.from_function(func=calculate, name="calculator",
+    description=calculate.__doc__, args_schema=CalcInput)
+print(wiki_tool.run({"topic": "Eiffel Tower"}))
+print(calc_tool.run({"expression": "1.7 ** 2 * 3.14159"}))</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Wire Tools into a ReAct Agent</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain import hub
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_openai import ChatOpenAI
+
+tools = [weather_tool, wiki_tool, calc_tool]
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+prompt = hub.pull("hwchase17/react")
+agent = create_react_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=6)
+
+result = executor.invoke({"input": "What is the weather in the city where the Eiffel Tower is located, and what is the square root of the tower's height in metres?"})
+print("\nFinal answer:", result["output"])</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/capabilities/07-memory.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Memory Systems</span>
+      </a>
+      <a href="/Agentic-AI/sessions/capabilities/09-planning.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Planning & Task Decomposition ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-08",
+  title: "Tool Design & API Integration",
+  section: "capabilities",
+  quizData: [
+    { type: "mcq", question: "What are the three essential components of a well-designed agent tool?", options: ["Code, tests, documentation", "Name, description, and input schema", "API key, endpoint, and timeout", "Prompt, parser, and memory"], correct: 1, explanation: "Every tool needs: a clear name (what it is), a description (when to use it and what it returns), and an input schema (exactly what arguments it accepts)." },
+    { type: "mcq", question: "Why should tool error handlers return informative strings rather than raise exceptions?", options: ["Exceptions are slower", "Informative error strings allow the agent to reason about the failure and try alternatives", "Python doesn't support exceptions in tools", "LangChain requires string returns"], correct: 1, explanation: "If a tool raises an exception, the agent loop crashes. A descriptive error string like 'Rate limit exceeded, wait 60s' lets the agent decide to wait and retry or use a different approach." },
+    { type: "mcq", question: "For an agent with 200+ tools, the best selection strategy is:", options: ["Pass all 200 tool descriptions to the LLM", "Embed tool descriptions and retrieve the top-k most relevant before passing to LLM", "Hard-code tool selection in the prompt", "Use only the first 10 tools alphabetically"], correct: 1, explanation: "Retrieval-based selection embeds all tool descriptions and retrieves only the most relevant ones for each query, staying within context window limits." },
+    { type: "mcq", question: "Adding 'Do NOT use for X' in a tool description is useful because:", options: ["It makes the description longer", "It prevents common misuse cases and guides the LLM to the right tool for each situation", "It satisfies a LangChain requirement", "It speeds up tool execution"], correct: 1, explanation: "Negative examples in tool descriptions train the LLM's selection logic — they prevent the agent from calling, say, a search tool for a math problem." },
+    { type: "mcq", question: "The Unix philosophy applied to tool design means:", options: ["Tools should be written in C", "Each tool should do one thing well", "Tools must support piping", "Tools should have no dependencies"], correct: 1, explanation: "Single-responsibility tools are more reliable, easier to test, and easier for agents to select correctly. A tool that does 5 things has a confusing description and is harder to use correctly." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

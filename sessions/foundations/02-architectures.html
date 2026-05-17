@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agent Architectures Overview — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .badge-foundations { background: #6366f1; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .arch-box { background: #1e293b; border: 2px solid #6366f1; border-radius: 10px; padding: 1rem 1.25rem; margin: 0.75rem 0; }
+    .arch-box h4 { color: #6366f1; margin: 0 0 0.5rem 0; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #6366f1; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; gap: 1rem; }
+    .session-nav-btn { background: #6366f1; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/foundations.html">Foundations</a><span class="sep">›</span><span>Session 02</span></div>
+      <h1 class="session-title">Agent Architectures Overview</h1>
+      <p class="session-tagline">Explore reactive, deliberative, hybrid, and BDI architectures with a comparison table and design guidance.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 30 min</span>
+        <span><span class="badge-foundations"><i class="fas fa-brain"></i> Foundations</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+
+      <h2>Why Architecture Matters</h2>
+      <p>Before writing a single line of agent code, you need to choose an architecture — the fundamental pattern that determines how your agent perceives, reasons, and acts. The wrong architecture choice leads to agents that are too slow, too rigid, too unpredictable, or too expensive to run. The right choice depends on your task's complexity, latency requirements, and environment dynamics.</p>
+      <p>In classical AI and robotics, agent architectures were studied for decades before large language models arrived. Understanding these foundations helps you reason about LLM-based agents with much greater precision.</p>
+
+      <div class="callout">
+        <i class="fas fa-info-circle" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Four major families:</strong> Reactive (stimulus-response), Deliberative (plan then act), Hybrid (layered reactive + deliberative), and BDI (Beliefs-Desires-Intentions). Modern LLM agents blend elements of all four.</div>
+      </div>
+
+      <h2>1. Reactive Architectures</h2>
+      <p>Reactive architectures, pioneered by Rodney Brooks at MIT in the 1980s, reject the idea that an agent needs an explicit world model. Instead, the agent connects perception directly to action through a set of <strong>situation-action rules</strong>. Brooks called his layered version the <em>Subsumption Architecture</em>.</p>
+
+      <div class="arch-box">
+        <h4>Subsumption Architecture (Brooks, 1986)</h4>
+        <p>Behaviours are layered in a priority hierarchy. Lower layers (e.g., "avoid obstacles") can <em>subsume</em> (override) higher layers (e.g., "move toward goal"). The agent responds purely to current sensor input — no planning, no memory of the past.</p>
+        <p><strong>Pros:</strong> Extremely fast response, robust to sensor noise, easy to implement.<br/>
+        <strong>Cons:</strong> Cannot handle tasks requiring planning, learning, or goal reasoning.</p>
+        <p><strong>Modern analogy:</strong> A retrieval-augmented chatbot with rule-based routing — fast, no planning.</p>
+      </div>
+
+      <pre><code class="language-python"># Reactive agent: direct stimulus → response mapping
+class ReactiveAgent:
+    def __init__(self):
+        # Priority-ordered list of (condition, action) pairs
+        self.rules = [
+            (lambda obs: "error" in obs.lower(),   self.handle_error),
+            (lambda obs: "urgent" in obs.lower(),  self.escalate),
+            (lambda obs: "question" in obs.lower(),self.answer_question),
+            (lambda obs: True,                     self.default_response),
+        ]
+
+    def act(self, observation: str) -> str:
+        for condition, action in self.rules:
+            if condition(observation):
+                return action(observation)
+
+    def handle_error(self, obs):   return f"ERROR HANDLER: {obs}"
+    def escalate(self, obs):       return f"ESCALATING: {obs}"
+    def answer_question(self, obs):return f"ANSWER: {obs}"
+    def default_response(self, obs):return f"DEFAULT: {obs}"</code></pre>
+
+      <h2>2. Deliberative Architectures</h2>
+      <p>Deliberative (or "classical") architectures build an explicit model of the world, formulate a plan, and then execute it. This approach dominated AI research through the 1990s under the banner of <strong>symbolic AI</strong>. The STRIPS planner and SOAR cognitive architecture are canonical examples.</p>
+
+      <div class="arch-box">
+        <h4>Deliberative Cycle: Model → Plan → Execute</h4>
+        <p><strong>World Model:</strong> The agent maintains a symbolic representation of the environment (predicates, facts, states).<br/>
+        <strong>Goal:</strong> A desired state expressed in the same symbolic language.<br/>
+        <strong>Planner:</strong> Searches for a sequence of actions that transforms the current state into the goal state.<br/>
+        <strong>Executor:</strong> Carries out the plan step by step.</p>
+        <p><strong>Pros:</strong> Can handle complex, long-horizon tasks; produces explainable plans.<br/>
+        <strong>Cons:</strong> Slow (planning is expensive); brittle when the world deviates from the model.</p>
+      </div>
+
+      <h2>3. Hybrid Architectures</h2>
+      <p>Hybrid architectures, also called <strong>layered architectures</strong>, combine reactive and deliberative components. The reactive layer handles time-critical responses while the deliberative layer plans longer-horizon behaviour. The two layers communicate through a shared state.</p>
+
+      <div class="arch-box">
+        <h4>Three-Layer Architecture</h4>
+        <p><strong>Reactive Layer (bottom):</strong> Sensor data → immediate action. Sub-second response.<br/>
+        <strong>Executive Layer (middle):</strong> Sequences reactive behaviours, monitors plan execution.<br/>
+        <strong>Deliberative Layer (top):</strong> Long-term planning, goal management, world modeling.</p>
+        <p><strong>Modern analogy:</strong> A LangGraph agent where tool-call nodes are reactive, a supervisor node is executive, and an LLM planner node is deliberative.</p>
+      </div>
+
+      <h2>4. BDI Architecture (Preview)</h2>
+      <p>The Beliefs-Desires-Intentions (BDI) model gives agents a formal cognitive structure inspired by human practical reasoning (philosopher Michael Bratman, 1987). We cover BDI in depth in Session 03 — here is a brief preview.</p>
+
+      <div class="arch-box">
+        <h4>BDI Components</h4>
+        <p><strong>Beliefs:</strong> The agent's model of the world — what it thinks is true.<br/>
+        <strong>Desires:</strong> The agent's goals — what it wants to achieve.<br/>
+        <strong>Intentions:</strong> Committed plans the agent has chosen to pursue (a subset of desires).</p>
+        <p>The BDI interpreter loop continuously updates beliefs, selects desires to pursue, and commits to intention-achieving plans.</p>
+      </div>
+
+      <h2>Architecture Comparison Table</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Feature</th><th>Reactive</th><th>Deliberative</th><th>Hybrid</th><th>BDI</th></tr></thead>
+          <tbody>
+            <tr><td>World model</td><td>None</td><td>Explicit symbolic</td><td>Partial</td><td>Belief base</td></tr>
+            <tr><td>Planning</td><td>None</td><td>Full planning</td><td>Executive sequencing</td><td>Plan library</td></tr>
+            <tr><td>Reaction speed</td><td>Very fast</td><td>Slow</td><td>Fast (reactive layer)</td><td>Medium</td></tr>
+            <tr><td>Long-horizon tasks</td><td>Poor</td><td>Excellent</td><td>Good</td><td>Excellent</td></tr>
+            <tr><td>Robustness to change</td><td>High</td><td>Low</td><td>High</td><td>Medium</td></tr>
+            <tr><td>Explainability</td><td>Low</td><td>High</td><td>Medium</td><td>High</td></tr>
+            <tr><td>LLM analogy</td><td>Tool-routing rules</td><td>Plan-and-execute</td><td>LangGraph supervisor</td><td>ReAct + memory</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Choosing the Right Architecture</h2>
+      <p>Use this decision guide when designing a new agent:</p>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Real-time response required (&lt;100ms)?</strong> → Reactive layer is mandatory.</li>
+          <li><strong>Task requires multi-step planning?</strong> → Add a deliberative or BDI layer.</li>
+          <li><strong>Environment changes unpredictably?</strong> → Hybrid architecture for resilience.</li>
+          <li><strong>Goal can change mid-task?</strong> → BDI with intention revision.</li>
+          <li><strong>Multiple concurrent goals?</strong> → BDI or multi-agent system.</li>
+        </ul>
+      </div>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>LLM agents are implicitly hybrid:</strong> The LLM's next-token generation is reactive (it responds immediately to context), while chain-of-thought and tool-use planning add deliberative capability. Understanding this helps you debug why agents behave unexpectedly — often the reactive and deliberative "layers" are fighting each other.</div>
+      </div>
+
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Design an Architecture for a Customer Support Agent</h2>
+          <p>You will sketch and implement a three-layer architecture for a customer support agent that handles refunds, escalations, and FAQs.</p>
+        </div>
+        <div class="lab-steps">
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Define the Three Layers</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python"># Three-layer architecture for a customer support agent
+
+# Layer 1: REACTIVE — immediate classification
+REACTIVE_RULES = {
+    "urgent":   ["emergency", "broken", "not working", "critical"],
+    "refund":   ["refund", "return", "money back", "cancel"],
+    "billing":  ["invoice", "charge", "payment", "bill"],
+    "general":  [],  # fallback
+}
+
+def reactive_layer(message: str) -> str:
+    """Classify intent instantly from keywords."""
+    msg_lower = message.lower()
+    for intent, keywords in REACTIVE_RULES.items():
+        if any(kw in msg_lower for kw in keywords):
+            return intent
+    return "general"
+
+# Test
+test_msgs = [
+    "My service is completely broken and critical!",
+    "I want a refund for order #1234",
+    "What are your business hours?",
+]
+for msg in test_msgs:
+    print(f"  '{msg[:40]}...' → {reactive_layer(msg)}")</code></pre>
+            </div>
+          </div>
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Executive Layer</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python"># Layer 2: EXECUTIVE — sequences actions based on intent
+
+def executive_layer(intent: str, customer_tier: str) -> list:
+    """
+    Returns an ordered list of actions to execute.
+    The executive layer translates intent into an action plan.
+    """
+    plans = {
+        "urgent": [
+            "create_priority_ticket",
+            "notify_on_call_engineer",
+            "send_acknowledgement_email",
+        ],
+        "refund": [
+            "lookup_order",
+            "check_refund_eligibility",
+            "process_refund" if customer_tier == "premium" else "escalate_to_human",
+        ],
+        "billing": [
+            "lookup_billing_account",
+            "generate_invoice_summary",
+            "send_response",
+        ],
+        "general": [
+            "search_knowledge_base",
+            "send_response",
+        ],
+    }
+    return plans.get(intent, plans["general"])
+
+# Test
+print("Urgent plan:", executive_layer("urgent", "standard"))
+print("Refund plan (premium):", executive_layer("refund", "premium"))
+print("Refund plan (standard):", executive_layer("refund", "standard"))</code></pre>
+            </div>
+          </div>
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Add the Deliberative Layer</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from datetime import datetime
+
+# Layer 3: DELIBERATIVE — long-term goal management
+class DeliberativeLayer:
+    def __init__(self):
+        self.active_goals = []
+        self.world_state = {}
+
+    def add_goal(self, goal: dict):
+        self.active_goals.append(goal)
+        print(f"  Goal added: {goal['name']}")
+
+    def update_world_state(self, key: str, value):
+        self.world_state[key] = value
+
+    def select_next_goal(self) -> dict:
+        """Simple priority-based goal selection."""
+        if not self.active_goals:
+            return None
+        # Sort by priority (higher = more urgent)
+        return sorted(self.active_goals, key=lambda g: g.get("priority", 0), reverse=True)[0]
+
+# Assemble the full agent
+class CustomerSupportAgent:
+    def __init__(self):
+        self.deliberative = DeliberativeLayer()
+
+    def handle(self, message: str, customer_tier: str = "standard") -> dict:
+        # Layer 1: Reactive classification
+        intent = reactive_layer(message)
+        # Layer 2: Executive planning
+        action_plan = executive_layer(intent, customer_tier)
+        # Layer 3: Deliberative goal tracking
+        self.deliberative.add_goal({"name": f"resolve_{intent}", "priority": 3 if intent == "urgent" else 1})
+        return {
+            "intent": intent,
+            "plan": action_plan,
+            "active_goals": len(self.deliberative.active_goals),
+            "timestamp": datetime.now().isoformat()
+        }
+
+agent = CustomerSupportAgent()
+result = agent.handle("My payment isn't processing — this is critical!", "premium")
+print("\nAgent response:", result)</code></pre>
+            </div>
+          </div>
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Draw the Architecture Diagram</h3></div>
+            <div class="lab-step-body">
+              <p>In a markdown cell, draw a text-based architecture diagram for your customer support agent. Use the format below as a starting point and add your own labels:</p>
+              <pre><code class="language-markdown">## Customer Support Agent — Three-Layer Architecture
+
+  [User Message]
+       │
+       ▼
+┌─────────────────────────────┐
+│  REACTIVE LAYER             │  ← keyword matching, &lt;1ms
+│  intent = classify(message) │
+└────────────┬────────────────┘
+             │ intent
+             ▼
+┌─────────────────────────────┐
+│  EXECUTIVE LAYER            │  ← action sequencing
+│  plan = actions(intent)     │
+└────────────┬────────────────┘
+             │ plan
+             ▼
+┌─────────────────────────────┐
+│  DELIBERATIVE LAYER         │  ← goal management
+│  goals, world state, retry  │
+└─────────────────────────────┘</code></pre>
+              <p><strong>Extension:</strong> Add arrows showing how the deliberative layer can update the reactive rules (e.g., after learning a new escalation keyword from past failures).</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/foundations/01-intro.html" class="session-nav-btn" id="prev-session">
+        <span class="nav-label">Previous</span>
+        <span class="nav-title">‹ What Is Agentic AI?</span>
+      </a>
+      <a href="/Agentic-AI/sessions/foundations/03-bdi.html" class="session-nav-btn next" id="next-session">
+        <span class="nav-label">Next</span>
+        <span class="nav-title">BDI: Beliefs, Desires, Intentions ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-02",
+  title: "Agent Architectures Overview",
+  section: "foundations",
+  quizData: [
+    { type: "mcq", question: "Rodney Brooks' Subsumption Architecture is an example of which agent type?", options: ["Deliberative", "BDI", "Reactive", "Hybrid"], correct: 2, explanation: "The Subsumption Architecture is the canonical reactive architecture — it uses layered stimulus-response rules with no explicit world model or planning." },
+    { type: "mcq", question: "What is the main weakness of deliberative architectures?", options: ["They cannot use tools", "They are too fast", "They are brittle when the world deviates from the model", "They have no memory"], correct: 2, explanation: "Deliberative agents build an explicit world model and plan against it. When reality diverges from the model (unexpected events), the plan breaks down." },
+    { type: "mcq", question: "In a hybrid three-layer architecture, which layer handles time-critical responses?", options: ["Deliberative layer", "Executive layer", "Reactive layer", "Memory layer"], correct: 2, explanation: "The reactive (bottom) layer responds to sensor input with near-zero latency. The executive and deliberative layers operate on longer timescales." },
+    { type: "mcq", question: "Which architecture family gives agents a formal model with Beliefs, Desires, and Intentions?", options: ["Subsumption", "STRIPS", "BDI", "Reactive"], correct: 2, explanation: "The BDI model (Bratman, 1987) gives agents a cognitive structure: Beliefs (world model), Desires (goals), and Intentions (committed plans)." },
+    { type: "mcq", question: "An LLM agent with chain-of-thought reasoning and tool use is best described as:", options: ["Purely reactive", "Purely deliberative", "Implicitly hybrid (reactive generation + deliberative planning)", "A BDI agent with no beliefs"], correct: 2, explanation: "LLM next-token generation is reactive (immediate response to context). Chain-of-thought and tool-use planning add a deliberative component, making modern LLM agents implicitly hybrid." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

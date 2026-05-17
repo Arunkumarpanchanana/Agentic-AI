@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Debate, Voting & Consensus — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-multi{background:#a855f7;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1a0f2e;border:1px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#a855f7;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#a855f7;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/multi-agent.html">Multi-Agent</a><span class="sep">›</span><span>Session 17</span></div>
+      <h1 class="session-title">Debate, Voting & Consensus</h1>
+      <p class="session-tagline">Society of Mind, LLM debate, majority voting, ranked choice, and Delphi method for multi-agent truth-seeking.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-multi"><i class="fas fa-balance-scale"></i> Multi-Agent</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Society of Mind</h2>
+      <p>Marvin Minsky's <em>Society of Mind</em> (1986) proposed that human intelligence arises not from a single monolithic process but from the interaction of many simple agents — each responsible for a narrow capability, collectively producing intelligent behaviour. This maps beautifully to LLM multi-agent systems: rather than asking one model to do everything, build a society of specialized agents that debate, critique, and synthesize.</p>
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Core idea:</strong> Multiple agents independently reason about the same problem, then combine their conclusions through a consensus mechanism. This reduces the impact of any single agent's bias or hallucination.</div>
+      </div>
+
+      <h2>LLM Debate (Du et al., 2023)</h2>
+      <p>Yilun Du and colleagues showed in 2023 that having multiple LLM agents debate each other significantly improves factual accuracy and reasoning quality. The debate protocol:</p>
+      <div class="card">
+        <ol style="line-height:2.2">
+          <li><strong>Round 1:</strong> Each agent independently answers the question.</li>
+          <li><strong>Round 2+:</strong> Each agent reads all other agents' answers and writes a critique + revised answer.</li>
+          <li><strong>Final round:</strong> Agents produce their final position after N rounds of debate.</li>
+          <li><strong>Synthesis:</strong> A judge agent or voting mechanism selects the best final answer.</li>
+        </ol>
+      </div>
+      <p>The paper showed debate improved performance on arithmetic, reasoning, and factual tasks — outperforming single-agent chain-of-thought on complex problems.</p>
+
+      <h2>Voting Mechanisms</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Method</th><th>How it works</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Majority vote</strong></td><td>Most common answer wins</td><td>Binary/categorical answers (True/False, A/B/C/D)</td></tr>
+            <tr><td><strong>Weighted vote</strong></td><td>Agents with higher trust scores get more weight</td><td>When agents have known reliability differences</td></tr>
+            <tr><td><strong>Ranked choice</strong></td><td>Agents rank options; instant-runoff elimination</td><td>Multiple answer options with preference ordering</td></tr>
+            <tr><td><strong>Confidence-weighted</strong></td><td>Each agent reports a confidence score; weighted average</td><td>Numerical estimates (prices, dates, quantities)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Delphi Method for Agents</h2>
+      <p>The Delphi method is a structured expert consensus technique from the 1950s (RAND Corporation) that iteratively converges expert opinion. Adapted for LLM agents:</p>
+      <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+
+AGENT_PERSONAS = [
+    ("Optimist", "You are an optimistic analyst who focuses on opportunities and potential."),
+    ("Skeptic",  "You are a skeptical analyst who focuses on risks, uncertainties, and counter-evidence."),
+    ("Pragmatist","You are a pragmatic analyst who focuses on practical implementation and real-world constraints."),
+]
+
+def delphi_round(question: str, previous_responses: list = None, round_num: int = 1) -> dict:
+    """Run one Delphi round: each agent answers, optionally seeing previous round answers."""
+    responses = {}
+    context = ""
+    if previous_responses:
+        context = "\n\nPrevious round answers from other analysts:\n" + "\n".join(
+            [f"- {name}: {resp[:200]}" for name, resp in previous_responses.items()]
+        ) + "\n\nConsider these perspectives in your answer, but maintain independent judgment."
+
+    for name, system_prompt in AGENT_PERSONAS:
+        response = llm([
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=f"Round {round_num}. Question: {question}{context}\n\nYour analysis (2-3 sentences):")
+        ]).content
+        responses[name] = response
+        print(f"  [{name}]: {response[:120]}...")
+    return responses
+
+def run_delphi(question: str, rounds: int = 2) -> str:
+    print(f"Question: {question}\n")
+    all_responses = None
+    for r in range(1, rounds+1):
+        print(f"=== Round {r} ===")
+        all_responses = delphi_round(question, all_responses, r)
+    # Synthesize
+    synthesis_prompt = f"Synthesise these expert analyses into one balanced conclusion:\n" + \
+        "\n".join([f"{k}: {v}" for k,v in all_responses.items()])
+    final = llm([HumanMessage(content=synthesis_prompt)]).content
+    return final</code></pre>
+
+      <h2>Self-Consistency Voting</h2>
+      <p>Self-consistency (Wang et al., 2022) is a simpler consensus technique: sample the same LLM multiple times with temperature > 0, then take majority vote. This works because different reasoning paths often converge on the correct answer even when individual paths vary.</p>
+      <pre><code class="language-python">from collections import Counter
+
+def self_consistency_vote(question: str, n_samples: int = 5) -> str:
+    """Sample LLM n times and take majority vote on the final answer."""
+    llm_sampler = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+    answers = []
+    for i in range(n_samples):
+        response = llm_sampler([HumanMessage(content=f"Answer with just the final answer (no explanation):\n{question}")]).content.strip()
+        answers.append(response)
+        print(f"  Sample {i+1}: {response}")
+    # Vote
+    counts = Counter(answers)
+    winner, votes = counts.most_common(1)[0]
+    confidence = votes / n_samples
+    print(f"\nVote result: '{winner}' ({votes}/{n_samples} = {confidence:.0%} confidence)")
+    return winner</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Cost vs quality tradeoff:</strong> Debate and Delphi multiply LLM calls (3 agents × 2 rounds × synthesis = 7+ calls). Self-consistency is cheaper (n samples of one model). Use debate for high-stakes fact-checking; self-consistency for numerical estimation; majority vote for MCQ-style tasks.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: 3-Agent Debate to Fact-Check a Claim</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Setup Agents</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">!pip install langchain langchain-openai -q
+import os; os.environ["OPENAI_API_KEY"] = "your-key"
+from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
+from collections import Counter
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+
+agents = {
+    "FactChecker": "You are a rigorous fact-checker. Evaluate claims against known evidence. Be specific about what is confirmed, uncertain, or false.",
+    "Advocate":    "You are a devil's advocate. Find ways the claim could be true even if it seems false. Look for nuance.",
+    "Skeptic":     "You are deeply skeptical. Find every reason the claim might be false, exaggerated, or misleading.",
+}
+claim = "The Great Wall of China is visible from space with the naked eye."
+print(f"Claim to fact-check: '{claim}'")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Round 1: Independent Positions</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def agent_respond(name, system, claim, context=""):
+    return llm([
+        SystemMessage(content=system),
+        HumanMessage(content=f"Claim: '{claim}'\n{context}\nYour analysis (3 sentences max):")
+    ]).content
+
+round1 = {}
+print("=== ROUND 1: Independent Positions ===")
+for name, system in agents.items():
+    r = agent_respond(name, system, claim)
+    round1[name] = r
+    print(f"\n[{name}]: {r}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Round 2: Debate After Seeing Others</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">round2 = {}
+print("=== ROUND 2: Revised Positions After Debate ===")
+for name, system in agents.items():
+    others = "\n".join([f"- {n}: {r[:150]}" for n,r in round1.items() if n != name])
+    context = f"\nOther analysts said:\n{others}\nRevise your position if warranted:"
+    r = agent_respond(name, system, claim, context)
+    round2[name] = r
+    print(f"\n[{name}]: {r}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Verdict and Consensus</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">print("=== FINAL VERDICT ===")
+# Ask each agent for a binary verdict
+verdicts = {}
+for name, system in agents.items():
+    v = llm([
+        SystemMessage(content=system),
+        HumanMessage(content=f"Based on our debate, is this claim TRUE or FALSE? Answer with just TRUE or FALSE.\nClaim: '{claim}'\nYour round 2 position: {round2[name][:200]}")
+    ]).content.strip().upper()
+    verdict = "TRUE" if "TRUE" in v else "FALSE"
+    verdicts[name] = verdict
+    print(f"  {name}: {verdict}")
+
+counts = Counter(verdicts.values())
+final_verdict = counts.most_common(1)[0][0]
+confidence = counts.most_common(1)[0][1] / len(agents)
+print(f"\nConsensus Verdict: {final_verdict} ({confidence:.0%} agreement)")
+
+# Synthesize final explanation
+synth = llm([HumanMessage(content=f"The claim '{claim}' was debated by 3 analysts who concluded {final_verdict}. Write a 2-sentence explanation of the verdict based on:\n" + "\n".join([f"{n}: {r}" for n,r in round2.items()]))]).content
+print(f"\nExplanation: {synth}")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/multi-agent/16-swarms.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Swarms</span>
+      </a>
+      <a href="/Agentic-AI/sessions/evaluation/18-benchmarks.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Agent Benchmarks ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-17",
+  title: "Debate, Voting & Consensus",
+  section: "multi-agent",
+  quizData: [
+    { type: "mcq", question: "Marvin Minsky's 'Society of Mind' proposes that intelligence arises from:", options: ["A single powerful AI model", "Many simple specialized agents interacting", "Hierarchical planning algorithms", "Reinforcement learning agents"], correct: 1, explanation: "Minsky proposed intelligence emerges from many simple agents, each with narrow capability, collectively producing intelligent behaviour — directly analogous to modern LLM multi-agent systems." },
+    { type: "mcq", question: "In LLM debate (Du et al. 2023), what happens in rounds 2 and beyond?", options: ["Agents answer independently again", "Each agent reads other agents' answers and writes a critique + revised position", "A judge agent selects the best answer", "Agents are given new tools"], correct: 1, explanation: "Round 2+ has each agent reading all others' answers and revising their position. This iterative refinement through exposure to different perspectives improves accuracy." },
+    { type: "mcq", question: "Self-consistency voting works by:", options: ["Having multiple different models vote", "Sampling the same LLM multiple times and taking majority vote on the final answer", "Asking the agent to score its own confidence", "Using a retrieval system to verify answers"], correct: 1, explanation: "Self-consistency (Wang 2022) samples the same LLM n times with temperature > 0 then majority-votes. Different reasoning paths often converge on the correct answer." },
+    { type: "mcq", question: "Ranked choice voting is most appropriate when:", options: ["Agents have a binary true/false question", "There are multiple answer options and agents have preference orderings over them", "All agents agree", "Speed is the priority"], correct: 1, explanation: "Ranked choice (instant-runoff) handles multi-option decisions where majority can't be achieved on first count — agents rank options and lower-preference options are eliminated iteratively." },
+    { type: "mcq", question: "The Delphi method's key distinguishing feature is:", options: ["Using the internet for research", "Iterative rounds where participants revise positions after seeing anonymous summaries of others' views", "Voting with equal weights", "Using only expert agents"], correct: 1, explanation: "The Delphi method uses iterative rounds with anonymous feedback — participants see a summary of the group's views and revise, converging toward consensus while maintaining independent judgment." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

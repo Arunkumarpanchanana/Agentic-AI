@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Memory Systems for Agents — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .badge-capabilities { background: #10b981; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #10b981; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #10b981; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .mem-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; margin: 1rem 0; }
+    .mem-card { background: #1e293b; border: 2px solid #10b981; border-radius: 10px; padding: 1rem; }
+    .mem-card h4 { color: #10b981; margin: 0 0 0.5rem 0; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #10b981; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .session-nav-btn { background: #10b981; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/capabilities.html">Capabilities</a><span class="sep">›</span><span>Session 07</span></div>
+      <h1 class="session-title">Memory Systems for Agents</h1>
+      <p class="session-tagline">Design working, episodic, semantic, and procedural memory for agents that remember across sessions.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-capabilities"><i class="fas fa-database"></i> Capabilities</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Agents Need Memory</h2>
+      <p>A stateless LLM forgets everything after each API call. For short Q&amp;A, that is fine. But agentic tasks — completing a week-long research project, maintaining a user relationship over months, building a codebase incrementally — require memory that <em>persists beyond a single context window</em>.</p>
+      <p>Memory enables agents to: avoid repeating work, learn from past mistakes, personalise responses to users, and maintain coherent state across many steps. Without it, every session starts cold.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Four memory types:</strong> Working (context window), Episodic (event log), Semantic (vector store of facts), Procedural (fine-tuned skills). Each has different read/write speeds, capacities, and use cases.</div>
+      </div>
+
+      <h2>The Four Memory Types</h2>
+      <div class="mem-grid">
+        <div class="mem-card">
+          <h4>1. Working Memory</h4>
+          <p style="font-size:0.88rem">The current context window — everything the LLM sees right now. Fast, expensive (costs tokens), ephemeral. Cleared at end of conversation.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">Capacity: 8k–200k tokens | Speed: instant | Persistence: zero</p>
+        </div>
+        <div class="mem-card">
+          <h4>2. Episodic Memory</h4>
+          <p style="font-size:0.88rem">A log of past events, interactions, and observations. Written sequentially, retrieved by time or similarity. Like a diary.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">Capacity: unlimited | Speed: fast write, slow retrieval | Persistence: session or long-term</p>
+        </div>
+        <div class="mem-card">
+          <h4>3. Semantic Memory</h4>
+          <p style="font-size:0.88rem">A knowledge base of facts, concepts, and relationships stored as vector embeddings. Retrieval by semantic similarity via cosine distance.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">Capacity: millions of chunks | Speed: fast retrieval | Persistence: long-term</p>
+        </div>
+        <div class="mem-card">
+          <h4>4. Procedural Memory</h4>
+          <p style="font-size:0.88rem">Skill memory — how to do things. Encoded in model weights via fine-tuning, or in tool definitions and prompt templates.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">Capacity: model weights | Speed: instant (in weights) | Persistence: permanent until retrained</p>
+        </div>
+      </div>
+
+      <h2>Memory Read/Write Patterns</h2>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Pattern</th><th>When to use</th><th>Implementation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Write-on-event</strong></td><td>Save important observations immediately</td><td>Store tool results, key decisions to episodic log</td></tr>
+            <tr><td><strong>Read-before-think</strong></td><td>Retrieve relevant context before reasoning</td><td>Vector similarity search on semantic store</td></tr>
+            <tr><td><strong>Summarise-and-compress</strong></td><td>When context window is filling up</td><td>Summarise older conversation turns; keep only summary</td></tr>
+            <tr><td><strong>Forget-on-irrelevance</strong></td><td>Prune stale or low-value memories</td><td>TTL-based expiry or importance scoring</td></tr>
+            <tr><td><strong>Reflect-and-abstract</strong></td><td>Generalise from specific episodes</td><td>Periodically summarise episodes into semantic facts</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Vector Databases for Long-Term Memory</h2>
+      <p>Semantic memory is typically implemented with a <strong>vector database</strong> — a store that indexes high-dimensional embedding vectors and supports approximate nearest-neighbour search. Popular options:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Database</th><th>Best for</th><th>Hosting</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ChromaDB</strong></td><td>Local development, prototyping</td><td>In-process or local server</td></tr>
+            <tr><td><strong>Pinecone</strong></td><td>Production at scale</td><td>Managed cloud</td></tr>
+            <tr><td><strong>Weaviate</strong></td><td>Hybrid search (keyword + vector)</td><td>Self-hosted or managed</td></tr>
+            <tr><td><strong>Qdrant</strong></td><td>High-performance, Rust-based</td><td>Self-hosted or managed</td></tr>
+            <tr><td><strong>pgvector</strong></td><td>Adding vectors to existing Postgres</td><td>Your existing DB</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Adding ChromaDB Memory to an Agent</h2>
+      <pre><code class="language-python">import chromadb
+from chromadb.utils import embedding_functions
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.memory import VectorStoreRetrieverMemory
+from langchain_community.vectorstores import Chroma
+
+# --- Setup ChromaDB ---
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma(
+    collection_name="agent_memory",
+    embedding_function=embeddings,
+    persist_directory="./agent_memory_db"
+)
+
+# --- Memory interface ---
+retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+memory = VectorStoreRetrieverMemory(retriever=retriever)
+
+# --- Write to memory ---
+memory.save_context(
+    inputs={"input": "What is the capital of France?"},
+    outputs={"output": "The capital of France is Paris. Population ~2.1 million."}
+)
+memory.save_context(
+    inputs={"input": "What language do they speak in France?"},
+    outputs={"output": "French is the official language of France."}
+)
+
+# --- Read from memory ---
+relevant = memory.load_memory_variables({"input": "Tell me about France"})
+print("Retrieved memories:")
+print(relevant["history"])</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#10b981;margin-top:2px"></i>
+        <div><strong>Memory architecture tip:</strong> Use a two-tier approach — fast in-memory cache (dict) for recent interactions, vector store for long-term retrieval. Most queries hit the cache; the vector store handles cross-session recall. This keeps latency low while maintaining depth.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Build an Agent with Vector Store Memory</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Install ChromaDB</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">!pip install chromadb langchain langchain-openai -q
+import chromadb, os
+os.environ["OPENAI_API_KEY"] = "your-key"
+client = chromadb.Client()
+collection = client.create_collection("conversations")
+print("ChromaDB ready. Collections:", client.list_collections())</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Implement Memory Write and Read</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain_openai import OpenAIEmbeddings
+import uuid, time
+
+embeddings_model = OpenAIEmbeddings()
+
+def remember(collection, user_msg, agent_response):
+    """Write a conversation turn to vector memory."""
+    text = f"User: {user_msg}\nAgent: {agent_response}"
+    embedding = embeddings_model.embed_query(text)
+    collection.add(
+        ids=[str(uuid.uuid4())],
+        embeddings=[embedding],
+        documents=[text],
+        metadatas=[{"timestamp": time.time(), "user": user_msg}]
+    )
+    print(f"  [MEMORY WRITE] Stored: '{user_msg[:50]}...'")
+
+def recall(collection, query, n=3):
+    """Retrieve most relevant past memories."""
+    query_embedding = embeddings_model.embed_query(query)
+    results = collection.query(query_embeddings=[query_embedding], n_results=n)
+    return results["documents"][0] if results["documents"] else []
+
+# Populate with some history
+remember(collection, "I prefer concise answers", "Understood, I'll keep responses brief.")
+remember(collection, "My name is Alex", "Nice to meet you, Alex!")
+remember(collection, "I'm working on a Python project using FastAPI", "FastAPI is a great choice for async APIs.")
+remember(collection, "What's a good ORM for FastAPI?", "SQLAlchemy with async support works well with FastAPI.")
+
+# Test recall
+memories = recall(collection, "What do you know about my project?")
+print("\nRelevant memories retrieved:")
+for m in memories:
+    print(f"  - {m[:100]}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Build a Memory-Augmented Agent</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+def memory_agent(user_input: str, collection) -> str:
+    # Retrieve relevant memories
+    memories = recall(collection, user_input, n=3)
+    memory_context = "\n".join(memories) if memories else "No relevant past interactions."
+    # Build prompt with memory context
+    messages = [
+        SystemMessage(content=f"""You are a helpful assistant with memory of past conversations.
+Relevant past interactions:
+{memory_context}
+Use this context to personalise your response."""),
+        HumanMessage(content=user_input)
+    ]
+    response = llm(messages)
+    answer = response.content
+    # Save this interaction to memory
+    remember(collection, user_input, answer)
+    return answer
+
+# Test the memory agent
+print(memory_agent("Can you suggest a database for my project?", collection))
+print()
+print(memory_agent("What's my name again?", collection))</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Test Memory Persistence</h3></div>
+            <div class="lab-step-body">
+              <p>Switch ChromaDB to persistent mode and verify memory survives a Python restart:</p>
+              <pre><code class="language-python">import chromadb
+# Use persistent client — data saved to disk
+persistent_client = chromadb.PersistentClient(path="./my_agent_memory")
+p_collection = persistent_client.get_or_create_collection("conversations")
+
+# Write something
+p_collection.add(ids=["test-1"], documents=["User prefers dark mode UI"], embeddings=[embeddings_model.embed_query("User prefers dark mode UI")])
+
+# Simulate restart by creating a NEW client pointing to same path
+client2 = chromadb.PersistentClient(path="./my_agent_memory")
+c2 = client2.get_collection("conversations")
+print("Records after restart:", c2.count())
+results = c2.query(query_embeddings=[embeddings_model.embed_query("UI preferences")], n_results=1)
+print("Retrieved:", results["documents"])</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/foundations/06-cognitive-loops.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Cognitive Loops</span>
+      </a>
+      <a href="/Agentic-AI/sessions/capabilities/08-tools.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Tool Design & API Integration ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-07",
+  title: "Memory Systems for Agents",
+  section: "capabilities",
+  quizData: [
+    { type: "mcq", question: "Which memory type stores the current conversation context within the LLM's active window?", options: ["Episodic memory", "Semantic memory", "Working memory", "Procedural memory"], correct: 2, explanation: "Working memory is the context window — fast, ephemeral, and limited in size. Everything the LLM sees right now lives in working memory." },
+    { type: "mcq", question: "A vector database retrieves memories using:", options: ["SQL JOIN queries", "Approximate nearest-neighbour search on embedding vectors", "Full-text keyword matching only", "Random sampling"], correct: 1, explanation: "Vector databases embed text as high-dimensional vectors and find similar memories by computing cosine or Euclidean distance between vectors." },
+    { type: "mcq", question: "Procedural memory in an agent is best described as:", options: ["A log of past conversations", "Skills encoded in model weights or tool definitions", "The current context window", "A key-value cache of recent facts"], correct: 1, explanation: "Procedural memory encodes 'how to do things' — in LLM agents this lives in fine-tuned weights, tool schemas, and prompt templates." },
+    { type: "mcq", question: "The 'summarise-and-compress' memory pattern is used when:", options: ["The vector database is full", "The context window is filling up and older content must be compressed", "The agent starts a new task", "Tools return too much data"], correct: 1, explanation: "When the context window fills up, older conversation turns are summarised by an LLM and replaced with the summary, freeing space for new observations." },
+    { type: "mcq", question: "Which vector database is best suited for local development and prototyping?", options: ["Pinecone", "Weaviate", "ChromaDB", "pgvector"], correct: 2, explanation: "ChromaDB runs in-process with zero infrastructure setup, making it ideal for local development and prototyping before switching to a managed solution." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

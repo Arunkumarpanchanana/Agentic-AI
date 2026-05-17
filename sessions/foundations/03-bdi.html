@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BDI: Beliefs, Desires, Intentions — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .badge-foundations { background: #6366f1; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .bdi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin: 1rem 0; }
+    .bdi-card { background: #1e293b; border: 2px solid #6366f1; border-radius: 10px; padding: 1rem; text-align: center; }
+    .bdi-card h4 { color: #6366f1; margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #6366f1; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .session-nav-btn { background: #6366f1; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/foundations.html">Foundations</a><span class="sep">›</span><span>Session 03</span></div>
+      <h1 class="session-title">BDI: Beliefs, Desires, Intentions</h1>
+      <p class="session-tagline">Master the BDI cognitive model — the theoretical backbone of goal-directed autonomous agents.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-foundations"><i class="fas fa-brain"></i> Foundations</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Origins of the BDI Model</h2>
+      <p>The BDI (Beliefs-Desires-Intentions) model was formalised by philosopher Michael Bratman in 1987 in his work <em>Intention, Plans, and Practical Reason</em>. Bratman was studying how humans manage competing goals and commit to plans despite limited time and resources. AI researchers Rao and Georgeff adapted this into a computational model in 1991, which became the foundation for the <strong>Procedural Reasoning System (PRS)</strong> — one of the first deployed multi-agent systems.</p>
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Why BDI matters for LLM agents:</strong> BDI gives us precise vocabulary to describe what agents "know," "want," and "plan to do" — vocabulary that maps directly to prompt design, memory architecture, and goal management in modern systems.</div>
+      </div>
+
+      <h2>The Three Components</h2>
+      <div class="bdi-grid">
+        <div class="bdi-card">
+          <h4>Beliefs (B)</h4>
+          <p style="font-size:0.88rem">The agent's model of the world — what it thinks is currently true. Beliefs can be incomplete or wrong. They are updated as new information arrives.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">LLM analogy: system prompt + conversation history + retrieved context</p>
+        </div>
+        <div class="bdi-card">
+          <h4>Desires (D)</h4>
+          <p style="font-size:0.88rem">The agent's motivational states — all the things it would like to achieve. Multiple desires can exist simultaneously and may conflict with each other.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">LLM analogy: user-provided goals + implicit objectives (be helpful, be safe)</p>
+        </div>
+        <div class="bdi-card">
+          <h4>Intentions (I)</h4>
+          <p style="font-size:0.88rem">The subset of desires the agent has committed to pursue. Intentions constrain future reasoning — the agent doesn't constantly re-evaluate committed plans.</p>
+          <p style="font-size:0.8rem;color:#94a3b8">LLM analogy: the current task plan selected by the planner node</p>
+        </div>
+      </div>
+
+      <h2>The BDI Interpreter Loop</h2>
+      <p>The BDI model is not just a data structure — it is an operational loop. At each cycle the interpreter:</p>
+      <div class="card">
+        <ol style="line-height:2.2">
+          <li><strong>Update Beliefs:</strong> Process new perceptions and update the belief base.</li>
+          <li><strong>Generate Options (Desires):</strong> Based on current beliefs and active intentions, generate a set of possible desires.</li>
+          <li><strong>Filter (Select Intentions):</strong> Choose which desires to commit to as intentions, balancing feasibility and priority.</li>
+          <li><strong>Execute Intention:</strong> Select the next action from the current intention's plan and execute it.</li>
+          <li><strong>Check Completion:</strong> If the intention is achieved or impossible, drop it and return to step 2.</li>
+        </ol>
+      </div>
+
+      <h2>Intention Reconsideration</h2>
+      <p>A subtle but critical aspect of BDI is <strong>when to reconsider intentions</strong>. Two extreme strategies:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Strategy</th><th>Behaviour</th><th>Problem</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Fanatic</strong></td><td>Never reconsiders — always completes the current intention</td><td>Misses opportunities when the world changes; pursues impossible goals</td></tr>
+            <tr><td><strong>Cautious</strong></td><td>Reconsiders after every action</td><td>Too much planning overhead; never commits long enough to succeed</td></tr>
+            <tr><td><strong>Balanced</strong></td><td>Reconsiders only when the world changes significantly</td><td>Requires good change-detection heuristics</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Modern LLM agent frameworks implement "balanced" reconsideration through mechanisms like LangGraph's conditional edges — the agent checks whether its current plan is still valid at each node and can branch to a replanning node if needed.</p>
+
+      <h2>The PRS System</h2>
+      <p>The Procedural Reasoning System (PRS), built by Rao and Georgeff at SRI International, was one of the first full BDI implementations. It used a <strong>plan library</strong> — a database of pre-written plans (called <em>KA plans</em>) indexed by triggering conditions. When a desire matched a plan's condition, PRS would select that plan as an intention.</p>
+      <p>PRS was deployed in real applications including NASA's spacecraft monitoring systems and air traffic management. This demonstrated that BDI was not just theory — it could handle real-world complexity.</p>
+
+      <h2>BDI Python Skeleton</h2>
+      <pre><code class="language-python">from dataclasses import dataclass, field
+from typing import Any, Callable, Optional
+import time
+
+@dataclass
+class Belief:
+    key: str
+    value: Any
+    confidence: float = 1.0  # 0.0 - 1.0
+    timestamp: float = field(default_factory=time.time)
+
+@dataclass
+class Desire:
+    name: str
+    condition: Callable  # returns True when desire is satisfied
+    priority: int = 1    # higher = more important
+
+@dataclass
+class Plan:
+    name: str
+    trigger: str         # desire name this plan achieves
+    steps: list          # list of callables (actions)
+    precondition: Callable = lambda beliefs: True
+
+class BDIAgent:
+    def __init__(self, name: str):
+        self.name = name
+        self.beliefs: dict[str, Belief] = {}
+        self.desires: list[Desire] = []
+        self.intentions: list[Plan] = []  # committed plans
+        self.plan_library: list[Plan] = []
+
+    def update_belief(self, key: str, value: Any, confidence: float = 1.0):
+        self.beliefs[key] = Belief(key, value, confidence)
+        print(f"[{self.name}] Belief updated: {key} = {value}")
+
+    def add_desire(self, desire: Desire):
+        self.desires.append(desire)
+
+    def add_plan(self, plan: Plan):
+        self.plan_library.append(plan)
+
+    def select_intention(self) -> Optional[Plan]:
+        """Filter desires → select highest-priority achievable desire → find matching plan."""
+        achievable = [d for d in self.desires if not d.condition(self.beliefs)]
+        if not achievable:
+            return None
+        best_desire = max(achievable, key=lambda d: d.priority)
+        # Find a plan for this desire whose preconditions are met
+        for plan in self.plan_library:
+            if plan.trigger == best_desire.name and plan.precondition(self.beliefs):
+                return plan
+        return None
+
+    def run_cycle(self):
+        print(f"\n[{self.name}] --- BDI Cycle ---")
+        intention = self.select_intention()
+        if not intention:
+            print(f"[{self.name}] No applicable intention found.")
+            return False
+        print(f"[{self.name}] Executing plan: {intention.name}")
+        for step in intention.steps:
+            step(self)
+        return True
+
+
+# Example usage
+def pickup_package(agent):
+    print(f"  Action: Moving to pickup location")
+    agent.update_belief("has_package", True)
+
+def deliver_package(agent):
+    print(f"  Action: Delivering package to destination")
+    agent.update_belief("delivered", True)
+    agent.update_belief("has_package", False)
+
+agent = BDIAgent("DeliveryBot")
+agent.update_belief("has_package", False)
+agent.update_belief("delivered", False)
+
+agent.add_desire(Desire(
+    name="deliver_item",
+    condition=lambda b: b.get("delivered", Belief("delivered", False)).value,
+    priority=5
+))
+
+agent.add_plan(Plan(
+    name="pickup_and_deliver",
+    trigger="deliver_item",
+    steps=[pickup_package, deliver_package],
+    precondition=lambda b: not b.get("has_package", Belief("hp", False)).value
+))
+
+agent.run_cycle()</code></pre>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>BDI in LLM agents:</strong> When you use LangChain's <code>AgentExecutor</code>, the system prompt encodes beliefs, the user goal encodes a desire, and the ReAct loop's selected tool calls are intentions. BDI gives you the conceptual clarity to design these components deliberately rather than by trial and error.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Implement a BDI Agent for a Delivery Task</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Setup the BDI Framework</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from dataclasses import dataclass, field
+from typing import Any, Callable, Optional, List
+import random
+
+@dataclass
+class Belief:
+    key: str
+    value: Any
+
+class BeliefBase:
+    def __init__(self):
+        self._beliefs = {}
+    def set(self, key, value):
+        self._beliefs[key] = value
+        print(f"  [BELIEF] {key} = {value}")
+    def get(self, key, default=None):
+        return self._beliefs.get(key, default)
+    def __repr__(self):
+        return str(self._beliefs)
+
+bb = BeliefBase()
+bb.set("location", "warehouse")
+bb.set("has_package", False)
+bb.set("battery", 100)
+print("Initial beliefs:", bb)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Define Desires and Plans</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">desires = [
+    {"name": "recharge",      "priority": 10, "satisfied": lambda bb: bb.get("battery") >= 20},
+    {"name": "pickup",        "priority": 5,  "satisfied": lambda bb: bb.get("has_package")},
+    {"name": "deliver",       "priority": 8,  "satisfied": lambda bb: bb.get("delivered", False)},
+]
+
+plan_library = {
+    "recharge": [
+        ("go_to_charger",  lambda bb: bb.set("location", "charger")),
+        ("charge_battery", lambda bb: bb.set("battery", 100)),
+    ],
+    "pickup": [
+        ("go_to_warehouse", lambda bb: bb.set("location", "warehouse")),
+        ("pick_up_package", lambda bb: bb.set("has_package", True)),
+    ],
+    "deliver": [
+        ("go_to_destination", lambda bb: bb.set("location", "customer")),
+        ("drop_off_package",  lambda bb: (bb.set("has_package", False), bb.set("delivered", True))),
+    ],
+}
+
+# Simulate low battery
+bb.set("battery", 15)
+print("\nBeliefs after battery drain:", bb)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Run the BDI Interpreter Loop</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">def bdi_loop(bb, desires, plan_library, max_cycles=10):
+    for cycle in range(max_cycles):
+        print(f"\n=== Cycle {cycle+1} | Battery: {bb.get('battery')}% | Location: {bb.get('location')} ===")
+        # Select highest-priority unsatisfied desire
+        active = [d for d in desires if not d["satisfied"](bb)]
+        if not active:
+            print("All goals achieved!")
+            return True
+        intention = max(active, key=lambda d: d["priority"])
+        print(f"  Intention: {intention['name']}")
+        # Execute plan
+        plan = plan_library.get(intention["name"], [])
+        for action_name, action_fn in plan:
+            print(f"  Executing: {action_name}")
+            action_fn(bb)
+        # Simulate battery drain
+        bb.set("battery", max(0, bb.get("battery") - 10))
+    print("Max cycles reached.")
+    return False
+
+bdi_loop(bb, desires, plan_library)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Extend: Add Intention Reconsideration</h3></div>
+            <div class="lab-step-body">
+              <p>Modify the loop so that if the battery drops below 20% mid-execution, the current plan is abandoned and the "recharge" desire takes priority. Test by setting battery to 25% at the start.</p>
+              <pre><code class="language-python">def bdi_loop_with_reconsideration(bb, desires, plan_library, max_cycles=15):
+    for cycle in range(max_cycles):
+        print(f"\n=== Cycle {cycle+1} ===")
+        active = [d for d in desires if not d["satisfied"](bb)]
+        if not active:
+            print("All goals achieved!")
+            return
+        intention = max(active, key=lambda d: d["priority"])
+        print(f"  Intention: {intention['name']}")
+        plan = plan_library.get(intention["name"], [])
+        for action_name, action_fn in plan:
+            # RECONSIDER before each step
+            urgent = [d for d in desires if not d["satisfied"](bb) and d["priority"] > intention["priority"]]
+            if urgent:
+                print(f"  [RECONSIDER] Switching to: {urgent[0]['name']}")
+                break
+            print(f"  Executing: {action_name}")
+            action_fn(bb)
+            bb.set("battery", max(0, bb.get("battery") - 5))
+
+bb2 = BeliefBase()
+bb2.set("location", "warehouse"); bb2.set("has_package", False)
+bb2.set("battery", 25); bb2.set("delivered", False)
+bdi_loop_with_reconsideration(bb2, desires, plan_library)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/foundations/02-architectures.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Agent Architectures</span>
+      </a>
+      <a href="/Agentic-AI/sessions/foundations/04-react.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">ReAct: Reasoning + Acting ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-03",
+  title: "BDI: Beliefs, Desires, Intentions",
+  section: "foundations",
+  quizData: [
+    { type: "mcq", question: "Who originally formalised the BDI model for practical reasoning?", options: ["Rodney Brooks", "Michael Bratman", "Alan Turing", "Marvin Minsky"], correct: 1, explanation: "Philosopher Michael Bratman formalised BDI in 1987 in 'Intention, Plans, and Practical Reason'. Rao and Georgeff later adapted it computationally." },
+    { type: "mcq", question: "In BDI, 'Intentions' differ from 'Desires' because:", options: ["Intentions are physical actions", "Intentions are committed plans chosen from desires", "Intentions never change", "Desires require tool calls"], correct: 1, explanation: "Desires are all possible goals. Intentions are the subset the agent commits to pursue — constraining future reasoning to avoid constant replanning." },
+    { type: "mcq", question: "A 'fanatic' BDI agent is one that:", options: ["Reconsiders its intentions after every action", "Never reconsiders its current intention", "Only pursues one desire at a time", "Uses LLMs for planning"], correct: 1, explanation: "A fanatic agent always completes its current intention regardless of world changes. The risk: pursuing impossible goals or missing new opportunities." },
+    { type: "mcq", question: "The Procedural Reasoning System (PRS) used which key data structure?", options: ["A neural network", "A plan library indexed by triggering conditions", "A SQL database", "A key-value cache"], correct: 1, explanation: "PRS stored pre-written plans (KA plans) in a plan library. Plans were selected when a desire matched the plan's triggering condition and preconditions were met." },
+    { type: "mcq", question: "In a LangChain ReAct agent, what corresponds to BDI 'Beliefs'?", options: ["The tool schemas", "The system prompt + conversation history + retrieved context", "The LLM model weights", "The output parser"], correct: 1, explanation: "Beliefs are the agent's model of the world. In LangChain, this is encoded in the system prompt, conversation history, and any retrieved documents that inform the agent's current understanding." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

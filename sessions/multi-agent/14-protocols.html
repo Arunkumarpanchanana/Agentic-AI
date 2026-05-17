@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Communication Protocols — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-multi{background:#a855f7;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1a0f2e;border:1px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#a855f7;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#a855f7;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/multi-agent.html">Multi-Agent</a><span class="sep">›</span><span>Session 14</span></div>
+      <h1 class="session-title">Communication Protocols</h1>
+      <p class="session-tagline">Master message passing, shared blackboard, pub/sub, and FIPA ACL speech acts for agent-to-agent communication.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-multi"><i class="fas fa-comments"></i> Multi-Agent</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Why Communication Protocols Matter</h2>
+      <p>When multiple agents need to collaborate, they must agree on <em>how</em> to communicate — not just <em>what</em> to say. Without a protocol, agents produce incompatible message formats, misinterpret each other's intent, and create coordination failures that are extremely difficult to debug.</p>
+      <p>A communication protocol defines: message structure, the set of valid message types (performatives), how agents identify themselves and their target, and the expected conversation flow (who replies to whom in what order).</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Four protocol patterns:</strong> Direct message passing (point-to-point), shared blackboard (shared state), pub/sub (topic-based broadcasting), and FIPA ACL (formal speech acts). Each suits different coordination needs.</div>
+      </div>
+
+      <h2>1. Direct Message Passing</h2>
+      <p>The simplest protocol: Agent A sends a structured message directly to Agent B. Works well for simple pipelines where the communication graph is known upfront.</p>
+      <pre><code class="language-python">from dataclasses import dataclass, field
+from typing import Any
+import time, uuid
+
+@dataclass
+class Message:
+    sender: str
+    receiver: str
+    performative: str   # "inform", "request", "propose", "agree", "refuse"
+    content: Any
+    conversation_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
+    timestamp: float = field(default_factory=time.time)
+
+    def __repr__(self):
+        return f"[{self.performative.upper()}] {self.sender}→{self.receiver}: {str(self.content)[:60]}"
+
+class MessageBus:
+    """Simple in-process message bus for agent communication."""
+    def __init__(self):
+        self.inboxes: dict[str, list] = {}
+
+    def register(self, agent_id: str):
+        self.inboxes[agent_id] = []
+
+    def send(self, msg: Message):
+        if msg.receiver not in self.inboxes:
+            raise ValueError(f"Unknown agent: {msg.receiver}")
+        self.inboxes[msg.receiver].append(msg)
+        print(f"  📨 {msg}")
+
+    def receive(self, agent_id: str) -> list:
+        msgs = self.inboxes.get(agent_id, [])
+        self.inboxes[agent_id] = []
+        return msgs
+
+bus = MessageBus()
+bus.register("planner"); bus.register("researcher"); bus.register("writer")
+
+bus.send(Message("planner", "researcher", "request", {"task": "Research quantum computing trends 2024"}))
+bus.send(Message("planner", "writer",     "request", {"task": "Draft introduction section"}))
+
+msgs = bus.receive("researcher")
+print(f"\nResearcher inbox: {len(msgs)} messages")</code></pre>
+
+      <h2>2. Shared Blackboard Architecture</h2>
+      <p>A blackboard is a shared data structure that all agents can read from and write to. Agents don't communicate directly — they post results to the blackboard and read others' results. This decouples agents from each other, enabling flexible, emergent coordination.</p>
+      <pre><code class="language-python">import threading
+from typing import Callable
+
+class Blackboard:
+    """Thread-safe shared state for multi-agent coordination."""
+    def __init__(self):
+        self._data: dict = {}
+        self._lock = threading.Lock()
+        self._watchers: dict[str, list[Callable]] = {}
+
+    def write(self, key: str, value: Any, author: str = "unknown"):
+        with self._lock:
+            self._data[key] = {"value": value, "author": author, "timestamp": time.time()}
+            print(f"  [BB WRITE] {author} → {key}: {str(value)[:50]}")
+        # Notify watchers
+        for watcher in self._watchers.get(key, []):
+            watcher(key, value)
+
+    def read(self, key: str) -> Any:
+        with self._lock:
+            entry = self._data.get(key)
+            return entry["value"] if entry else None
+
+    def watch(self, key: str, callback: Callable):
+        """Register a callback triggered when key is written."""
+        self._watchers.setdefault(key, []).append(callback)
+
+bb = Blackboard()
+# Researcher writes findings
+bb.write("research_findings", "Quantum computing advances: IBM 1000-qubit chip...", "researcher")
+# Writer reads findings
+findings = bb.read("research_findings")
+print(f"\nWriter read: {findings[:60] if findings else 'Nothing yet'}...")</code></pre>
+
+      <h2>3. Pub/Sub Pattern</h2>
+      <p>In pub/sub, agents publish messages to named topics and subscribe to topics they care about. Publishers don't know who is listening; subscribers don't know who published. This is ideal for loosely coupled systems where agents may join or leave dynamically.</p>
+      <pre><code class="language-python">class PubSubBus:
+    def __init__(self):
+        self.subscribers: dict[str, list] = {}
+
+    def subscribe(self, topic: str, agent_id: str, callback: Callable):
+        self.subscribers.setdefault(topic, []).append((agent_id, callback))
+        print(f"  [SUB] {agent_id} subscribed to '{topic}'")
+
+    def publish(self, topic: str, message: Any, publisher: str):
+        print(f"  [PUB] {publisher} → topic:'{topic}': {str(message)[:50]}")
+        for agent_id, callback in self.subscribers.get(topic, []):
+            callback(agent_id, topic, message)
+
+pubsub = PubSubBus()
+def handle_research(agent_id, topic, msg): print(f"    {agent_id} received on {topic}: {str(msg)[:40]}")
+def handle_error(agent_id, topic, msg):    print(f"    {agent_id} ERROR ALERT on {topic}: {str(msg)[:40]}")
+
+pubsub.subscribe("research_complete", "writer_agent",   handle_research)
+pubsub.subscribe("research_complete", "review_agent",   handle_research)
+pubsub.subscribe("error",             "monitor_agent",  handle_error)
+pubsub.publish("research_complete", {"topic": "AI", "summary": "Key findings..."}, "researcher_agent")
+pubsub.publish("error", {"code": 500, "msg": "API timeout"}, "researcher_agent")</code></pre>
+
+      <h2>4. FIPA ACL Speech Acts</h2>
+      <p>FIPA (Foundation for Intelligent Physical Agents) ACL defines a formal set of <strong>performatives</strong> — message types that indicate the communicative intent:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Performative</th><th>Meaning</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><code>inform</code></td><td>Assert that something is true</td><td>"The search returned 42 results."</td></tr>
+            <tr><td><code>request</code></td><td>Ask another agent to perform an action</td><td>"Please search for X and return results."</td></tr>
+            <tr><td><code>propose</code></td><td>Offer to do something under stated conditions</td><td>"I can complete this in 2 steps if given tool access."</td></tr>
+            <tr><td><code>agree</code></td><td>Accept a previous proposal or request</td><td>"I agree to handle the research subtask."</td></tr>
+            <tr><td><code>refuse</code></td><td>Decline a request with a reason</td><td>"Cannot access that URL — outside my permissions."</td></tr>
+            <tr><td><code>failure</code></td><td>Report that an action could not be completed</td><td>"Search API returned 503 after 3 retries."</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Protocol choice guide:</strong> Use direct messages for simple pipelines (&lt;5 agents, fixed flow). Use blackboard when agents need to share state asynchronously. Use pub/sub when agents dynamically join/leave or multiple agents react to the same event. Use FIPA ACL when you need formal, auditable agent conversations.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Implement a Pub/Sub System for 3 Agents</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Build the Pub/Sub Bus</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from collections import defaultdict
+import time, uuid
+
+class PubSubBus:
+    def __init__(self):
+        self._subs = defaultdict(list)
+        self._log = []
+
+    def subscribe(self, topic, agent_id, callback):
+        self._subs[topic].append((agent_id, callback))
+
+    def publish(self, topic, payload, publisher):
+        event = {"id": str(uuid.uuid4())[:6], "topic": topic, "payload": payload,
+                 "publisher": publisher, "timestamp": time.time()}
+        self._log.append(event)
+        print(f"📡 [{publisher}] → {topic}: {str(payload)[:50]}")
+        for agent_id, cb in self._subs[topic]:
+            cb(event)
+
+    def stats(self):
+        print(f"\nBus stats: {len(self._log)} events, {len(self._subs)} topics")
+
+bus = PubSubBus()
+print("Bus ready")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Create 3 Specialized Agents</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class ResearchAgent:
+    def __init__(self, bus):
+        self.bus = bus
+        self.name = "ResearchAgent"
+        bus.subscribe("task.research", self.name, self.on_task)
+
+    def on_task(self, event):
+        topic = event["payload"]["topic"]
+        print(f"  🔍 {self.name}: researching '{topic}'")
+        result = f"Found 5 key papers on {topic}: [paper1, paper2, paper3...]"
+        self.bus.publish("research.complete", {"topic": topic, "result": result}, self.name)
+
+class WriterAgent:
+    def __init__(self, bus):
+        self.bus = bus
+        self.name = "WriterAgent"
+        bus.subscribe("research.complete", self.name, self.on_research_done)
+
+    def on_research_done(self, event):
+        print(f"  ✍️  {self.name}: drafting from research on '{event['payload']['topic']}'")
+        draft = f"Draft article on {event['payload']['topic']}: Introduction... Body... Conclusion..."
+        self.bus.publish("draft.ready", {"draft": draft, "topic": event["payload"]["topic"]}, self.name)
+
+class ReviewAgent:
+    def __init__(self, bus):
+        self.bus = bus
+        self.name = "ReviewAgent"
+        self.reviews = []
+        bus.subscribe("draft.ready", self.name, self.on_draft)
+        bus.subscribe("research.complete", self.name, self.on_research_done)
+
+    def on_draft(self, event):
+        print(f"  🔍 {self.name}: reviewing draft on '{event['payload']['topic']}'")
+        self.reviews.append({"topic": event["payload"]["topic"], "verdict": "approved", "score": 8})
+        self.bus.publish("review.complete", {"verdict": "approved", "score": 8}, self.name)
+
+    def on_research_done(self, event):
+        print(f"  📋 {self.name}: noting research completion for '{event['payload']['topic']}'")
+
+researcher = ResearchAgent(bus)
+writer = WriterAgent(bus)
+reviewer = ReviewAgent(bus)
+print("All agents registered")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Run the Pipeline</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">print("\n=== Starting pipeline ===\n")
+# Trigger: publish a research task
+bus.publish("task.research", {"topic": "Agentic AI in 2025"}, "Orchestrator")
+print(f"\n=== Pipeline complete ===")
+bus.stats()
+print(f"\nReviewer completed {len(reviewer.reviews)} reviews")
+for r in reviewer.reviews:
+    print(f"  Topic: {r['topic']}, Verdict: {r['verdict']}, Score: {r['score']}/10")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Add a 4th Agent Dynamically</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class SEOAgent:
+    """Dynamically added agent — subscribes to draft.ready."""
+    def __init__(self, bus):
+        self.bus = bus
+        self.name = "SEOAgent"
+        bus.subscribe("draft.ready", self.name, self.on_draft)
+        print(f"  🆕 {self.name} joined the bus dynamically")
+
+    def on_draft(self, event):
+        print(f"  🔎 {self.name}: analysing SEO for '{event['payload']['topic']}'")
+        keywords = ["agentic AI", "autonomous agents", "LLM agents", "multi-agent systems"]
+        self.bus.publish("seo.analysis", {"keywords": keywords, "score": 72}, self.name)
+
+seo = SEOAgent(bus)
+print("\n=== Re-running pipeline with SEO agent ===\n")
+bus.publish("task.research", {"topic": "LangGraph best practices"}, "Orchestrator")
+bus.stats()</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/multi-agent/13-coordination.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Coordination Theory</span>
+      </a>
+      <a href="/Agentic-AI/sessions/multi-agent/15-trust-roles.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Trust, Roles & Delegation ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-14",
+  title: "Communication Protocols",
+  section: "multi-agent",
+  quizData: [
+    { type: "mcq", question: "In the pub/sub pattern, which statement is true?", options: ["Publishers must know who their subscribers are", "Subscribers must know who published", "Publishers and subscribers are decoupled — neither needs to know about the other", "Only one subscriber per topic is allowed"], correct: 2, explanation: "Pub/sub decouples publishers from subscribers via named topics. Publishers broadcast without knowing who listens; subscribers receive without knowing who sent." },
+    { type: "mcq", question: "A shared blackboard differs from direct message passing because:", options: ["Blackboards are faster", "Agents read/write shared state rather than sending messages directly to each other", "Blackboards require a central coordinator", "Only one agent can use a blackboard"], correct: 1, explanation: "In blackboard architecture, agents interact through shared state. This decouples them — an agent writes results without knowing which other agent will read them." },
+    { type: "mcq", question: "The FIPA ACL 'refuse' performative means:", options: ["The agent failed to complete a task", "The agent declines a request and provides a reason", "The agent is unavailable", "The message was malformed"], correct: 1, explanation: "FIPA's 'refuse' performative signals that an agent declines a request, typically accompanied by a reason. This is distinct from 'failure' (tried but couldn't complete)." },
+    { type: "mcq", question: "When should you use direct message passing over pub/sub?", options: ["When agents dynamically join and leave", "For simple fixed pipelines where the communication graph is known upfront", "When multiple agents react to the same event", "When agents need shared state"], correct: 1, explanation: "Direct message passing is simplest when the communication graph is fixed and small. Pub/sub adds flexibility but also complexity — use it when that flexibility is needed." },
+    { type: "mcq", question: "What does FIPA stand for?", options: ["Formal Intelligent Protocol Architecture", "Foundation for Intelligent Physical Agents", "Federated Interface Protocol for Agents", "Framework for Inter-Process Agent Abstraction"], correct: 1, explanation: "FIPA — Foundation for Intelligent Physical Agents — is an IEEE standards body that developed ACL (Agent Communication Language) and formal protocols for multi-agent communication." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

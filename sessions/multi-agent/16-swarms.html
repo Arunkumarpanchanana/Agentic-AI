@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emergent Behavior & Swarms — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-multi{background:#a855f7;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1a0f2e;border:1px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#a855f7;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#a855f7;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/multi-agent.html">Multi-Agent</a><span class="sep">›</span><span>Session 16</span></div>
+      <h1 class="session-title">Emergent Behavior & Swarms</h1>
+      <p class="session-tagline">Stigmergy, ant colony optimization, boid rules, and swarm intelligence applied to LLM agent collectives.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-multi"><i class="fas fa-bug"></i> Multi-Agent</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Swarm Intelligence</h2>
+      <p>Swarm intelligence is the collective behaviour that emerges when many simple agents interact locally, producing complex, adaptive, globally intelligent behaviour without central control. Nature's examples: ant colonies finding shortest paths, bird flocking, bee colony decision-making. These systems are robust, scalable, and self-organizing — all properties valuable in AI agent systems.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Key insight:</strong> The intelligence is in the system, not the individual. Each agent follows simple local rules. Complex global behaviour emerges from their interactions. This means you can build sophisticated document processing pipelines from five simple, specialized micro-agents.</div>
+      </div>
+
+      <h2>Stigmergy: Coordination Through the Environment</h2>
+      <p>Stigmergy is indirect coordination through environmental modification. Ants don't communicate directly — they deposit pheromones that other ants follow, creating self-reinforcing trails to food sources. In agent systems, stigmergy is implemented through a <strong>shared state</strong> that agents modify and read.</p>
+      <pre><code class="language-python">import time, random
+from collections import defaultdict
+
+class StigmergyBoard:
+    """Shared environment that agents modify to coordinate."""
+    def __init__(self, evaporation_rate=0.05):
+        self.pheromones = defaultdict(float)  # path -> strength
+        self.evaporation_rate = evaporation_rate
+
+    def deposit(self, path: str, amount: float = 1.0):
+        self.pheromones[path] += amount
+        # Reinforce paths proportional to quality
+
+    def evaporate(self):
+        for path in list(self.pheromones.keys()):
+            self.pheromones[path] *= (1 - self.evaporation_rate)
+            if self.pheromones[path] < 0.01:
+                del self.pheromones[path]
+
+    def best_path(self) -> str | None:
+        if not self.pheromones: return None
+        return max(self.pheromones, key=self.pheromones.get)
+
+class AntAgent:
+    def __init__(self, agent_id: str, board: StigmergyBoard):
+        self.id = agent_id
+        self.board = board
+        self.paths = ["path_A", "path_B", "path_C"]
+
+    def explore(self) -> str:
+        """Choose path probabilistically based on pheromone strength."""
+        weights = [self.board.pheromones.get(p, 0.1) for p in self.paths]
+        total = sum(weights)
+        probs = [w/total for w in weights]
+        chosen = random.choices(self.paths, weights=probs)[0]
+        # Simulate path quality (path_A is best)
+        quality = {"path_A": 1.5, "path_B": 0.8, "path_C": 0.4}[chosen]
+        self.board.deposit(chosen, quality)
+        return chosen
+
+board = StigmergyBoard()
+ants = [AntAgent(f"ant-{i}", board) for i in range(10)]
+print("Running ant colony simulation (20 rounds):")
+for round_num in range(20):
+    choices = [ant.explore() for ant in ants]
+    board.evaporate()
+    if round_num % 5 == 4:
+        print(f"  Round {round_num+1}: pheromones = {dict(board.pheromones)}")
+print(f"\nEmergent best path: {board.best_path()}")</code></pre>
+
+      <h2>Boid Rules for Agent Flocking</h2>
+      <p>Craig Reynolds' boid model (1986) generates realistic flocking from three simple local rules:</p>
+      <div class="card">
+        <ul style="line-height:2.2">
+          <li><strong>Separation:</strong> Avoid crowding neighbors — maintain minimum distance.</li>
+          <li><strong>Alignment:</strong> Steer toward the average heading of neighbors.</li>
+          <li><strong>Cohesion:</strong> Steer toward the average position of neighbors.</li>
+        </ul>
+        <p>In LLM agent systems, these map to: separation = don't duplicate work other agents are doing; alignment = adopt the consensus approach of the group; cohesion = stay focused on the shared goal.</p>
+      </div>
+
+      <h2>Swarm Intelligence in LLM Agent Collectives</h2>
+      <p>How swarm principles apply to real LLM agent systems:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Swarm concept</th><th>LLM agent implementation</th><th>Benefit</th></tr></thead>
+          <tbody>
+            <tr><td>Pheromone trails</td><td>Confidence scores on shared results; agents follow high-confidence paths</td><td>Self-organizing quality routing</td></tr>
+            <tr><td>Stigmergy</td><td>Shared blackboard; agents write tags/scores that others act on</td><td>No central coordinator needed</td></tr>
+            <tr><td>Ant colony optimization</td><td>Multiple agents explore different approaches; best propagates</td><td>Finds better solutions than single agent</td></tr>
+            <tr><td>Separation</td><td>Task deduplication; agents check if task already claimed before starting</td><td>No wasted parallel effort</td></tr>
+            <tr><td>Cohesion</td><td>Goal reminder injected into each agent's context</td><td>Prevents goal drift</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Practical application:</strong> The most immediately useful swarm idea for LLM agents is stigmergy via a shared blackboard. Instead of explicit orchestration, agents mark what they've done and what needs doing. New agents check the board and pick up available work. This creates a self-organizing pipeline with no single orchestrator.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Emergent Document Summarization with 5 Micro-Agents</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Define the Shared Blackboard</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">import time, random
+from dataclasses import dataclass, field
+from typing import Optional
+
+@dataclass
+class WorkItem:
+    item_id: str
+    content: str
+    item_type: str       # "raw_chunk", "summary", "fact", "final"
+    status: str = "available"  # "available", "claimed", "done"
+    result: Optional[str] = None
+    claimed_by: Optional[str] = None
+    score: float = 0.0   # quality/confidence score (stigmergy)
+
+class Blackboard:
+    def __init__(self):
+        self._items: dict[str, WorkItem] = {}
+
+    def post(self, item: WorkItem):
+        self._items[item.item_id] = item
+
+    def claim(self, item_type: str, agent_id: str) -> Optional[WorkItem]:
+        """Atomically claim an available item of given type."""
+        available = [i for i in self._items.values()
+                     if i.item_type == item_type and i.status == "available"]
+        if not available: return None
+        item = random.choice(available)
+        item.status = "claimed"
+        item.claimed_by = agent_id
+        return item
+
+    def complete(self, item_id: str, result: str, score: float = 1.0):
+        item = self._items[item_id]
+        item.status = "done"
+        item.result = result
+        item.score = score
+
+    def get_done(self, item_type: str) -> list:
+        return [i for i in self._items.values() if i.item_type == item_type and i.status == "done"]
+
+    def summary(self):
+        from collections import Counter
+        counts = Counter(f"{i.item_type}:{i.status}" for i in self._items.values())
+        for k, v in sorted(counts.items()): print(f"  {k}: {v}")
+
+bb = Blackboard()
+# Post raw document chunks
+docs = [
+    "Quantum computing uses qubits that can exist in superposition states.",
+    "Unlike classical bits (0 or 1), qubits can be 0, 1, or both simultaneously.",
+    "Quantum entanglement allows qubits to be correlated across distances.",
+    "Shor's algorithm can factor large numbers exponentially faster than classical computers.",
+    "Error correction is a major challenge — quantum states are fragile.",
+    "IBM, Google, and IonQ are leading quantum hardware companies in 2024.",
+]
+for i, doc in enumerate(docs):
+    bb.post(WorkItem(f"chunk-{i}", doc, "raw_chunk"))
+print("Posted", len(docs), "chunks to blackboard")
+bb.summary()</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Create Specialized Micro-Agents</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class SummarizerAgent:
+    """Summarizes raw chunks into concise summaries."""
+    def __init__(self, agent_id, bb): self.id, self.bb = agent_id, bb
+    def run(self):
+        item = self.bb.claim("raw_chunk", self.id)
+        if not item: return False
+        summary = f"[Summary by {self.id}] {item.content[:60]}... → Key point extracted."
+        result_item = WorkItem(f"sum-{item.item_id}", summary, "summary")
+        self.bb.post(result_item)
+        self.bb.complete(item.item_id, summary, score=0.8)
+        print(f"  {self.id}: summarized {item.item_id}")
+        return True
+
+class FactExtractorAgent:
+    """Extracts key facts from summaries."""
+    def __init__(self, agent_id, bb): self.id, self.bb = agent_id, bb
+    def run(self):
+        item = self.bb.claim("summary", self.id)
+        if not item: return False
+        fact = f"FACT: {item.content.split('→')[-1].strip()}"
+        result_item = WorkItem(f"fact-{item.item_id}", fact, "fact")
+        self.bb.post(result_item)
+        self.bb.complete(item.item_id, fact, score=0.9)
+        print(f"  {self.id}: extracted fact from {item.item_id}")
+        return True
+
+class QualityAgent:
+    """Scores facts for quality (stigmergy: deposits confidence)."""
+    def __init__(self, agent_id, bb): self.id, self.bb = agent_id, bb
+    def run(self):
+        facts = self.bb.get_done("fact")
+        unscored = [f for f in facts if f.score < 0.5]
+        if not unscored: return False
+        fact = random.choice(unscored)
+        fact.score = random.uniform(0.6, 1.0)  # score it
+        print(f"  {self.id}: scored fact {fact.item_id} → {fact.score:.2f}")
+        return True
+
+agents = [SummarizerAgent("sum-1", bb), SummarizerAgent("sum-2", bb),
+          FactExtractorAgent("fact-1", bb), QualityAgent("quality-1", bb)]
+print("\nAgents created:", [a.id for a in agents])</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Run the Swarm</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">print("\n=== Running swarm (no central coordinator) ===")
+for round_num in range(8):
+    print(f"\nRound {round_num+1}:")
+    did_work = False
+    random.shuffle(agents)  # Random agent order — emergent
+    for agent in agents:
+        result = agent.run()
+        did_work = did_work or result
+    if not did_work:
+        print("  No more work available")
+        break
+
+print("\n=== Blackboard state ===")
+bb.summary()</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Synthesizer Agent Collects High-Quality Facts</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class SynthesizerAgent:
+    """Collects high-confidence facts and produces final summary."""
+    def __init__(self, bb): self.bb = bb
+    def run(self, min_score=0.7):
+        facts = self.bb.get_done("fact")
+        high_quality = [f for f in facts if f.score >= min_score]
+        high_quality.sort(key=lambda f: -f.score)
+        print(f"\n=== FINAL SYNTHESIS ({len(high_quality)}/{len(facts)} facts meet quality threshold) ===")
+        for f in high_quality:
+            print(f"  [{f.score:.2f}] {f.content[:80]}")
+        synthesis = f"Document Summary: {len(high_quality)} key facts extracted about quantum computing including superposition, entanglement, algorithms, and hardware."
+        self.bb.post(WorkItem("final", synthesis, "final"))
+        self.bb.complete("final", synthesis, score=1.0)
+        return synthesis
+
+synth = SynthesizerAgent(bb)
+final = synth.run()
+print(f"\nFinal output: {final}")</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/multi-agent/15-trust-roles.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Trust & Roles</span>
+      </a>
+      <a href="/Agentic-AI/sessions/multi-agent/17-consensus.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Debate, Voting & Consensus ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-16",
+  title: "Emergent Behavior & Swarms",
+  section: "multi-agent",
+  quizData: [
+    { type: "mcq", question: "Stigmergy in multi-agent systems is best described as:", options: ["Agents communicating via direct messages", "Coordination through shared environmental state that agents modify and read", "A central coordinator assigning tasks", "Agents voting on the best action"], correct: 1, explanation: "Stigmergy is indirect coordination via environment modification — like ants depositing pheromones. In agent systems, a shared blackboard where agents write scores and tags implements stigmergy." },
+    { type: "mcq", question: "The three boid rules are:", options: ["Plan, Execute, Review", "Separation, Alignment, Cohesion", "Observe, Orient, Decide", "Search, Rank, Select"], correct: 1, explanation: "Reynolds' boid model uses Separation (avoid crowding), Alignment (match neighbors' heading), and Cohesion (move toward neighbors' center) to produce realistic flocking from simple local rules." },
+    { type: "mcq", question: "In ant colony optimization, the 'pheromone evaporation' mechanism serves to:", options: ["Speed up the algorithm", "Forget old solutions and allow exploration of new paths", "Increase memory usage", "Signal task completion"], correct: 1, explanation: "Evaporation prevents premature convergence on suboptimal paths by gradually reducing pheromone strength. Paths that aren't reinforced fade, keeping the search exploratory." },
+    { type: "mcq", question: "The 'separation' boid rule maps to which LLM agent behavior?", options: ["Agents staying close to the goal", "Task deduplication — checking if work is already claimed before starting", "Agents adopting the group's consensus approach", "Agents asking for human approval"], correct: 1, explanation: "Separation = don't crowd neighbors = don't duplicate work. In agent systems, checking a shared state before claiming a task prevents multiple agents from doing the same work." },
+    { type: "mcq", question: "What is the key advantage of swarm-based agent architectures over centralized orchestration?", options: ["Lower LLM costs", "No single point of failure and natural scalability through self-organization", "Easier to debug", "Faster response time"], correct: 1, explanation: "Swarm architectures are resilient — no single orchestrator to crash — and scale naturally as adding agents increases throughput without redesigning the coordination mechanism." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{
+  "sections": [
+    {
+      "id": "foundations",
+      "label": "🧠 Foundations",
+      "sessions": [
+        {"id":"aa-01","title":"What Is Agentic AI?","path":"/Agentic-AI/sessions/foundations/01-intro.html","duration":"20 min"},
+        {"id":"aa-02","title":"Agent Architectures Overview","path":"/Agentic-AI/sessions/foundations/02-architectures.html","duration":"25 min"},
+        {"id":"aa-03","title":"BDI: Beliefs, Desires, Intentions","path":"/Agentic-AI/sessions/foundations/03-bdi.html","duration":"25 min"},
+        {"id":"aa-04","title":"ReAct: Reasoning + Acting","path":"/Agentic-AI/sessions/foundations/04-react.html","duration":"25 min"},
+        {"id":"aa-05","title":"Plan-and-Execute Agents","path":"/Agentic-AI/sessions/foundations/05-plan-execute.html","duration":"30 min"},
+        {"id":"aa-06","title":"Cognitive Loops & Agent Perception","path":"/Agentic-AI/sessions/foundations/06-cognitive-loops.html","duration":"25 min"}
+      ]
+    },
+    {
+      "id": "capabilities",
+      "label": "🔧 Core Capabilities",
+      "sessions": [
+        {"id":"aa-07","title":"Memory Systems for Agents","path":"/Agentic-AI/sessions/capabilities/07-memory.html","duration":"30 min"},
+        {"id":"aa-08","title":"Tool Design & API Integration","path":"/Agentic-AI/sessions/capabilities/08-tools.html","duration":"30 min"},
+        {"id":"aa-09","title":"Planning & Task Decomposition","path":"/Agentic-AI/sessions/capabilities/09-planning.html","duration":"35 min"},
+        {"id":"aa-10","title":"Self-Reflection & Critique","path":"/Agentic-AI/sessions/capabilities/10-reflection.html","duration":"30 min"},
+        {"id":"aa-11","title":"Long-Horizon Task Execution","path":"/Agentic-AI/sessions/capabilities/11-long-horizon.html","duration":"35 min"},
+        {"id":"aa-12","title":"Human-in-the-Loop Patterns","path":"/Agentic-AI/sessions/capabilities/12-human-loop.html","duration":"30 min"}
+      ]
+    },
+    {
+      "id": "multi-agent",
+      "label": "🤝 Multi-Agent",
+      "sessions": [
+        {"id":"aa-13","title":"Multi-Agent Coordination Theory","path":"/Agentic-AI/sessions/multi-agent/13-coordination.html","duration":"30 min"},
+        {"id":"aa-14","title":"Communication Protocols","path":"/Agentic-AI/sessions/multi-agent/14-protocols.html","duration":"30 min"},
+        {"id":"aa-15","title":"Trust, Roles & Delegation","path":"/Agentic-AI/sessions/multi-agent/15-trust-roles.html","duration":"30 min"},
+        {"id":"aa-16","title":"Emergent Behavior & Swarms","path":"/Agentic-AI/sessions/multi-agent/16-swarms.html","duration":"30 min"},
+        {"id":"aa-17","title":"Debate, Voting & Consensus","path":"/Agentic-AI/sessions/multi-agent/17-consensus.html","duration":"30 min"}
+      ]
+    },
+    {
+      "id": "evaluation",
+      "label": "🔬 Evaluation & Safety",
+      "sessions": [
+        {"id":"aa-18","title":"Agent Benchmarks & Metrics","path":"/Agentic-AI/sessions/evaluation/18-benchmarks.html","duration":"30 min"},
+        {"id":"aa-19","title":"Hallucination & Reliability","path":"/Agentic-AI/sessions/evaluation/19-hallucination.html","duration":"30 min"},
+        {"id":"aa-20","title":"Prompt Injection & Attack Surfaces","path":"/Agentic-AI/sessions/evaluation/20-security.html","duration":"30 min"},
+        {"id":"aa-21","title":"Alignment & Agent Safety","path":"/Agentic-AI/sessions/evaluation/21-alignment.html","duration":"35 min"}
+      ]
+    },
+    {
+      "id": "production",
+      "label": "🚀 Production",
+      "sessions": [
+        {"id":"aa-22","title":"Deploying Agents in Production","path":"/Agentic-AI/sessions/production/22-deployment.html","duration":"35 min"},
+        {"id":"aa-23","title":"Observability & Monitoring","path":"/Agentic-AI/sessions/production/23-observability.html","duration":"30 min"},
+        {"id":"aa-24","title":"Cost, Latency & Optimization","path":"/Agentic-AI/sessions/production/24-optimization.html","duration":"30 min"},
+        {"id":"aa-25","title":"Capstone: Build an Autonomous Agent","path":"/Agentic-AI/sessions/production/25-capstone.html","duration":"60 min"}
+      ]
+    }
+  ]
+}

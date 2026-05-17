@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Production — Agentic AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <style>
+    .section-hero { background: linear-gradient(135deg, #0f172a 0%, #0c1f12 100%); padding: 3.5rem 1.5rem 3rem; text-align: center; }
+    .section-badge { display:inline-flex; align-items:center; gap:.5rem; background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); color:#86efac; padding:.3rem .9rem; border-radius:999px; font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+    .section-hero h1 { font-size:2.4rem; font-weight:800; color:#f1f5f9; margin-bottom:.75rem; }
+    .section-hero p { color:#94a3b8; max-width:560px; margin:0 auto 1.5rem; line-height:1.7; }
+    .section-stats { display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap; }
+    .stat .n { font-size:1.6rem; font-weight:800; color:#86efac; }
+    .stat .l { font-size:.75rem; color:#64748b; text-transform:uppercase; letter-spacing:.08em; }
+    .sessions-list { max-width:800px; margin:0 auto; padding:3rem 1.5rem 4rem; }
+    .sessions-list h2 { font-size:1.2rem; font-weight:700; color:#94a3b8; margin-bottom:1.5rem; text-transform:uppercase; letter-spacing:.08em; }
+    .session-row { display:flex; align-items:center; gap:1rem; background:#1e293b; border:1px solid #334155; border-radius:.875rem; padding:1.25rem 1.5rem; margin-bottom:.875rem; text-decoration:none; transition:border-color .2s, transform .15s; }
+    .session-row:hover { border-color:#22c55e; transform:translateX(4px); }
+    .session-row .num { font-family:'JetBrains Mono',monospace; font-size:.8rem; font-weight:700; color:#22c55e; min-width:2.5rem; }
+    .session-row .info { flex:1; }
+    .session-row .info h3 { font-size:1rem; font-weight:600; color:#e2e8f0; margin-bottom:.2rem; }
+    .session-row .info p { font-size:.83rem; color:#64748b; }
+    .session-row .dur { font-size:.78rem; color:#475569; white-space:nowrap; }
+    .capstone-badge { background:rgba(34,197,94,.2); color:#86efac; font-size:.72rem; font-weight:700; padding:.2rem .6rem; border-radius:999px; margin-left:.5rem; }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="section-hero">
+    <div class="section-badge"><i class="fa-solid fa-rocket"></i> Section 5 of 5</div>
+    <h1>🚀 Production</h1>
+    <p>Ship real agentic systems. Learn deployment patterns, observability, cost optimization — then build a full autonomous agent as your capstone project.</p>
+    <div class="section-stats">
+      <div class="stat"><div class="n">4</div><div class="l">Sessions</div></div>
+      <div class="stat"><div class="n">~2.5h</div><div class="l">Duration</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Labs</div></div>
+    </div>
+  </div>
+  <div class="sessions-list">
+    <h2>Sessions</h2>
+    <a href="/Agentic-AI/sessions/production/22-deployment.html" class="session-row">
+      <span class="num">22</span>
+      <div class="info"><h3>Deploying Agents in Production</h3><p>Containerization, async queues, stateful execution, API wrappers, and production-ready agent services.</p></div>
+      <span class="dur">35 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/production/23-observability.html" class="session-row">
+      <span class="num">23</span>
+      <div class="info"><h3>Observability &amp; Monitoring</h3><p>Tracing agent steps, LangSmith, logging tool calls, alerting on failure, and building dashboards.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/production/24-optimization.html" class="session-row">
+      <span class="num">24</span>
+      <div class="info"><h3>Cost, Latency &amp; Optimization</h3><p>Token budgets, caching strategies, model routing, parallel tool calls, and cost-per-task analysis.</p></div>
+      <span class="dur">30 min</span>
+    </a>
+    <a href="/Agentic-AI/sessions/production/25-capstone.html" class="session-row">
+      <span class="num">25</span>
+      <div class="info"><h3>Capstone: Build an Autonomous Agent <span class="capstone-badge">Capstone</span></h3><p>Choose a track — research agent, coding assistant, or data analyst — and ship it end to end.</p></div>
+      <span class="dur">60 min</span>
+    </a>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="/Agentic-AI/assets/js/progress.js"></script>
+  <script src="/Agentic-AI/assets/js/main.js"></script>
+</body>
+</html>

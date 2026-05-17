@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trust, Roles & Delegation — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.25rem 0}
+    .badge-multi{background:#a855f7;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem}
+    .callout{display:flex;gap:.75rem;background:#1e293b;border-left:4px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .tip-box{display:flex;gap:.75rem;background:#1a0f2e;border:1px solid #a855f7;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:#334155;padding:.6rem .8rem;text-align:left;font-size:.85rem}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid #334155;font-size:.88rem}
+    .lab-step{background:#1e293b;border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+    .lab-step-header{display:flex;align-items:center;gap:1rem;background:#334155;padding:.75rem 1.25rem}
+    .lab-step-num{background:#a855f7;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .lab-step-body{padding:1rem 1.25rem}
+    .session-nav-buttons{display:flex;justify-content:space-between;margin-top:2rem}
+    .session-nav-btn{background:#a855f7;color:#fff;border-radius:8px;padding:.7rem 1.4rem;text-decoration:none;font-weight:600;display:flex;flex-direction:column}
+    .nav-label{font-size:.75rem;opacity:.8}
+    .nav-title{font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/multi-agent.html">Multi-Agent</a><span class="sep">›</span><span>Session 15</span></div>
+      <h1 class="session-title">Trust, Roles & Delegation</h1>
+      <p class="session-tagline">Design role assignment, capability discovery, trust scoring, and safe delegation in multi-agent systems.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 35 min</span>
+        <span><span class="badge-multi"><i class="fas fa-shield-alt"></i> Multi-Agent</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <h2>Roles in Multi-Agent Systems</h2>
+      <p>Roles define what an agent is responsible for and what it is permitted to do. Well-defined roles prevent capability overlap, reduce coordination confusion, and make the system easier to reason about and debug. Common role patterns:</p>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Role</th><th>Responsibilities</th><th>Typical permissions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Orchestrator</strong></td><td>Assigns tasks, monitors progress, resolves conflicts</td><td>Read all state, assign any task, terminate agents</td></tr>
+            <tr><td><strong>Specialist Worker</strong></td><td>Executes specific task types (research, coding, writing)</td><td>Use designated tools, write to own result slot</td></tr>
+            <tr><td><strong>Critic/Reviewer</strong></td><td>Evaluates outputs, provides feedback</td><td>Read all results, write critique; cannot modify originals</td></tr>
+            <tr><td><strong>Monitor</strong></td><td>Tracks system health, cost, timeouts</td><td>Read all state, raise alerts, can pause agents</td></tr>
+            <tr><td><strong>Gateway</strong></td><td>Manages external I/O (user, APIs, storage)</td><td>External network access; other agents cannot access external directly</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Principle of least privilege:</strong> Each agent should have only the permissions it needs for its role. A research agent should not be able to send emails; a writing agent should not be able to delete files. This limits blast radius when an agent misbehaves.</div>
+      </div>
+
+      <h2>Capability Discovery</h2>
+      <p>In dynamic multi-agent systems, the orchestrator may not know upfront which agents are available and what they can do. Capability discovery solves this through a registry where agents advertise their capabilities:</p>
+      <pre><code class="language-python">from dataclasses import dataclass, field
+from typing import List, Dict
+
+@dataclass
+class AgentCapability:
+    agent_id: str
+    role: str
+    skills: List[str]          # e.g., ["web_search", "summarization"]
+    tools: List[str]           # e.g., ["duckduckgo", "calculator"]
+    max_concurrent_tasks: int = 1
+    trust_level: float = 0.5   # 0.0 (untrusted) to 1.0 (fully trusted)
+    success_rate: float = 1.0  # computed from history
+
+class AgentRegistry:
+    def __init__(self):
+        self._agents: Dict[str, AgentCapability] = {}
+
+    def register(self, cap: AgentCapability):
+        self._agents[cap.agent_id] = cap
+        print(f"  [REGISTRY] Registered: {cap.agent_id} ({cap.role}) — skills: {cap.skills}")
+
+    def find_capable(self, required_skill: str, min_trust: float = 0.5) -> List[AgentCapability]:
+        """Find agents with required skill above trust threshold."""
+        return [
+            a for a in self._agents.values()
+            if required_skill in a.skills and a.trust_level >= min_trust
+        ]
+
+    def best_for(self, skill: str) -> AgentCapability | None:
+        candidates = self.find_capable(skill)
+        if not candidates: return None
+        return max(candidates, key=lambda a: a.trust_level * a.success_rate)
+
+registry = AgentRegistry()
+registry.register(AgentCapability("researcher-1", "specialist", ["web_search","summarization"], ["duckduckgo"], trust_level=0.9))
+registry.register(AgentCapability("researcher-2", "specialist", ["web_search","data_extraction"], ["duckduckgo","scraper"], trust_level=0.7))
+registry.register(AgentCapability("writer-1",     "specialist", ["writing","editing"], [], trust_level=0.85))
+
+best = registry.best_for("web_search")
+print(f"\nBest for web_search: {best.agent_id} (trust={best.trust_level})")</code></pre>
+
+      <h2>Trust Scoring Models</h2>
+      <p>Trust scores quantify how reliable an agent is, based on its history of task completion. A simple trust model:</p>
+      <pre><code class="language-python">class TrustManager:
+    def __init__(self, decay: float = 0.1):
+        self.scores: Dict[str, float] = {}
+        self.history: Dict[str, list] = {}
+        self.decay = decay  # Recent performance weighted more
+
+    def record(self, agent_id: str, success: bool, task_difficulty: float = 1.0):
+        if agent_id not in self.scores:
+            self.scores[agent_id] = 0.5  # Start neutral
+        outcome = 1.0 if success else 0.0
+        # Exponential moving average
+        self.scores[agent_id] = (1 - self.decay) * self.scores[agent_id] + self.decay * outcome
+        self.history.setdefault(agent_id, []).append({"success": success, "difficulty": task_difficulty})
+
+    def get_trust(self, agent_id: str) -> float:
+        return round(self.scores.get(agent_id, 0.5), 3)
+
+trust = TrustManager()
+# Simulate agent history
+for _ in range(8): trust.record("researcher-1", success=True)
+trust.record("researcher-1", success=False)  # One failure
+for _ in range(3): trust.record("researcher-2", success=True)
+trust.record("researcher-2", success=False)
+trust.record("researcher-2", success=False)
+
+print(f"researcher-1 trust: {trust.get_trust('researcher-1')}")
+print(f"researcher-2 trust: {trust.get_trust('researcher-2')}")</code></pre>
+
+      <h2>The Principal-Agent Problem</h2>
+      <p>The principal-agent problem from economics describes the tension when one entity (principal) delegates work to another (agent) whose interests may not perfectly align. In AI systems, this appears when:</p>
+      <ul style="line-height:2">
+        <li>A worker agent optimises for completing its assigned metric rather than the true goal.</li>
+        <li>An agent takes shortcuts that look like success but aren't (reward hacking).</li>
+        <li>An agent accumulates capabilities or resources beyond what the task requires.</li>
+      </ul>
+      <p>Solutions: clear success criteria, output verification by a critic agent, permission boundaries, and audit logs of all agent actions.</p>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#a855f7;margin-top:2px"></i>
+        <div><strong>Delegation with verification:</strong> Never fully trust a worker agent's self-reported success. Always have the orchestrator (or a dedicated verifier agent) independently check the output against the task specification before marking a task complete.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Build a Manager-Worker Agent System with Trust Verification</h2>
+        </div>
+        <div class="lab-steps">
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Define Roles and Registry</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">from dataclasses import dataclass, field
+from typing import List, Dict
+import random, time
+
+@dataclass
+class WorkerAgent:
+    agent_id: str
+    skills: List[str]
+    reliability: float  # 0-1: probability of producing correct output
+    trust_score: float = 0.5
+
+    def execute(self, task: dict) -> dict:
+        """Execute a task. Returns result (may be wrong based on reliability)."""
+        time.sleep(0.05)
+        success = random.random() < self.reliability
+        return {
+            "task_id": task["id"],
+            "agent": self.agent_id,
+            "result": f"Completed: {task['description']}" if success else f"WRONG: Partial result for {task['description']}",
+            "self_reported_success": True,  # Agents always claim success!
+        }
+
+workers = [
+    WorkerAgent("w1", ["research"], reliability=0.9),
+    WorkerAgent("w2", ["research"], reliability=0.6),
+    WorkerAgent("w3", ["writing"],  reliability=0.85),
+]
+print("Workers:", [(w.agent_id, w.skills, w.reliability) for w in workers])</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build the Manager with Trust Scoring</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">class ManagerAgent:
+    def __init__(self, workers: List[WorkerAgent]):
+        self.workers = {w.agent_id: w for w in workers}
+        self.trust = {w.agent_id: 0.5 for w in workers}
+        self.history = []
+
+    def select_worker(self, skill: str) -> WorkerAgent:
+        """Select highest-trust worker with required skill."""
+        eligible = [w for w in self.workers.values() if skill in w.skills]
+        if not eligible: raise ValueError(f"No worker for skill: {skill}")
+        return max(eligible, key=lambda w: self.trust[w.agent_id])
+
+    def verify(self, result: dict, task: dict) -> bool:
+        """Independent verification: check result meets basic criteria."""
+        r = result.get("result", "")
+        return len(r) > 20 and "WRONG" not in r and task["description"][:10].lower() in r.lower()
+
+    def update_trust(self, agent_id: str, verified_success: bool):
+        """Update trust score based on verified (not self-reported) success."""
+        decay = 0.15
+        self.trust[agent_id] = (1-decay)*self.trust[agent_id] + decay*(1.0 if verified_success else 0.0)
+        self.trust[agent_id] = round(self.trust[agent_id], 3)
+
+    def delegate(self, task: dict) -> dict:
+        worker = self.select_worker(task["skill"])
+        print(f"  Delegating '{task['description'][:30]}' → {worker.agent_id} (trust={self.trust[worker.agent_id]:.2f})")
+        result = worker.execute(task)
+        verified = self.verify(result, task)
+        self.update_trust(worker.agent_id, verified)
+        print(f"  Self-reported: {result['self_reported_success']} | Verified: {verified} | New trust: {self.trust[worker.agent_id]:.2f}")
+        self.history.append({"task": task["id"], "agent": worker.agent_id, "verified": verified})
+        return {**result, "verified": verified}
+
+manager = ManagerAgent(workers)
+tasks = [
+    {"id": f"t{i}", "description": f"Research topic {i} thoroughly", "skill": "research"}
+    for i in range(1, 7)
+]
+print("\n=== Running delegated tasks ===")
+for t in tasks:
+    manager.delegate(t)</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Observe Trust Score Evolution</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">print("\n=== Final Trust Scores ===")
+for agent_id, score in sorted(manager.trust.items(), key=lambda x: -x[1]):
+    worker = manager.workers[agent_id]
+    agent_tasks = [h for h in manager.history if h["agent"] == agent_id]
+    verified_rate = sum(1 for h in agent_tasks if h["verified"]) / len(agent_tasks) if agent_tasks else 0
+    print(f"  {agent_id}: trust={score:.3f}, reliability={worker.reliability}, verified_rate={verified_rate:.0%}")
+
+print("\n=== Task History ===")
+for h in manager.history:
+    status = "✅" if h["verified"] else "❌"
+    print(f"  {status} {h['task']} → {h['agent']}")</code></pre>
+            </div>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Add Automatic Blacklisting</h3></div>
+            <div class="lab-step-body">
+              <pre><code class="language-python">BLACKLIST_THRESHOLD = 0.3
+
+def delegate_with_blacklist(manager, task):
+    worker = manager.select_worker(task["skill"])
+    if manager.trust[worker.agent_id] < BLACKLIST_THRESHOLD:
+        print(f"  ⛔ {worker.agent_id} blacklisted (trust={manager.trust[worker.agent_id]:.2f}). No eligible workers!")
+        return None
+    return manager.delegate(task)
+
+# Simulate a bad worker dominating then getting blacklisted
+bad_worker = WorkerAgent("w_bad", ["research"], reliability=0.1)
+manager.workers["w_bad"] = bad_worker
+manager.trust["w_bad"] = 0.5
+
+bad_tasks = [{"id": f"b{i}", "description": f"Research bad topic {i}", "skill": "research"} for i in range(5)]
+print("=== Bad worker scenario ===")
+for t in bad_tasks:
+    result = delegate_with_blacklist(manager, t)
+    if not result: break</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/multi-agent/14-protocols.html" class="session-nav-btn">
+        <span class="nav-label">Previous</span><span class="nav-title">‹ Protocols</span>
+      </a>
+      <a href="/Agentic-AI/sessions/multi-agent/16-swarms.html" class="session-nav-btn next">
+        <span class="nav-label">Next</span><span class="nav-title">Emergent Behavior & Swarms ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-15",
+  title: "Trust, Roles & Delegation",
+  section: "multi-agent",
+  quizData: [
+    { type: "mcq", question: "The 'principle of least privilege' applied to agent roles means:", options: ["Use the cheapest LLM for each role", "Each agent should only have the permissions required for its specific role", "Agents should share all permissions", "Only the orchestrator needs permissions"], correct: 1, explanation: "Least privilege limits each agent to exactly the permissions it needs. A researcher shouldn't be able to send emails; a writer shouldn't be able to delete records. This limits damage from misbehaving agents." },
+    { type: "mcq", question: "Capability discovery in multi-agent systems solves the problem of:", options: ["Agents running too slowly", "The orchestrator not knowing upfront which agents are available and what they can do", "Agents producing duplicate results", "Memory overflow in large agent networks"], correct: 1, explanation: "In dynamic systems, agents may join or leave. A registry where agents advertise capabilities lets the orchestrator discover and select appropriate workers without hardcoding assignments." },
+    { type: "mcq", question: "Why should an orchestrator independently verify a worker's output rather than trusting self-reported success?", options: ["Workers always lie", "Worker agents optimise for appearing successful, not for actual success (principal-agent problem)", "Independent verification is required by LangChain", "Worker agents cannot access their own outputs"], correct: 1, explanation: "The principal-agent problem: workers optimise for their metric (task marked complete) which may diverge from the true goal. Independent verification catches cases where self-reported success is inaccurate." },
+    { type: "mcq", question: "An exponential moving average trust score weights:", options: ["All historical results equally", "Older results more heavily", "Recent results more heavily than older ones", "Only the last result"], correct: 2, explanation: "EMA applies a decay factor so recent outcomes have higher weight. This means a currently reliable agent recovers trust faster after past failures, and a currently failing agent loses trust faster." },
+    { type: "mcq", question: "The 'Gateway' role in a multi-agent system is responsible for:", options: ["Planning the overall task", "Managing all external I/O so other agents cannot directly access external systems", "Reviewing other agents' outputs", "Maintaining the trust registry"], correct: 1, explanation: "A Gateway agent centralises all external access (APIs, user I/O, file systems). This means external interaction policies, rate limits, and security checks are enforced in one place." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>

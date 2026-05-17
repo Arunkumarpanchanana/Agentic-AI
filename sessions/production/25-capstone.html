@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capstone: Build an Autonomous Agent — Agentic AI</title>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <style>
+    body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; margin: 0; }
+    .session-page-wrapper { display: flex; min-height: 100vh; }
+    aside#session-sidebar { width: 260px; background: #1e293b; border-right: 1px solid #334155; flex-shrink: 0; }
+    main { flex: 1; padding: 2rem; max-width: 900px; }
+    .session-header { margin-bottom: 2rem; }
+    .breadcrumb { font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; }
+    .breadcrumb a { color: #94a3b8; text-decoration: none; }
+    .session-badge { display: inline-block; background: #22c55e22; color: #22c55e; border: 1px solid #22c55e55; border-radius: 999px; padding: 0.2rem 0.8rem; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .session-title { font-size: 2rem; font-weight: 800; color: #f1f5f9; margin: 0 0 0.5rem; }
+    .session-tagline { color: #94a3b8; font-size: 1.05rem; margin: 0 0 1rem; }
+    .session-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: #64748b; flex-wrap: wrap; }
+    .tab-nav { display: flex; gap: 0.5rem; border-bottom: 1px solid #334155; margin-bottom: 1.5rem; }
+    .tab-btn { background: none; border: none; color: #94a3b8; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 0.95rem; border-bottom: 2px solid transparent; transition: color 0.2s; }
+    .tab-btn.active { color: #22c55e; border-bottom-color: #22c55e; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    h2 { color: #f1f5f9; font-size: 1.4rem; margin-top: 2rem; }
+    h3 { color: #cbd5e1; font-size: 1.1rem; margin-top: 1.5rem; }
+    p { color: #cbd5e1; line-height: 1.75; }
+    .callout { background: #1e293b; border-left: 4px solid #22c55e; border-radius: 0 8px 8px 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+    .callout strong { color: #22c55e; }
+    .track-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.4rem 1.6rem; margin: 1.2rem 0; }
+    .track-card h3 { margin: 0 0 0.5rem; color: #22c55e; font-size: 1.1rem; }
+    .track-card p { margin: 0 0 0.75rem; }
+    .track-tag { display: inline-block; background: #22c55e22; color: #22c55e; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 600; margin-right: 0.4rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    th { background: #1e293b; color: #22c55e; padding: 0.6rem 1rem; text-align: left; border: 1px solid #334155; }
+    td { padding: 0.6rem 1rem; border: 1px solid #334155; color: #cbd5e1; }
+    tr:nth-child(even) td { background: #1e293b44; }
+    pre[class*="language-"] { border-radius: 8px; font-size: 0.85rem; margin: 1rem 0; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1rem 0; }
+    .lab-step-num { display: inline-block; background: #22c55e; color: #0f172a; font-weight: 700; border-radius: 999px; width: 1.6rem; height: 1.6rem; text-align: center; line-height: 1.6rem; font-size: 0.85rem; margin-right: 0.5rem; }
+    .lab-step h3 { margin: 0 0 0.5rem; color: #f1f5f9; display: inline; font-size: 1rem; }
+    .quiz-container { }
+    .quiz-question { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1rem 0; }
+    .quiz-question p { margin: 0 0 0.75rem; font-weight: 600; color: #f1f5f9; }
+    .quiz-option { display: block; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 0.5rem 0.9rem; margin: 0.4rem 0; cursor: pointer; color: #cbd5e1; text-align: left; width: 100%; font-size: 0.9rem; transition: border-color 0.2s; }
+    .quiz-option:hover { border-color: #22c55e; }
+    .cert-banner { background: linear-gradient(135deg, #22c55e22, #10b98122); border: 1px solid #22c55e55; border-radius: 12px; padding: 1.5rem 2rem; margin: 2rem 0; text-align: center; }
+    .cert-banner h3 { color: #22c55e; margin: 0 0 0.5rem; font-size: 1.3rem; }
+    .cert-banner p { color: #94a3b8; margin: 0 0 1rem; }
+    .cert-btn { display: inline-block; background: #22c55e; color: #0f172a; font-weight: 700; border-radius: 8px; padding: 0.7rem 1.8rem; text-decoration: none; font-size: 1rem; }
+    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .session-nav-btn { background: #22c55e; color: #0f172a; border: none; border-radius: 8px; padding: 0.6rem 1.4rem; font-weight: 700; cursor: pointer; font-size: 0.95rem; text-decoration: none; display: inline-block; }
+    .session-nav-btn.secondary { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <div class="session-header">
+      <div class="breadcrumb"><a href="/Agentic-AI/">Home</a> › <a href="/Agentic-AI/#production">Production</a> › Session 25</div>
+      <span class="session-badge">Capstone</span>
+      <h1 class="session-title">Capstone: Build an Autonomous Agent</h1>
+      <p class="session-tagline">Bring everything together — design, implement, evaluate, and deploy a production-grade autonomous agent end to end.</p>
+      <div class="session-meta">
+        <span>⏱ 90 min</span>
+        <span>🟢 Production</span>
+        <span>Session 25 of 25</span>
+      </div>
+    </div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn" onclick="switchTab('learn')">Learn</button>
+      <button class="tab-btn" data-tab="lab" onclick="switchTab('lab')">Lab</button>
+      <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')">Quiz</button>
+    </div>
+
+    <!-- LEARN TAB -->
+    <div class="tab-panel active" data-panel="learn">
+      <h2>Bringing It All Together</h2>
+      <p>You have now studied every major concept in the agentic AI landscape: agent architectures, BDI and ReAct patterns, memory systems, tool design, planning, reflection, human-in-the-loop patterns, multi-agent coordination, evaluation, security, alignment, deployment, observability, and cost optimization. The capstone session is your opportunity to synthesise these concepts into a single, coherent, working system.</p>
+
+      <p>A well-designed autonomous agent is not just a loop around an LLM. It is a software system with a clear architecture, defined interfaces, tested components, observable behaviour, and a cost budget. The goal of this session is to give you the blueprint and starter code for three realistic project tracks, so you can choose the one that matches your interests and build something you can genuinely ship.</p>
+
+      <h2>The Architecture Checklist</h2>
+      <p>Before writing a single line of code for a production agent, answer these questions:</p>
+
+      <table>
+        <thead><tr><th>Dimension</th><th>Question to Answer</th><th>Sessions Covered</th></tr></thead>
+        <tbody>
+          <tr><td>Purpose</td><td>What is the exact task this agent performs?</td><td>01, 02</td></tr>
+          <tr><td>Architecture</td><td>Reactive, deliberative, BDI, or ReAct?</td><td>02, 03, 04</td></tr>
+          <tr><td>Planning</td><td>Single-shot, iterative, or hierarchical?</td><td>05, 09</td></tr>
+          <tr><td>Memory</td><td>What must persist across sessions?</td><td>07</td></tr>
+          <tr><td>Tools</td><td>Which APIs and functions does the agent need?</td><td>08</td></tr>
+          <tr><td>Reflection</td><td>Does the agent self-critique its outputs?</td><td>10</td></tr>
+          <tr><td>Human oversight</td><td>What actions require approval?</td><td>12</td></tr>
+          <tr><td>Multi-agent</td><td>Are multiple specialised agents needed?</td><td>13–17</td></tr>
+          <tr><td>Evaluation</td><td>How do you measure success?</td><td>18–21</td></tr>
+          <tr><td>Deployment</td><td>How is the agent served and monitored?</td><td>22–24</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Project Track A: Autonomous Research Agent</h2>
+
+      <div class="track-card">
+        <h3>Autonomous Research Agent</h3>
+        <p>Given a research question, the agent autonomously searches the web, retrieves and reads papers, extracts key findings, cross-checks facts across sources, and generates a structured research report with citations.</p>
+        <span class="track-tag">WebSearch</span>
+        <span class="track-tag">RAG</span>
+        <span class="track-tag">Reflection</span>
+        <span class="track-tag">Multi-source synthesis</span>
+        <p style="margin-top:0.75rem"><strong>Core components:</strong> ReAct planner → search tool → web scraper → ChromaDB memory → critic agent → report generator → hallucination checker → human review gate.</p>
+      </div>
+
+<pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_community.tools import DuckDuckGoSearchRun, WikipediaQueryRun
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain.prompts import PromptTemplate
+
+RESEARCH_PROMPT = PromptTemplate.from_template("""
+You are an autonomous research agent. Your goal is to answer the research question
+thoroughly, with evidence and citations.
+
+Research Question: {input}
+
+You have access to the following tools:
+{tools}
+
+Use this exact format:
+Thought: what I need to find next
+Action: tool_name
+Action Input: query
+Observation: tool result
+... (repeat as needed, at least 3 searches)
+Thought: I have enough information
+Final Answer: [structured report with: Summary, Key Findings (bullet list), Citations]
+
+{agent_scratchpad}
+""")
+
+def build_research_agent():
+    llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+    tools = [
+        DuckDuckGoSearchRun(name="web_search"),
+        WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper(top_k_results=2), name="wikipedia"),
+    ]
+    memory = ConversationSummaryBufferMemory(
+        llm=llm, max_token_limit=2000, return_messages=True
+    )
+    agent = create_react_agent(llm, tools, RESEARCH_PROMPT)
+    return AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True, max_iterations=12)
+
+# Usage:
+# agent = build_research_agent()
+# result = agent.invoke({"input": "What are the latest advances in protein folding AI?"})
+# print(result["output"])
+</code></pre>
+
+      <h2>Project Track B: Coding Assistant Agent</h2>
+
+      <div class="track-card">
+        <h3>Coding Assistant Agent</h3>
+        <p>Given a natural-language feature request or bug description, the agent reads existing code, writes or patches functions, runs tests in a sandbox, inspects failures, and iterates until tests pass — with a human approval gate before any file is written.</p>
+        <span class="track-tag">Code execution</span>
+        <span class="track-tag">Test-driven</span>
+        <span class="track-tag">Human-in-the-loop</span>
+        <span class="track-tag">Reflexion</span>
+        <p style="margin-top:0.75rem"><strong>Core components:</strong> Plan step → code generator → sandbox executor → test runner → failure analyser (Reflexion) → approval gate → file writer.</p>
+      </div>
+
+<pre><code class="language-python">import subprocess, tempfile, os
+
+def execute_python_safely(code: str, timeout: int = 10) -> dict:
+    """Run Python code in a subprocess sandbox."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+        f.write(code)
+        path = f.name
+    try:
+        result = subprocess.run(
+            ["python3", path],
+            capture_output=True, text=True, timeout=timeout
+        )
+        return {
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "returncode": result.returncode,
+            "success": result.returncode == 0
+        }
+    except subprocess.TimeoutExpired:
+        return {"stdout": "", "stderr": "Timeout", "returncode": -1, "success": False}
+    finally:
+        os.unlink(path)
+
+def coding_agent_loop(llm, task: str, tests: str, max_iterations: int = 5) -> str:
+    history = []
+    for iteration in range(max_iterations):
+        prompt = f"""Task: {task}
+Tests that must pass:
+{tests}
+Previous attempts: {history[-2:] if history else 'None'}
+Write only the Python implementation (no markdown fences)."""
+        code = llm.invoke(prompt).content
+        result = execute_python_safely(tests.replace("# IMPL\n", code + "\n"))
+        if result["success"]:
+            print(f"Tests passed on iteration {iteration + 1}")
+            return code
+        # Reflexion: critique the failure
+        critique = llm.invoke(
+            f"The code failed with:\n{result['stderr']}\nCode was:\n{code}\n"
+            f"Identify the bug in one sentence."
+        ).content
+        history.append({"code": code[:200], "error": result["stderr"][:200], "critique": critique})
+        print(f"Iteration {iteration+1} failed: {critique[:80]}")
+    return "Max iterations reached — manual review needed"
+</code></pre>
+
+      <h2>Project Track C: Data Analyst Agent</h2>
+
+      <div class="track-card">
+        <h3>Data Analyst Agent</h3>
+        <p>Given a CSV or database connection and a business question, the agent explores the schema, generates and executes SQL/pandas queries, interprets results, produces visualisations, and writes an executive summary — with self-consistency checks on key statistics.</p>
+        <span class="track-tag">Pandas/SQL</span>
+        <span class="track-tag">Code execution</span>
+        <span class="track-tag">Self-consistency</span>
+        <span class="track-tag">Visualisation</span>
+        <p style="margin-top:0.75rem"><strong>Core components:</strong> Schema explorer → query planner → code executor → chart generator → self-consistency verifier (run key queries 3×) → insight extractor → report writer.</p>
+      </div>
+
+<pre><code class="language-python">import pandas as pd
+import io
+
+def data_analyst_agent(llm, csv_path: str, question: str) -> dict:
+    df = pd.read_csv(csv_path)
+    schema = f"Columns: {list(df.columns)}\nDtypes:\n{df.dtypes.to_string()}\nShape: {df.shape}\nSample:\n{df.head(3).to_string()}"
+
+    # Step 1: plan the analysis
+    plan = llm.invoke(
+        f"Dataset schema:\n{schema}\n\nQuestion: {question}\n\n"
+        "Write a numbered analysis plan (3–5 steps). Be concise."
+    ).content
+    print("Plan:", plan)
+
+    # Step 2: generate pandas code
+    code = llm.invoke(
+        f"Dataset schema:\n{schema}\n\nQuestion: {question}\n\n"
+        "Write Python pandas code that answers the question. "
+        "The dataframe is already loaded as 'df'. "
+        "Print the key result as the last line. No imports needed."
+    ).content.strip().strip("```python").strip("```")
+
+    # Step 3: execute
+    exec_globals = {"df": df, "pd": pd}
+    try:
+        exec(code, exec_globals)
+        # Step 4: interpret
+        insight = llm.invoke(
+            f"Question: {question}\nAnalysis code executed successfully.\n"
+            f"Write a 2-sentence executive summary of the findings."
+        ).content
+        return {"status": "success", "plan": plan, "code": code, "insight": insight}
+    except Exception as e:
+        return {"status": "error", "error": str(e), "code": code}
+</code></pre>
+
+      <h2>Evaluation Rubric</h2>
+      <p>Whichever track you choose, evaluate your completed agent against these five dimensions before calling it production-ready:</p>
+
+      <table>
+        <thead><tr><th>Dimension</th><th>What to Measure</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td>Task success rate</td><td>% of tasks completed correctly end to end</td><td>&gt;80%</td></tr>
+          <tr><td>Hallucination rate</td><td>% of factual claims that are wrong</td><td>&lt;5%</td></tr>
+          <tr><td>Latency (P95)</td><td>95th-percentile wall-clock time per task</td><td>&lt;30s</td></tr>
+          <tr><td>Cost per task</td><td>Average USD spent per completed task</td><td>&lt;$0.10</td></tr>
+          <tr><td>Human escalation rate</td><td>% of tasks requiring human intervention</td><td>&lt;10%</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout"><strong>Graduation criterion:</strong> Your agent passes when it scores above the target on all five dimensions across a 50-task evaluation run. Document your results in a short evaluation report and share it with the community.</div>
+
+      <h2>What You Have Learned</h2>
+      <p>Across 25 sessions you have covered the full stack of agentic AI engineering:</p>
+      <ul style="color:#cbd5e1;line-height:1.9">
+        <li><strong>Foundations</strong> — autonomy spectrum, agent architectures, BDI, ReAct, plan-and-execute, cognitive loops</li>
+        <li><strong>Capabilities</strong> — memory systems, tool design, planning and decomposition, self-reflection, long-horizon execution, human-in-the-loop</li>
+        <li><strong>Multi-agent</strong> — coordination theory, communication protocols, trust and roles, emergent swarm behaviour, debate and consensus</li>
+        <li><strong>Evaluation</strong> — benchmarks and metrics, hallucination detection, security and prompt injection, alignment and safety</li>
+        <li><strong>Production</strong> — deployment with FastAPI and Docker, observability with LangSmith, cost and latency optimization</li>
+      </ul>
+
+      <p>The field of agentic AI is evolving rapidly. The concepts you have learned — tool use, planning, reflection, multi-agent coordination — are stable architectural patterns that will remain relevant regardless of which foundation model is dominant next year. Stay curious, keep building, and share what you create.</p>
+
+      <div class="cert-banner">
+        <h3>Congratulations — Course Complete!</h3>
+        <p>You have finished all 25 sessions of the Agentic AI course. Claim your certificate of completion.</p>
+        <a href="/Agentic-AI/certificate.html" class="cert-btn">Get Your Certificate</a>
+      </div>
+    </div>
+
+    <!-- LAB TAB -->
+    <div class="tab-panel" data-panel="lab">
+      <h2>Capstone Lab: Build Your Agent End to End</h2>
+      <p>Choose one of the three project tracks and complete all four phases. This lab is intentionally open-ended — the starter code gives you a scaffold, but the design decisions are yours.</p>
+
+      <div class="lab-step">
+        <span class="lab-step-num">1</span>
+        <h3>Design Phase — Architecture Document</h3>
+        <p>Before coding, fill in this architecture template for your chosen track. Write it as a Python dict so it is both human-readable and machine-parseable.</p>
+<pre><code class="language-python">AGENT_DESIGN = {
+    "track": "research",   # "research" | "coding" | "data_analyst"
+    "name": "ResearchBot v1",
+    "task": "Answer research questions with a structured report and citations",
+    "architecture": "ReAct",
+    "models": {
+        "planner": "gpt-4o",
+        "tool_parser": "gpt-4o-mini",
+        "summarizer": "gpt-4o-mini",
+        "critic": "gpt-4o",
+    },
+    "tools": ["web_search", "wikipedia", "arxiv"],
+    "memory": {
+        "type": "vector_store",
+        "backend": "chromadb",
+        "persist": True,
+    },
+    "human_in_the_loop": {
+        "enabled": True,
+        "trigger": "confidence < 0.7",
+        "actions_requiring_approval": ["write_file", "send_email"],
+    },
+    "observability": {
+        "tracing": "langsmith",
+        "metrics": ["tokens_used", "latency_ms", "tool_calls"],
+        "cost_budget_usd": 0.10,
+    },
+    "evaluation": {
+        "dataset": "10 curated research questions",
+        "success_metric": "task_success_rate",
+        "target": 0.80,
+    },
+}
+
+import json
+print(json.dumps(AGENT_DESIGN, indent=2))
+</code></pre>
+      </div>
+
+      <div class="lab-step">
+        <span class="lab-step-num">2</span>
+        <h3>Implementation Phase — Core Agent Loop</h3>
+        <p>Implement your agent using the starter scaffold for your chosen track. Add semantic caching, token budgeting, and parallel tool calls where applicable.</p>
+<pre><code class="language-python">import time, random
+
+class CapstoneAgent:
+    """
+    Generic scaffold — extend for your chosen track.
+    Replace the mock LLM and tools with real implementations.
+    """
+    def __init__(self, design: dict):
+        self.design = design
+        self.token_budget = 8000
+        self.tokens_used = 0
+        self.cache = {}   # simple string cache for demo
+        self.trace = []
+
+    def _mock_llm(self, prompt: str, model: str = "gpt-4o") -> str:
+        cost_map = {"gpt-4o": 20, "gpt-4o-mini": 1}
+        self.tokens_used += cost_map.get(model, 10)
+        if self.tokens_used > self.token_budget:
+            raise RuntimeError(f"Token budget exceeded: {self.tokens_used}")
+        return f"[{model}] Response to: {prompt[:60]}..."
+
+    def _mock_tool(self, name: str, query: str) -> str:
+        time.sleep(0.1)  # simulate API latency
+        return f"Tool '{name}' result for '{query}'"
+
+    def run(self, task: str) -> dict:
+        start = time.time()
+        self.trace = []
+
+        # Step 1: plan
+        plan = self._mock_llm(f"Plan how to: {task}", model="gpt-4o")
+        self.trace.append({"step": "plan", "output": plan})
+
+        # Step 2: check cache
+        if task in self.cache:
+            self.trace.append({"step": "cache_hit"})
+            return {"result": self.cache[task], "from_cache": True, "tokens": 0}
+
+        # Step 3: execute tools (parallel in real impl)
+        tool_results = {}
+        for tool in self.design["tools"]:
+            tool_results[tool] = self._mock_tool(tool, task)
+        self.trace.append({"step": "tools", "results": tool_results})
+
+        # Step 4: synthesise
+        answer = self._mock_llm(
+            f"Synthesise: {task}\nEvidence: {tool_results}",
+            model="gpt-4o"
+        )
+        self.trace.append({"step": "synthesise", "output": answer})
+
+        # Step 5: self-critique
+        critique = self._mock_llm(
+            f"Critique this answer: {answer}",
+            model="gpt-4o-mini"
+        )
+        self.trace.append({"step": "critique", "output": critique})
+
+        self.cache[task] = answer
+        latency = time.time() - start
+
+        return {
+            "result": answer,
+            "from_cache": False,
+            "tokens_used": self.tokens_used,
+            "latency_s": round(latency, 2),
+            "steps": len(self.trace),
+        }
+
+agent = CapstoneAgent(AGENT_DESIGN)
+result = agent.run("What are the main approaches to AI alignment?")
+print(result)
+</code></pre>
+      </div>
+
+      <div class="lab-step">
+        <span class="lab-step-num">3</span>
+        <h3>Evaluation Phase — 10-Task Test Suite</h3>
+        <p>Run your agent on a 10-task evaluation set and compute success rate, average latency, and average cost.</p>
+<pre><code class="language-python">EVAL_TASKS = {
+    "research": [
+        "What are the latest advances in protein folding AI?",
+        "How does retrieval-augmented generation work?",
+        "What is the difference between RLHF and Constitutional AI?",
+        "Summarise the key findings of the Attention Is All You Need paper.",
+        "What safety techniques are used in GPT-4?",
+        "Explain the BDI agent architecture.",
+        "What benchmarks are used to evaluate LLM agents?",
+        "How does LangGraph differ from LangChain?",
+        "What is prompt injection and how can it be prevented?",
+        "What is the ReAct prompting framework?",
+    ],
+}
+
+def evaluate_agent(agent: CapstoneAgent, tasks: list) -> dict:
+    results = []
+    for task in tasks:
+        try:
+            r = agent.run(task)
+            results.append({
+                "task": task[:50],
+                "success": True,
+                "tokens": r["tokens_used"],
+                "latency": r["latency_s"],
+            })
+        except Exception as e:
+            results.append({
+                "task": task[:50],
+                "success": False,
+                "error": str(e),
+                "tokens": 0,
+                "latency": 0,
+            })
+
+    successful = [r for r in results if r["success"]]
+    success_rate = len(successful) / len(results)
+    avg_latency = sum(r["latency"] for r in successful) / max(len(successful), 1)
+    total_tokens = sum(r["tokens"] for r in results)
+    est_cost = total_tokens * 5e-6  # rough GPT-4o estimate
+
+    report = {
+        "total_tasks": len(results),
+        "success_rate": f"{success_rate:.0%}",
+        "avg_latency_s": round(avg_latency, 2),
+        "total_tokens": total_tokens,
+        "estimated_cost_usd": round(est_cost, 4),
+        "passed": success_rate >= 0.80,
+    }
+    print("\n=== EVALUATION REPORT ===")
+    for k, v in report.items():
+        print(f"  {k}: {v}")
+    return report
+
+# Fresh agent for eval (reset token counter)
+eval_agent = CapstoneAgent(AGENT_DESIGN)
+report = evaluate_agent(eval_agent, EVAL_TASKS["research"])
+</code></pre>
+      </div>
+
+      <div class="lab-step">
+        <span class="lab-step-num">4</span>
+        <h3>Ship It — FastAPI Endpoint</h3>
+        <p>Wrap your agent in a FastAPI endpoint and verify it responds correctly. This is the last step before production deployment.</p>
+<pre><code class="language-python">from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import uvicorn
+
+app = FastAPI(title="Agentic AI Capstone", version="1.0")
+_agent = CapstoneAgent(AGENT_DESIGN)
+
+class TaskRequest(BaseModel):
+    task: str
+    track: str = "research"
+
+class TaskResponse(BaseModel):
+    result: str
+    tokens_used: int
+    latency_s: float
+    from_cache: bool
+    steps: int
+
+@app.post("/run", response_model=TaskResponse)
+async def run_task(req: TaskRequest):
+    try:
+        result = _agent.run(req.task)
+        return TaskResponse(**result)
+    except RuntimeError as e:
+        raise HTTPException(status_code=429, detail=str(e))
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "tokens_used": _agent.tokens_used}
+
+@app.get("/metrics")
+def metrics():
+    return {
+        "cache_size": len(_agent.cache),
+        "tokens_used": _agent.tokens_used,
+        "token_budget": _agent.token_budget,
+        "budget_remaining_pct": round(
+            (1 - _agent.tokens_used / _agent.token_budget) * 100, 1
+        ),
+    }
+
+# To run: uvicorn script:app --host 0.0.0.0 --port 8080
+# Test:   curl -X POST http://localhost:8080/run -H "Content-Type: application/json" \
+#              -d '{"task": "What is agentic AI?"}'
+print("FastAPI app defined. Run with uvicorn to serve.")
+</code></pre>
+      </div>
+    </div>
+
+    <!-- QUIZ TAB -->
+    <div class="tab-panel" data-panel="quiz">
+      <h2>Final Quiz</h2>
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <a href="/Agentic-AI/sessions/production/24-optimization.html" class="session-nav-btn secondary">← Previous</a>
+      <a href="/Agentic-AI/" class="session-nav-btn">Back to Home</a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/nav.js"></script>
+<script src="/Agentic-AI/assets/js/sidebar.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
+  document.querySelector(`.tab-panel[data-panel="${tab}"]`).classList.add('active');
+}
+
+window.SESSION_META = {
+  id: "aa-25",
+  title: "Capstone: Build an Autonomous Agent",
+  section: "production",
+  quizData: [
+    {
+      type: "mcq",
+      question: "Which of the following is NOT one of the three capstone project tracks?",
+      options: [
+        "Autonomous Research Agent",
+        "Coding Assistant Agent",
+        "Data Analyst Agent",
+        "Autonomous Trading Agent"
+      ],
+      correct: 3,
+      explanation: "The three tracks are: Autonomous Research Agent, Coding Assistant Agent, and Data Analyst Agent. Autonomous Trading Agent is not one of the capstone tracks."
+    },
+    {
+      type: "mcq",
+      question: "In the evaluation rubric, what is the target task success rate for a production-ready agent?",
+      options: ["60%", "70%", "80%", "95%"],
+      correct: 2,
+      explanation: "The target task success rate is >80% across a 50-task evaluation run. This is the graduation criterion along with the other four metrics."
+    },
+    {
+      type: "mcq",
+      question: "The Reflexion pattern used in the Coding Assistant track involves:",
+      options: [
+        "Storing all intermediate results in a database",
+        "Running the agent on multiple machines in parallel",
+        "Self-critiquing failures and using the critique to guide the next attempt",
+        "Routing easy tasks to smaller models"
+      ],
+      correct: 2,
+      explanation: "Reflexion has the agent analyse why a previous attempt failed (the critique step) and use that analysis to guide a better next attempt — iterating until tests pass or max iterations is reached."
+    },
+    {
+      type: "mcq",
+      question: "Which FastAPI endpoint in the capstone scaffold is used to check whether the agent's token budget is being consumed correctly?",
+      options: ["/run", "/health", "/metrics", "/status"],
+      correct: 2,
+      explanation: "The /metrics endpoint returns cache_size, tokens_used, token_budget, and budget_remaining_pct — making it the right place to monitor token consumption."
+    },
+    {
+      type: "mcq",
+      question: "When running a Data Analyst Agent on a new dataset, the FIRST step should be:",
+      options: [
+        "Generate a visualisation immediately",
+        "Ask the user for the SQL query to run",
+        "Explore the schema: columns, dtypes, shape, and sample rows",
+        "Load all rows into the LLM context"
+      ],
+      correct: 2,
+      explanation: "The agent must first understand the dataset structure — columns, data types, shape, and sample rows — before it can plan or execute any meaningful analysis."
+    }
+  ]
+};
+</script>
+</body>
+</html>

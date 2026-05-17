@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>What Is Agentic AI? — Agentic AI Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.25rem 0; }
+    .spectrum-bar { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin: 1rem 0; }
+    .spectrum-seg { flex: 1; padding: 0.75rem 0.5rem; text-align: center; font-size: 0.78rem; font-weight: 600; }
+    .badge-foundations { background: #6366f1; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; }
+    .callout { display: flex; gap: 0.75rem; background: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .callout-warn { border-left-color: #f59e0b; }
+    .tip-box { display: flex; gap: 0.75rem; background: #0f2027; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #334155; padding: 0.6rem 0.8rem; text-align: left; font-size: 0.85rem; }
+    .data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #334155; font-size: 0.88rem; }
+    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+    .lab-step-header { display: flex; align-items: center; gap: 1rem; background: #334155; padding: 0.75rem 1.25rem; }
+    .lab-step-num { background: #6366f1; color: #fff; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .lab-step-body { padding: 1rem 1.25rem; }
+    .session-nav-buttons { display: flex; justify-content: flex-end; margin-top: 2rem; gap: 1rem; }
+    .session-nav-btn { background: #6366f1; color: #fff; border-radius: 8px; padding: 0.7rem 1.4rem; text-decoration: none; font-weight: 600; display: flex; flex-direction: column; }
+    .nav-label { font-size: 0.75rem; opacity: 0.8; }
+    .nav-title { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Agentic-AI/">Home</a><span class="sep">›</span><a href="/Agentic-AI/sections/foundations.html">Foundations</a><span class="sep">›</span><span>Session 01</span></div>
+      <h1 class="session-title">What Is Agentic AI?</h1>
+      <p class="session-tagline">Explore the autonomy spectrum, the perception-action loop, and how agentic systems differ from chatbots through real-world examples.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 25 min</span>
+        <span><span class="badge-foundations"><i class="fas fa-brain"></i> Foundations</span></span>
+        <span><i class="fas fa-flask"></i> Hands-on Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+
+      <h2>Defining Agentic AI</h2>
+      <p>The word "agentic" comes from <em>agency</em> — the capacity to act independently in pursuit of a goal. An agentic AI system is one that perceives its environment, reasons about what to do, takes actions (often using external tools), observes the outcomes, and loops back — all without a human directing each step.</p>
+      <p>This is a fundamentally different paradigm from the chatbot you might be familiar with. A chatbot waits for you to ask a question, generates one response, and stops. An agentic system is given a <strong>goal</strong> and pursues it across many steps, making decisions at each juncture.</p>
+
+      <div class="callout">
+        <i class="fas fa-lightbulb" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Core definition:</strong> An AI agent is a system that: (1) perceives its environment, (2) maintains some form of state or memory, (3) selects and executes actions, and (4) does so in a goal-directed loop — autonomously, until the task is complete or impossible.</div>
+      </div>
+
+      <h2>The Autonomy Spectrum</h2>
+      <p>Not all AI systems are equally autonomous. It is helpful to think of a spectrum from fully reactive (no agency) to fully autonomous (complete agency). Real systems live somewhere in between.</p>
+
+      <div class="spectrum-bar">
+        <div class="spectrum-seg" style="background:#1e3a5f">Fully Reactive<br/><small style="font-weight:400;opacity:0.8">Rule-based chatbot</small></div>
+        <div class="spectrum-seg" style="background:#1e3d6f">Assisted<br/><small style="font-weight:400;opacity:0.8">Copilot suggestions</small></div>
+        <div class="spectrum-seg" style="background:#2d3b8e">Supervised Agent<br/><small style="font-weight:400;opacity:0.8">Human approves each step</small></div>
+        <div class="spectrum-seg" style="background:#4338ca">Semi-Autonomous<br/><small style="font-weight:400;opacity:0.8">Human in the loop for key decisions</small></div>
+        <div class="spectrum-seg" style="background:#6366f1">Fully Autonomous<br/><small style="font-weight:400;opacity:0.8">Devin, AutoGPT</small></div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Level</th><th>Description</th><th>Human Role</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Fully Reactive</strong></td><td>Responds to direct input, no planning</td><td>Directs every step</td><td>FAQ chatbot</td></tr>
+              <tr><td><strong>Assisted</strong></td><td>Suggests actions, human decides</td><td>Approves suggestions</td><td>GitHub Copilot autocomplete</td></tr>
+              <tr><td><strong>Supervised Agent</strong></td><td>Executes plans with human review</td><td>Reviews each action</td><td>Claude with confirmation</td></tr>
+              <tr><td><strong>Semi-Autonomous</strong></td><td>Acts independently, pauses at decision points</td><td>Reviews key decisions</td><td>LangGraph with breakpoints</td></tr>
+              <tr><td><strong>Fully Autonomous</strong></td><td>Pursues goal end-to-end without human</td><td>Sets goal only</td><td>Devin, AutoGPT</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h2>The Perception-Action Loop</h2>
+      <p>At the heart of every agentic system is a cycle sometimes called the <strong>perception-action loop</strong> or the <em>sense-think-act</em> cycle. Here is how it works in detail:</p>
+
+      <div class="card">
+        <ol style="line-height:2">
+          <li><strong>Perceive:</strong> The agent receives input — a user message, a tool result, an environment state, or a combination of all three.</li>
+          <li><strong>Represent:</strong> The agent updates its internal world model (its "beliefs") based on what it just perceived.</li>
+          <li><strong>Deliberate:</strong> The LLM backbone reasons about the current state, available tools, and goal to decide the next action.</li>
+          <li><strong>Act:</strong> The agent executes the chosen action — calling a tool, writing to memory, querying a database, or producing a final answer.</li>
+          <li><strong>Observe:</strong> The result of the action becomes a new perception, and the loop restarts.</li>
+        </ol>
+      </div>
+
+      <p>This loop continues until the agent reaches a terminal state: either the goal is achieved, the agent decides it cannot proceed, or a maximum step count is reached.</p>
+
+      <h2>Agents vs Chatbots: A Structural Comparison</h2>
+      <p>The difference between a chatbot and an agent is not just about capability — it is about <em>architecture</em>.</p>
+
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Dimension</th><th>Chatbot</th><th>Agentic AI</th></tr></thead>
+          <tbody>
+            <tr><td>Interaction model</td><td>Request → Response (single turn)</td><td>Goal → Loop → Completion (multi-turn)</td></tr>
+            <tr><td>Memory</td><td>Usually stateless (or short context)</td><td>Working, episodic, semantic, procedural</td></tr>
+            <tr><td>Tools</td><td>None</td><td>Search, code execution, APIs, browsers</td></tr>
+            <tr><td>Planning</td><td>None</td><td>Task decomposition, replanning on failure</td></tr>
+            <tr><td>Output</td><td>Text</td><td>Text + side effects (files, emails, code)</td></tr>
+            <tr><td>Autonomy</td><td>Zero</td><td>Variable (supervised → fully autonomous)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Real-World Examples of Agentic AI</h2>
+      <p>Agentic AI has moved from research papers to production systems. Here are four landmark systems that illustrate different points on the autonomy spectrum:</p>
+
+      <div class="card">
+        <h3 style="color:#6366f1;margin-top:0">AutoGPT (2023)</h3>
+        <p>One of the first open-source autonomous agents. Given a goal like "Research competitors and write a market report," AutoGPT would break the goal into sub-tasks, search the web, write notes to memory, and iterate — entirely without human prompting. It demonstrated the power and the pitfalls of fully autonomous agents (it often got stuck in loops or hallucinated data).</p>
+      </div>
+
+      <div class="card">
+        <h3 style="color:#6366f1;margin-top:0">Devin (Cognition, 2024)</h3>
+        <p>Devin is a software engineering agent that can read a GitHub issue, write code, run tests, debug failures, and open a pull request — all autonomously. It achieved a 13.86% solve rate on SWE-Bench, a benchmark of real-world GitHub issues. Devin lives near the "fully autonomous" end of the spectrum for coding tasks.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="color:#6366f1;margin-top:0">Claude Computer Use (Anthropic, 2024)</h3>
+        <p>Claude's Computer Use capability allows the model to see a screenshot, move the cursor, click, type, and navigate applications. This is a perception-action loop applied to a computer desktop — the agent perceives the screen state, decides what to click, acts, and perceives the result. It is supervised-autonomous: Claude asks for confirmation on risky actions.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="color:#6366f1;margin-top:0">LangGraph / LangChain Agents (2024)</h3>
+        <p>The LangGraph framework lets developers build agents as explicit state machines with typed states, conditional edges, and human-in-the-loop breakpoints. This gives fine-grained control over the autonomy level — you decide exactly which nodes require human approval.</p>
+      </div>
+
+      <h2>Why Agentic AI Changes Everything</h2>
+      <p>Chatbots augment individual tasks. Agents augment <em>workflows</em>. The economic implication is enormous: knowledge work that used to require a team of specialists can increasingly be orchestrated by an agent that calls specialist tools, reviews its own output, and iterates to quality.</p>
+
+      <div class="tip-box">
+        <i class="fas fa-star" style="color:#6366f1;margin-top:2px"></i>
+        <div><strong>Key insight for 2025 and beyond:</strong> The bottleneck is no longer model intelligence — it is <em>agent reliability</em>. The hard problems are: keeping agents on-task over long horizons, preventing them from causing unintended side-effects, and knowing when to pause and ask a human. These are the problems this course is designed to teach you to solve.</div>
+      </div>
+
+      <h2>The Minimal Agent in Code</h2>
+      <pre><code class="language-python"># The simplest possible agent loop — conceptual pseudocode
+# This pattern underpins every framework: LangChain, LangGraph, AutoGen, CrewAI
+
+def agent_loop(goal: str, tools: dict, memory: list, max_steps: int = 20):
+    observation = goal
+    for step in range(max_steps):
+        # LLM reasons about what to do next
+        decision = llm.reason(
+            observation=observation,
+            memory=memory,
+            available_tools=list(tools.keys())
+        )
+        # Terminal condition
+        if decision.action == "final_answer":
+            return decision.answer
+        # Execute the chosen tool
+        tool_fn = tools[decision.action]
+        result = tool_fn(**decision.arguments)
+        # Update memory and loop
+        memory.append({
+            "step": step,
+            "observation": observation,
+            "action": decision.action,
+            "result": result
+        })
+        observation = result   # result becomes next observation
+    raise TimeoutError("Agent did not complete within max_steps")</code></pre>
+
+      <p>Over the next 24 sessions, you will learn to fill every part of this skeleton with production-grade patterns — from memory systems and tool design to multi-agent coordination, evaluation, and deployment.</p>
+
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-section">
+        <div class="lab-header">
+          <h2><i class="fas fa-flask"></i> Lab: Classify AI Systems on the Autonomy Spectrum</h2>
+          <p>In this lab you will research 10 real AI systems and place each one on the autonomy spectrum with justification.</p>
+        </div>
+        <div class="lab-steps">
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">1</span><h3>Setup Your Notebook</h3></div>
+            <div class="lab-step-body">
+              <p>Open <a href="https://colab.research.google.com" target="_blank">Google Colab</a> and create a new notebook. We will use only Python builtins for this lab — no API key needed.</p>
+              <pre><code class="language-python"># Define the autonomy levels
+AUTONOMY_LEVELS = {
+    1: "Fully Reactive",
+    2: "Assisted",
+    3: "Supervised Agent",
+    4: "Semi-Autonomous",
+    5: "Fully Autonomous"
+}
+
+# Systems to classify
+SYSTEMS = [
+    "ChatGPT (base chat)",
+    "GitHub Copilot autocomplete",
+    "Claude Computer Use",
+    "AutoGPT",
+    "Devin",
+    "Siri",
+    "LangGraph with human-in-loop",
+    "Google Duplex (restaurant booking)",
+    "Waymo self-driving car",
+    "A simple FAQ bot"
+]
+
+print("Systems to classify:")
+for i, s in enumerate(SYSTEMS, 1):
+    print(f"  {i:2}. {s}")</code></pre>
+            </div>
+          </div>
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">2</span><h3>Build a Classification Rubric</h3></div>
+            <div class="lab-step-body">
+              <p>Create a scoring function based on four criteria: planning ability, tool use, memory persistence, and human oversight required.</p>
+              <pre><code class="language-python">def score_system(planning, tool_use, memory, human_oversight_low):
+    """
+    planning: 0-2 (0=none, 1=single-step, 2=multi-step)
+    tool_use: 0-2 (0=none, 1=fixed tools, 2=dynamic tool selection)
+    memory: 0-1 (0=stateless, 1=persistent memory)
+    human_oversight_low: 0-1 (0=high oversight needed, 1=runs autonomously)
+    Returns autonomy level 1-5
+    """
+    total = planning + tool_use + memory + human_oversight_low
+    if total <= 1:   return 1
+    elif total <= 2: return 2
+    elif total <= 3: return 3
+    elif total <= 5: return 4
+    else:            return 5
+
+# Example: classify a simple FAQ bot
+faq_score = score_system(planning=0, tool_use=0, memory=0, human_oversight_low=0)
+print(f"FAQ Bot → Level {faq_score}: {AUTONOMY_LEVELS[faq_score]}")</code></pre>
+            </div>
+          </div>
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">3</span><h3>Classify All 10 Systems</h3></div>
+            <div class="lab-step-body">
+              <p>Fill in your assessment for each system. Discuss with a peer if possible.</p>
+              <pre><code class="language-python">classifications = [
+    # (system_name, planning, tool_use, memory, autonomous)
+    ("ChatGPT base chat",         1, 0, 0, 1),
+    ("GitHub Copilot autocomplete",0, 0, 0, 1),
+    ("Claude Computer Use",       2, 2, 1, 0),
+    ("AutoGPT",                   2, 2, 1, 1),
+    ("Devin",                     2, 2, 1, 1),
+    ("Siri",                      1, 1, 0, 0),
+    ("LangGraph + human-in-loop", 2, 2, 1, 0),
+    ("Google Duplex",             1, 1, 0, 1),
+    ("Waymo self-driving",        2, 2, 1, 1),
+    ("Simple FAQ bot",            0, 0, 0, 0),
+]
+
+print(f"{'System':<35} {'Level':>5}  {'Name'}")
+print("-" * 60)
+for name, p, t, m, a in classifications:
+    level = score_system(p, t, m, a)
+    print(f"{name:<35} {level:>5}  {AUTONOMY_LEVELS[level]}")</code></pre>
+            </div>
+          </div>
+
+          <div class="lab-step">
+            <div class="lab-step-header"><span class="lab-step-num">4</span><h3>Reflect and Challenge</h3></div>
+            <div class="lab-step-body">
+              <p>In a markdown cell, answer these questions:</p>
+              <ul>
+                <li>Which system surprised you most in its classification? Why?</li>
+                <li>Is "fully autonomous" always better? What risks does higher autonomy introduce?</li>
+                <li>Think of one AI system in your own work or life. Where does it fall on the spectrum?</li>
+              </ul>
+              <p><strong>Bonus challenge:</strong> Add a 5th dimension to the rubric (e.g., "can initiate action without being asked") and reclassify all 10 systems.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-buttons">
+      <span id="prev-session"></span>
+      <a href="/Agentic-AI/sessions/foundations/02-architectures.html" class="session-nav-btn next" id="next-session">
+        <span class="nav-label">Next</span>
+        <span class="nav-title">Agent Architectures Overview ›</span>
+      </a>
+    </div>
+  </main>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: "aa-01",
+  title: "What Is Agentic AI?",
+  section: "foundations",
+  quizData: [
+    { type: "mcq", question: "What best distinguishes an AI agent from a simple chatbot?", options: ["Agents use larger language models", "Agents operate in a goal-directed loop using tools and memory across multiple steps", "Agents always run in the cloud", "Agents require internet access"], correct: 1, explanation: "The defining characteristic is the perception-action loop: agents perceive, reason, act, observe results, and repeat — pursuing a goal autonomously across many steps." },
+    { type: "mcq", question: "On the autonomy spectrum, 'Supervised Agent' means:", options: ["The agent runs completely without human input", "A human approves or reviews each action before it executes", "The agent only answers questions", "The agent cannot use external tools"], correct: 1, explanation: "A supervised agent executes plans but has a human reviewing each action — higher autonomy than a copilot but lower than semi-autonomous systems that only pause at key decisions." },
+    { type: "mcq", question: "Which of these is NOT a step in the perception-action loop?", options: ["Perceive environment state", "Update internal world model", "Compile source code", "Execute chosen action"], correct: 2, explanation: "The perception-action loop consists of Perceive → Represent → Deliberate → Act → Observe. Compiling source code is a possible tool action but not a loop step itself." },
+    { type: "mcq", question: "Devin (Cognition 2024) is notable because it:", options: ["Was the first chatbot to pass the Turing Test", "Achieved a ~14% solve rate on real GitHub issues autonomously", "Is the largest language model ever trained", "Invented the ReAct framework"], correct: 1, explanation: "Devin achieved ~13.86% on SWE-Bench, a benchmark of real GitHub issues — demonstrating that agentic software engineering is not just theoretical." },
+    { type: "mcq", question: "What is the PRIMARY bottleneck limiting agentic AI in production today?", options: ["Model intelligence — LLMs are not smart enough", "Agent reliability — keeping agents on-task, preventing side-effects, knowing when to ask humans", "Compute cost — inference is too expensive", "Data privacy — agents cannot access private data"], correct: 1, explanation: "As of 2025, the core challenge is reliability over long horizons: agents drifting off-task, causing unintended side-effects, or failing to escalate appropriately." }
+  ],
+  labConfig: { type: "colab", notebookPath: "" }
+};
+</script>
+</body>
+</html>
