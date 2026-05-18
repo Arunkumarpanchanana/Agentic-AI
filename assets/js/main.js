@@ -1,24 +1,60 @@
-// Load shared nav and footer
-function loadFragment(id, path) {
-  fetch(path)
-    .then(r => r.text())
-    .then(html => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = html;
-    })
-    .catch(() => {});
-}
+/* ===== MAIN SITE CONTROLLER ===== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadFragment('nav-placeholder', '/Agentic-AI/components/nav.html');
-  loadFragment('footer-placeholder', '/Agentic-AI/components/footer.html');
-
-  // Update progress pill
-  setTimeout(() => {
-    const pill = document.querySelector('.nav-progress-count');
-    if (pill && window.Progress) {
-      const count = Progress.getCompletedCount();
-      pill.textContent = `${count}/25 completed`;
-    }
-  }, 200);
+  loadComponent('nav-placeholder', '/Agentic-AI/components/nav.html', initNav);
+  loadComponent('footer-placeholder', '/Agentic-AI/components/footer.html', null);
+  updateProgressPill();
 });
+
+async function loadComponent(placeholderId, url, callback) {
+  const el = document.getElementById(placeholderId);
+  if (!el) return;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return;
+    el.innerHTML = await res.text();
+    if (callback) callback();
+  } catch (e) {
+    console.warn(`Could not load component: ${url}`, e);
+  }
+}
+
+function initNav() {
+  const path = window.location.pathname;
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    const isActive = path === href || (href !== '/Agentic-AI/' && path.startsWith(href));
+    link.classList.toggle('active', isActive);
+  });
+
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => menu.classList.toggle('open'));
+  }
+
+  updateProgressPill();
+}
+
+function updateProgressPill() {
+  if (!window.Progress) return;
+  const count = Progress.getCompletedCount();
+  document.querySelectorAll('.nav-progress-count').forEach(p => {
+    p.textContent = `${count}/25 completed`;
+  });
+}
+
+// Smooth scroll for anchor links
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+  const id = link.getAttribute('href').slice(1);
+  const target = document.getElementById(id);
+  if (target) {
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+window.loadComponent = loadComponent;
