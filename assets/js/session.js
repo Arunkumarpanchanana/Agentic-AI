@@ -38,8 +38,8 @@ function buildSidebar(data, meta) {
   data.sections.forEach(section => {
     const label = document.createElement('div');
     label.className = 'sidebar-section-label';
-    const colors = { beginner: '#22c55e', intermediate: '#3b82f6', expert: '#a855f7' };
-    label.style.color = colors[section.id] || '#64748b';
+    const colors = { foundations: '#0284c7', capabilities: '#16a34a', 'multi-agent': '#7c3aed', evaluation: '#d97706', production: '#0284c7' };
+    label.style.color = colors[section.id] || '#0284c7';
     label.textContent = section.label;
     sidebar.appendChild(label);
 
@@ -58,7 +58,7 @@ function buildSidebar(data, meta) {
 
       const num = document.createElement('span');
       num.className = 'sidebar-num';
-      num.textContent = String(s.id).padStart(2, '0');
+      const numPart = String(s.id).replace(/^[a-z]+-/, ''); num.textContent = numPart;
 
       const title = document.createElement('span');
       title.style.cssText = 'flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.82rem;';
