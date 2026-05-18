@@ -2,49 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/session.css"/>
+  <link rel="stylesheet" href="/Agentic-AI/assets/css/quiz.css"/>
   <title>Cost, Latency & Optimization — Agentic AI</title>
-  <link rel="stylesheet" href="/Agentic-AI/assets/css/main.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
-  <style>
-    body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; margin: 0; }
-    .session-page-wrapper { display: flex; min-height: 100vh; }
-    aside#session-sidebar { width: 260px; background: #1e293b; border-right: 1px solid #334155; flex-shrink: 0; }
-    main { flex: 1; padding: 2rem; max-width: 900px; }
-    .session-header { margin-bottom: 2rem; }
-    .breadcrumb { font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; }
-    .breadcrumb a { color: #94a3b8; text-decoration: none; }
-    .session-badge { display: inline-block; background: #22c55e22; color: #22c55e; border: 1px solid #22c55e55; border-radius: 999px; padding: 0.2rem 0.8rem; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem; }
-    .session-title { font-size: 2rem; font-weight: 800; color: #f1f5f9; margin: 0 0 0.5rem; }
-    .session-tagline { color: #94a3b8; font-size: 1.05rem; margin: 0 0 1rem; }
-    .session-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: #64748b; flex-wrap: wrap; }
-    .tab-nav { display: flex; gap: 0.5rem; border-bottom: 1px solid #334155; margin-bottom: 1.5rem; }
-    .tab-btn { background: none; border: none; color: #94a3b8; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 0.95rem; border-bottom: 2px solid transparent; transition: color 0.2s; }
-    .tab-btn.active { color: #22c55e; border-bottom-color: #22c55e; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-    h2 { color: #f1f5f9; font-size: 1.4rem; margin-top: 2rem; }
-    h3 { color: #cbd5e1; font-size: 1.1rem; margin-top: 1.5rem; }
-    p { color: #cbd5e1; line-height: 1.75; }
-    .callout { background: #1e293b; border-left: 4px solid #22c55e; border-radius: 0 8px 8px 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
-    .callout strong { color: #22c55e; }
-    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
-    th { background: #1e293b; color: #22c55e; padding: 0.6rem 1rem; text-align: left; border: 1px solid #334155; }
-    td { padding: 0.6rem 1rem; border: 1px solid #334155; color: #cbd5e1; }
-    tr:nth-child(even) td { background: #1e293b44; }
-    pre[class*="language-"] { border-radius: 8px; font-size: 0.85rem; margin: 1rem 0; }
-    .lab-step { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1rem 0; }
-    .lab-step-num { display: inline-block; background: #22c55e; color: #0f172a; font-weight: 700; border-radius: 999px; width: 1.6rem; height: 1.6rem; text-align: center; line-height: 1.6rem; font-size: 0.85rem; margin-right: 0.5rem; }
-    .lab-step h3 { margin: 0 0 0.5rem; color: #f1f5f9; display: inline; font-size: 1rem; }
-    .quiz-container { }
-    .quiz-question { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1rem 0; }
-    .quiz-question p { margin: 0 0 0.75rem; font-weight: 600; color: #f1f5f9; }
-    .quiz-option { display: block; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 0.5rem 0.9rem; margin: 0.4rem 0; cursor: pointer; color: #cbd5e1; text-align: left; width: 100%; font-size: 0.9rem; transition: border-color 0.2s; }
-    .quiz-option:hover { border-color: #22c55e; }
-    .session-nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
-    .session-nav-btn { background: #22c55e; color: #0f172a; border: none; border-radius: 8px; padding: 0.6rem 1.4rem; font-weight: 700; cursor: pointer; font-size: 0.95rem; text-decoration: none; display: inline-block; }
-    .session-nav-btn.secondary { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
-  </style>
 </head>
 <body>
 <div id="nav-placeholder"></div>
@@ -462,6 +428,9 @@ print(f"Latency reduction: {(1 - parallel_time/sequential_time):.0%}")
       <a href="/Agentic-AI/sessions/production/25-capstone.html" class="session-nav-btn" id="next-session">Next →</a>
     </div>
   </main>
+  <aside id="toc-sidebar">
+    <div id="toc"></div>
+  </aside>
 </div>
 <div id="footer-placeholder"></div>
 
@@ -469,7 +438,7 @@ print(f"Latency reduction: {(1 - parallel_time/sequential_time):.0%}")
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 <script src="/Agentic-AI/assets/js/nav.js"></script>
 <script src="/Agentic-AI/assets/js/sidebar.js"></script>
-<script src="/Agentic-AI/assets/js/quiz.js"></script>
+
 <script>
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -532,5 +501,12 @@ window.SESSION_META = {
   labConfig: { type: "colab", notebookPath: "" }
 };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Agentic-AI/assets/js/progress.js"></script>
+<script src="/Agentic-AI/assets/js/quiz.js"></script>
+<script src="/Agentic-AI/assets/js/lab.js"></script>
+<script src="/Agentic-AI/assets/js/session.js"></script>
+<script src="/Agentic-AI/assets/js/main.js"></script>
 </body>
 </html>
