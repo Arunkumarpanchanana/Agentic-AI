@@ -9,7 +9,33 @@ const QuizEngine = (() => {
 
   function init(sessionId, questions, containerEl) {
     _sessionId = sessionId;
-    _questions = questions;
+    _questions = questions.map((q, idx) => {
+      const qId = q.id || `q-${idx}`;
+      
+      let mappedOptions = [];
+      if (Array.isArray(q.options)) {
+        mappedOptions = q.options.map((opt, optIdx) => {
+          if (typeof opt === 'string') {
+            const optId = String.fromCharCode(97 + optIdx); // 'a', 'b', 'c', 'd'
+            const isCorrect = q.correct === optIdx;
+            return { id: optId, text: opt, correct: isCorrect };
+          } else if (opt && typeof opt === 'object') {
+            return {
+              id: opt.id || String.fromCharCode(97 + optIdx),
+              text: opt.text || '',
+              correct: opt.correct !== undefined ? opt.correct : (q.correct === optIdx)
+            };
+          }
+          return { id: String.fromCharCode(97 + optIdx), text: String(opt), correct: q.correct === optIdx };
+        });
+      }
+      
+      return {
+        ...q,
+        id: qId,
+        options: mappedOptions
+      };
+    });
     _container = containerEl;
     _answers = {};
     _submitted = false;

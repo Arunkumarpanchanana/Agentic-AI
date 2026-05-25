@@ -1,8 +1,17 @@
 /* ===== MAIN SITE CONTROLLER ===== */
 
+function getBasePath() {
+  const path = window.location.pathname;
+  if (path.startsWith('/Agentic-AI/')) {
+    return '/Agentic-AI';
+  }
+  return '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  loadComponent('nav-placeholder', '/Agentic-AI/components/nav.html', initNav);
-  loadComponent('footer-placeholder', '/Agentic-AI/components/footer.html', null);
+  const basePath = getBasePath();
+  loadComponent('nav-placeholder', `${basePath}/components/nav.html`, initNav);
+  loadComponent('footer-placeholder', `${basePath}/components/footer.html`, initFooter);
   updateProgressPill();
 });
 
@@ -20,11 +29,22 @@ async function loadComponent(placeholderId, url, callback) {
 }
 
 function initNav() {
+  const basePath = getBasePath();
+  
+  // Adjust hrefs dynamically
+  document.querySelectorAll('#site-nav a, #mobile-menu a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('/Agentic-AI')) {
+      const relativePart = href.slice('/Agentic-AI'.length);
+      link.setAttribute('href', basePath + relativePart);
+    }
+  });
+
   const path = window.location.pathname;
   document.querySelectorAll('.nav-links a').forEach(link => {
     const href = link.getAttribute('href');
     if (!href) return;
-    const isActive = path === href || (href !== '/Agentic-AI/' && path.startsWith(href));
+    const isActive = path === href || (href !== '/' && href !== '/Agentic-AI/' && path.startsWith(href));
     link.classList.toggle('active', isActive);
   });
 
@@ -35,6 +55,17 @@ function initNav() {
   }
 
   updateProgressPill();
+}
+
+function initFooter() {
+  const basePath = getBasePath();
+  document.querySelectorAll('#site-footer a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('/Agentic-AI')) {
+      const relativePart = href.slice('/Agentic-AI'.length);
+      link.setAttribute('href', basePath + relativePart);
+    }
+  });
 }
 
 function updateProgressPill() {

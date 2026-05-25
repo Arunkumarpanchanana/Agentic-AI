@@ -22,6 +22,17 @@ const Progress = {
     all[id] = { ...this.getSession(id), quizPassed: true, quizScore: score };
     this.save(all);
   },
+  markQuizAttempted(id, score) {
+    const all = this.getAllProgress();
+    const sess = this.getSession(id);
+    all[id] = { ...sess, quizAttempted: true, quizScore: Math.max(sess.quizScore || 0, score) };
+    this.save(all);
+  },
+  markLabStarted(id) {
+    const all = this.getAllProgress();
+    all[id] = { ...this.getSession(id), labStarted: true };
+    this.save(all);
+  },
   getCompletedCount() {
     const all = this.getAllProgress();
     return Object.values(all).filter(s => s.viewed || s.quizPassed).length;
